@@ -1,5 +1,4 @@
 import { Link as RouterLink } from "react-router-dom";
-//import style from "./notFoundPage.module.css";
 import notFoundImage from "../../assets/images/404notfound.jpg";
 import { Box, Container, Link, Typography } from "@mui/material";
 
