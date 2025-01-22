@@ -1,0 +1,277 @@
+[
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "fundraiser",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "beneficiary",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "admin",
+    "permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "F_John",
+    "last_name": "Doe",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.571Z",
+    "email": "f_john@example.com",
+    "phone_number": "5551234561",
+    "group_membership": null,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [
+      [
+        "fundraiser"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "F_Jane",
+    "last_name": "Doe",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.573Z",
+    "email": "f_jane@example.com",
+    "phone_number": "5551234562",
+    "group_membership": null,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [
+      [
+        "fundraiser"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "F_Sam",
+    "last_name": "Smith",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.573Z",
+    "email": "f_sam@example.com",
+    "phone_number": "5551234563",
+    "group_membership": null,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [
+      [
+        "fundraiser"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "B_Alice",
+    "last_name": "Brown",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.574Z",
+    "email": "b_alice@example.com",
+    "phone_number": "5551234564",
+    "group_membership": 1,
+    "is_group_leader": true,
+    "img": "",
+    "groups": [
+      [
+        "beneficiary"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "B_Bob",
+    "last_name": "White",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.574Z",
+    "email": "b_bob@example.com",
+    "phone_number": "5551234565",
+    "group_membership": 1,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [
+      [
+        "beneficiary"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "B_Charlie",
+    "last_name": "Green",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.574Z",
+    "email": "b_charlie@example.com",
+    "phone_number": "5551234566",
+    "group_membership": 1,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [
+      [
+        "beneficiary"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "B_Diana",
+    "last_name": "Blue",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.575Z",
+    "email": "b_diana@example.com",
+    "phone_number": "5551134567",
+    "group_membership": 2,
+    "is_group_leader": true,
+    "img": "",
+    "groups": [
+      [
+        "beneficiary"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "B_Luke",
+    "last_name": "Greenish",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.575Z",
+    "email": "b_luke@example.com",
+    "phone_number": "5551214567",
+    "group_membership": 2,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [
+      [
+        "beneficiary"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "A_Richard",
+    "last_name": "MCF",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:37:45.575Z",
+    "email": "a_richard@example.com",
+    "phone_number": "555121497",
+    "group_membership": null,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$aacrrUZjH2ED181Tcqgpr4$D1ZWIMW0cfAKdATr8AgQOpMM9xnKYEHXrH18mb4A0Lo=",
+    "last_login": "2025-01-22T20:38:33.933Z",
+    "is_superuser": true,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-01-22T20:38:28.459Z",
+    "email": "ayo@example.com",
+    "phone_number": "",
+    "group_membership": null,
+    "is_group_leader": false,
+    "img": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.usergroup",
+  "pk": 1,
+  "fields": {
+    "name": "Beneficiary Group 1",
+    "phone_number": "1234567890",
+    "interest": "Community Development",
+    "img": "",
+    "bank_account": "BG1-001"
+  }
+},
+{
+  "model": "user.usergroup",
+  "pk": 2,
+  "fields": {
+    "name": "Beneficiary Group 2",
+    "phone_number": "9876543210",
+    "interest": "Education",
+    "img": "",
+    "bank_account": "BG2-001"
+  }
+}
+]
