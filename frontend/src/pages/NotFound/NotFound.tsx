@@ -23,10 +23,10 @@ const NotFoundPage = () => {
           sx={{
             height: {
               xs: 200,
-              sm: 300
+              sm: 300,
             },
-            maxWidth: '100%',
-            objectFit: 'contain'
+            maxWidth: "100%",
+            objectFit: "contain",
           }}
         />
         <Typography variant="h5">
@@ -34,7 +34,7 @@ const NotFoundPage = () => {
         </Typography>
         <Typography variant="body1">
           Back to{" "}
-          <Link underline="always" color="inherit">
+          <Link sx={{ textDecoration: "underline", color: "inherit" }}>
             <RouterLink to="/">Homepage</RouterLink>
           </Link>
         </Typography>
