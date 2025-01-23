@@ -1,3 +1,13 @@
+[project]
+name = "Kind Giving API"
+version = "0.1.0"
+requires-python = ">=3.9,<4.0"
+
+[tool.ruff]
+# Enable Pyflakes `E` and `F` codes by default.
+select = ["E", "F"]
+ignore = ["E501", "E741"]
+
 [tool.black]
 line-length = 79
 target-version = ["py39"]  # Use double quotes here
