@@ -1,6 +1,6 @@
 import { Link as RouterLink } from "react-router-dom";
 import notFoundImage from "../../assets/images/404notfound.jpg";
-import { Box, Container, Link, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 
 const NotFoundPage = () => {
   return (
@@ -33,9 +33,9 @@ const NotFoundPage = () => {
         </Typography>
         <Typography variant="body1">
           Back to{" "}
-          <Link sx={{ textDecoration: "underline", color: "inherit" }}>
+          <Box component={"span"} sx={{ textDecoration: "underline" }}>
             <RouterLink to="/">Homepage</RouterLink>
-          </Link>
+          </Box>
         </Typography>
       </Box>
     </Container>
