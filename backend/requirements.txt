@@ -6,3 +6,4 @@ django-cities-light
 django-cors-headers
 paypalrestsdk
 pillow
+django-phonenumber-field[phonenumbers]
