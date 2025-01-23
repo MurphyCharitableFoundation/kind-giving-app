@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Card, Container, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
 import EmailInput from "../../components/EmailInput";
@@ -96,7 +96,7 @@ const Login = () => {
         justifyContent: "center",
       }}
     >
-      <Box
+      <Card
         component={"form"}
         onSubmit={handleSubmit}
         sx={{
@@ -149,7 +149,7 @@ const Login = () => {
             <RouterLink to="/signup">Sign Up Here</RouterLink>
           </Box>
         </Typography>
-      </Box>
+      </Card>
     </Container>
   );
 };
