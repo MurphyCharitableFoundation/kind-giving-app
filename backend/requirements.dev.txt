@@ -2,5 +2,5 @@ flake8
 django_extensions
 faker
 black
-pre-commit 
-ruff 
+pre-commit
+ruff

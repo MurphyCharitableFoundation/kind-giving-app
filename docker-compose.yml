@@ -56,7 +56,7 @@ services:
       # 54320 is likely unused on your local; to
       # support access through db-tools: dbeaver
       # https://stackoverflow.com/a/73870873
-      - "54320:5432" 
+      - "54320:5432"
     environment:
       - POSTGRES_DB=devdb
       - POSTGRES_USER=devuser

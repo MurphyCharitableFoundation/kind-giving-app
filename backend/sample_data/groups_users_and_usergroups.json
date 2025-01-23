@@ -228,7 +228,7 @@
     "group_membership": null,
     "is_group_leader": false,
     "img": "",
-    "groups": [],
+    "groups": [["admin"]],
     "user_permissions": []
   }
 },
@@ -238,12 +238,12 @@
     "password": "pbkdf2_sha256$600000$aacrrUZjH2ED181Tcqgpr4$D1ZWIMW0cfAKdATr8AgQOpMM9xnKYEHXrH18mb4A0Lo=",
     "last_login": "2025-01-22T20:38:33.933Z",
     "is_superuser": true,
-    "first_name": "",
+    "first_name": "dev_admin",
     "last_name": "",
     "is_staff": true,
     "is_active": true,
     "date_joined": "2025-01-22T20:38:28.459Z",
-    "email": "ayo@example.com",
+    "email": "admin@example.com",
     "phone_number": "",
     "group_membership": null,
     "is_group_leader": false,
