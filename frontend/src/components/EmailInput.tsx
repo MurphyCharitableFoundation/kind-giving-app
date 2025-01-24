@@ -21,7 +21,6 @@ const EmailInput = ({
       name={name}
       id="email"
       label="E-mail"
-      type="email"
       value={value}
       onChange={onChange}
       error={error}
