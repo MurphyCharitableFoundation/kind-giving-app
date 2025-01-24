@@ -19,8 +19,8 @@
 
 - React
 
-- Run `npm install` to install the dependencies so that your IDE can recognize them
 - Don't run `npm start` as the frontend is served in the frontend container
+- If you need to install new libraries/packages, use the command `docker compose run --rm frontend sh -c "npm install <name_of_library>"`
 
 - localhost - React application
 
