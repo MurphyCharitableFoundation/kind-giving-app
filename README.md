@@ -3,7 +3,6 @@
 ## Setup
 
 - Run `docker compose build` to build the docker images
-- Run `docker compose run --rm backend sh -c "python manage.py createsuperuser"` to create a superuser
 - Run `docker compose up` to start the containers
 - Run `docker compose down` to stop the containers
 
@@ -13,7 +12,46 @@
 - Django Rest Framework
 - PostgreSQL
 
+### Important URLs
+
 - localhost:8000/admin - Django admin
+
+### Installing Project Dependencies
+
+1. Add the library to requirements.txt (or requirement.dev.txt)
+2. Run `docker compose build backend` to ensure the container
+   environment is rebuilt with the new dependencies
+3. (Optional) some packages will not take effect until the are added
+   to the project `settings.py` under `INSTALLED_APPS`. 
+4. (Optional) some packages will not take effect even after that until
+   their migrations are applied to the project database.
+   Run migrations, see [Database Management](#database-management).
+
+### Database Management
+
+- makemigrations: `docker compose run --rm backend sh -c "python
+  manage.py makemigrations"`
+- migrate: `docker compose run --rm backend sh -c "python manage.py migrate"`
+
+### Linting, Formatting and Fixing Lint/Format Errors
+
+1. Ensure `pre-commit` is available on PATH
+
+   For python lovers: `pip install pre-commit`
+   For homebrew (macOS): `brew install pre-commit`
+
+1. Run `pre-commit run --all-files`
+
+   On your first run some checks may fail with a note about the
+   corrective measures the autofixer will execute, just run again to
+   make sure all tests pass.
+
+### Testing
+
+- To run all tests: `docker compose run --rm backend sh -c "python
+  manage.py test"`
+- To run all tests for `<some-app>`: `docker compose run --rm backend
+  sh -c "python manage.py test <some-app>"`
 
 ## Frontend
 
