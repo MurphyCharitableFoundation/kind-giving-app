@@ -50,7 +50,7 @@ const ForgotPassword = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (validate()) {
@@ -59,6 +59,25 @@ const ForgotPassword = () => {
 
       // Optionally reset form fields
       // setValues({ email: "");
+      try {
+	const response = await fetch("http://localhost:8000/api/auth/password/reset/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: formData.email }),
+	});
+
+	if (response.ok) {
+	  console.log("success");
+	  setFormData({ email: ""})
+	} else {
+          const data = await response.json();
+	  console.log("else: ", data.detail)
+	}
+      } catch (error) {
+	console.log("error")
+      }
     }
   };
 
@@ -109,7 +128,7 @@ const ForgotPassword = () => {
         />
 
         <Button type="submit" variant="contained">
-          Continue
+          Reset Password
         </Button>
       </Card>
     </Container>

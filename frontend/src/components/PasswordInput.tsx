@@ -4,6 +4,7 @@ import { ChangeEvent, useState } from "react";
 
 interface PasswordInputProps {
   name: string;
+  label: string;
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   error: boolean;
@@ -12,6 +13,7 @@ interface PasswordInputProps {
 
 const PasswordInput = ({
   name,
+  label = "Password",
   value,
   onChange,
   error,
@@ -23,9 +25,9 @@ const PasswordInput = ({
 
   return (
     <TextField
-      id="password"
+      id={name + label}
       name={name}
-      label="Password"
+      label={label}
       type={showPassword ? "text" : "password"}
       value={value}
       onChange={onChange}

@@ -1,6 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Box, Button, Card, Container, Typography } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Box, Button, Card, Container, Typography, Alert } from "@mui/material";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+
+import { login, fetchUserProfile } from "../../utils/endpoints";
 
 import EmailInput from "../../components/EmailInput";
 import PasswordInput from "../../components/PasswordInput";
@@ -16,6 +18,8 @@ interface FormErrors {
 }
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
@@ -73,16 +77,27 @@ const Login = () => {
     return isValid;
   };
 
+  const handleHomeRedirect = () => {
+    navigate("/")
+  }
+
+
   // Handle form submission
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (validate()) {
       // Proceed with form submission (e.g., API call)
       console.log({ email: formData.email, password: formData.password });
 
-      // Optionally reset form fields
-      // setValues({ email: "", password: "" });
+      try {
+	await login(formData.email, formData.password);
+	const userProfile = await fetchUserProfile();
+	console.log("user-profile: ", userProfile)
+	handleHomeRedirect();
+      } catch (error: any) {
+	setErrorMessage(error.response?.data?.detail || "Login failed.");
+      }
     }
   };
 
@@ -121,6 +136,7 @@ const Login = () => {
         />
 
         <PasswordInput
+	  label="password"
           name="password"
           value={formData.password}
           onChange={handleInputChange}
@@ -144,9 +160,10 @@ const Login = () => {
         <Typography variant="body1" sx={{ textAlign: "end" }}>
           Don't have an account?{" "}
           <Box component={"span"} sx={{ textDecoration: "underline" }}>
-            <RouterLink to="/signup">Sign Up Here</RouterLink>
+            <RouterLink to="/register">Sign Up Here</RouterLink>
           </Box>
         </Typography>
+	{errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       </Card>
     </Container>
   );

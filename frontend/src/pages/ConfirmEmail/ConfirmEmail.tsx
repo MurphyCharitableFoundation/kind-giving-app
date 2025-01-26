@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { useParams, useNavigate } from "react-router-dom";
+import { Card, Container, Typography } from "@mui/material";
+import { confirmEmail } from "../../utils/endpoints";
 
 
 const EmailConfirm: React.FC = () => {
-  const { key } = useParams<{ key: string }>(); 
+  const { key } = useParams<{ key: string }>();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<string>("Verifying your email...");
   const [error, setError] = useState<string | null>(null);
+
+  const handleHomeRedirect = () => {
+    navigate("/")
+  }
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -16,22 +21,11 @@ const EmailConfirm: React.FC = () => {
         setStatus("");
         return;
       }
-
+      
       try {
-        const response = await fetch("http://localhost:8000/api/auth/register/verify-email/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ key }), 
-        });
-
-        if (response.ok) {
-          setStatus("Your email has been successfully verified!");
-        } else {
-          const data = await response.json();
-          setError(data.detail || "Verification failed. Please try again.");
-        }
+        await confirmEmail(key);
+	setStatus("Your email has been successfully verified!");
+	handleHomeRedirect();
       } catch (err) {
         setError("An error occurred while verifying your email. Please try again later.");
       }
@@ -41,11 +35,32 @@ const EmailConfirm: React.FC = () => {
   }, [key]);
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 500 }}>
-      <Typography variant="h4" gutterBottom>Email Confirmation</Typography>
-      <Typography  variant="caption" gutterBottom>{status && <p style={{ color: "green" }}>{status}</p>}</Typography>
-      <Typography  variant="caption" gutterBottom>{error && <p style={{ color: "red" }}>{error}</p>}</Typography>
-    </Box>
+    <Container
+      sx={{
+        paddingY: 3,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Card
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 3,
+          minWidth: "200px",
+          maxWidth: "400px",
+          bgcolor: "#f3f3f3",
+          padding: 4,
+          borderRadius: "10px",
+        }}
+      >
+        <Typography variant="h3" sx={{ textAlign: "center" }}>
+          Email Confirmation
+        </Typography>
+	<Typography  variant="caption" gutterBottom>{status && <p style={{ color: "green" }}>{status}</p>}</Typography>
+	<Typography  variant="caption" gutterBottom>{error && <p style={{ color: "red" }}>{error}</p>}</Typography>
+      </Card>
+    </Container>
   );
 };
 
