@@ -1,5 +1,7 @@
 Django
 djangorestframework
+django-allauth
+dj-rest-auth[with_social]
 psycopg2
 drf-spectacular
 django-cities-light
