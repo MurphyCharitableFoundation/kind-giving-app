@@ -9,28 +9,27 @@ const Header = () => {
       <Link to="/">
         <h1>Kind Giving App</h1>
       </Link>
+      <nav>
+        <ul className="flex-row gap20">
+          <Link to="/login">
+            <li>Login</li>
+          </Link>
 
-			<nav>
-				<ul className="flex-row gap20">
-					<Link to="/login">
-						<li>Login</li>
-					</Link>
+          <Link to="/register">
+            <li>Signup</li>
+          </Link>
 
-					<Link to="/register">
-						<li>Signup</li>
-					</Link>
+          <Link to="/about">
+            <li>About</li>
+          </Link>
 
-					<Link to="/about">
-						<li>About</li>
-					</Link>
-
-					<Link to="/faq">
-						<li>FAQ</li>
-					</Link>
-				</ul>
-			</nav>
-		</div>
-	);
+          <Link to="/faq">
+            <li>FAQ</li>
+          </Link>
+        </ul>
+      </nav>
+    </div>
+  );
 };
 
 export default Header;

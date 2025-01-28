@@ -9,9 +9,9 @@ const router = createBrowserRouter(routes);
 const googleClientId: string = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
 createRoot(document.getElementById("root")!).render(
-	<GoogleOAuthProvider clientId={googleClientId}>
-		<StrictMode>
-			<RouterProvider router={router} />
-		</StrictMode>
-	</GoogleOAuthProvider>,
+  <GoogleOAuthProvider clientId={googleClientId}>
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>
+  </GoogleOAuthProvider>
 );
