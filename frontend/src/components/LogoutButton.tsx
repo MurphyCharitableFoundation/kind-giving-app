@@ -1,8 +1,14 @@
 import { logout } from "../utils/endpoints";
+import { googleLogout } from "@react-oauth/google";
 import { Button } from "@mui/material";
 
 const LogoutButton = () => {
-	return <Button onClick={logout}>Logout</Button>;
+	const logOut = async () => {
+		googleLogout();
+		await logout();
+	};
+
+	return <Button onClick={logOut}>Logout</Button>;
 };
 
 export default LogoutButton;

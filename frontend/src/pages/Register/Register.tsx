@@ -5,6 +5,7 @@ import { registerUser } from "../../utils/endpoints";
 import EmailInput from "../../components/EmailInput";
 import PasswordInput from "../../components/PasswordInput";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
+import LogoutButton from "../../components/LogoutButton";
 
 interface FormData {
 	email: string;
@@ -78,7 +79,6 @@ const Register: React.FC = () => {
 		// Validate password2
 		if (formData.password1 != formData.password2) {
 			newErrors.password2 = "Passwords must match.";
-			newErrors.password2 = "Password is required.";
 			isValid = false;
 		}
 
@@ -165,6 +165,7 @@ const Register: React.FC = () => {
 					sign up
 				</Button>
 				<GoogleLoginButton />
+				<LogoutButton />
 				{successMessage && <Alert severity="success">{successMessage}</Alert>}
 				{errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 			</Card>

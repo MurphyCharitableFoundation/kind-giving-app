@@ -29,7 +29,6 @@ const PasswordResetConfirm: React.FC = () => {
 		new_password2: "",
 	});
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	const handleLoginRedirect = () => {
 		navigate("/login");
@@ -61,11 +60,8 @@ const PasswordResetConfirm: React.FC = () => {
 				formData.new_password2,
 			);
 			setSuccessMessage("Your password has been reset successfully!");
-
-			// TODO: navigate to login
 			handleLoginRedirect();
 		} catch (error: any) {
-			setErrorMessage("Something went wrong.");
 			setFormErrors({
 				...errors,
 				...error.response?.data,
@@ -120,7 +116,6 @@ const PasswordResetConfirm: React.FC = () => {
 					reset password
 				</Button>
 				{successMessage && <Alert severity="success">{successMessage}</Alert>}
-				{errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 			</Card>
 		</Container>
 	);

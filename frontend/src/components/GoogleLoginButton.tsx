@@ -14,11 +14,7 @@ const GoogleLoginButton: React.FC = () => {
 		},
 	});
 
-	return (
-		<div>
-			<Button onClick={login}>Login with Google</Button>
-		</div>
-	);
+	return <Button onClick={login}>Login with Google</Button>;
 };
 
 export default GoogleLoginButton;

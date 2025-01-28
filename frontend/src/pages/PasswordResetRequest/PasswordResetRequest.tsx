@@ -1,4 +1,4 @@
-import { Box, Button, Card, Container, Typography } from "@mui/material";
+import { Box, Button, Card, Container, Typography, Alert } from "@mui/material";
 import EmailInput from "../../components/EmailInput";
 import { ChangeEvent, FormEvent, useState } from "react";
 
@@ -12,7 +12,7 @@ const ForgotPassword = () => {
 	const [formData, setFormData] = useState<FormData>({
 		email: "",
 	});
-
+	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const [errors, setErrors] = useState<FormData>({
 		email: "",
 	});
@@ -56,16 +56,14 @@ const ForgotPassword = () => {
 		event.preventDefault();
 
 		if (validate()) {
-			// Proceed with form submission (e.g., API call)
 			console.log({ email: formData.email });
-
-			// Optionally reset form fields
-			// setValues({ email: "");
 			try {
-				await resetPasswordRequest(formData.email);
+				const { detail } = await resetPasswordRequest(formData.email);
 				setFormData({ email: "" });
+				setSuccessMessage(detail);
 			} catch (err: any) {
 				console.log("error", err);
+				setSuccessMessage("");
 			}
 		}
 	};
@@ -119,6 +117,7 @@ const ForgotPassword = () => {
 				<Button type="submit" variant="contained">
 					Reset Password
 				</Button>
+				{successMessage && <Alert severity="success">{successMessage}</Alert>}
 			</Card>
 		</Container>
 	);
