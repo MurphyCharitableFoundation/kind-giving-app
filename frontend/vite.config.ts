@@ -9,6 +9,7 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
+    allowedHosts: ["frontend"],
     hmr: {
       host: "localhost",
       port: 3000,

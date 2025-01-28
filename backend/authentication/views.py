@@ -16,8 +16,7 @@ def password_reset_confirm_redirect(request, uidb64, token):
         f"{settings.PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL}{uidb64}/{token}/"
     )
 
-
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
-    callback_url = "http://localhost:3000/"
+    callback_url = settings.BASE_FRONTEND_URL
     client_class = OAuth2Client

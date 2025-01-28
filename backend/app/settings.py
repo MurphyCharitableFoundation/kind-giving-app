@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+
+BASE_FRONTEND_URL = "http://localhost"
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,6 +54,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    "corsheaders",
     # Project Apps:
     "core",
     "user",
@@ -58,6 +62,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -167,10 +172,10 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 # ALLAUTH - verify through email
 ACCOUNT_EMAIL_VERIFICATION = True  # Always verify through email
 # <EMAIL_CONFIRM_REDIRECT_BASE_URL>/<key>
-EMAIL_CONFIRM_REDIRECT_BASE_URL = "http://localhost/email/confirm/"
+EMAIL_CONFIRM_REDIRECT_BASE_URL = f"{BASE_FRONTEND_URL}/email/confirm/"
 # <PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL>/<uidb64>/<token>/
 PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = (
-    "http://localhost/password-reset/confirm/"
+    f"{BASE_FRONTEND_URL}/password-reset/confirm/"
 )
 
 # SITE
@@ -198,3 +203,9 @@ SOCIALACCOUNT_PROVIDERS = {
         "VERIFIED_EMAIL": True,
     },
 }
+
+# CORS
+CORS_ALLOWED_ORIGINS = [
+    BASE_FRONTEND_URL,
+]
+# CORS_ALLOW_ALL_ORIGINS = True # for dev only
