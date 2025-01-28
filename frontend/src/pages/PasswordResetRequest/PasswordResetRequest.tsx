@@ -1,80 +1,127 @@
-import React, { useState } from "react";
-import { TextField, Button, Typography, Box } from "@mui/material";
+import { Box, Button, Card, Container, Typography } from "@mui/material";
+import EmailInput from "../../components/EmailInput";
+import { ChangeEvent, FormEvent, useState } from "react";
 
-const PasswordResetRequest: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+import { resetPasswordRequest } from "../../utils/endpoints";
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    
-    try {
-      const response = await fetch("http://localhost:8000/api/auth/password/reset/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+interface FormData {
+	email: string;
+}
 
-      if (response.ok) {
-        setSuccessMessage("Password reset email sent successfully!");
-        setErrorMessage(""); // Clear any error message
-        setEmail(""); // Clear the email input
-      } else {
-        const data = await response.json();
-        setErrorMessage(data.detail || "An error occurred. Please try again.");
-        setSuccessMessage(""); // Clear any success message
-      }
-    } catch (error) {
-      setErrorMessage("Something went wrong. Please check your connection.");
-      setSuccessMessage(""); // Clear any success message
-    }
-  };
+const ForgotPassword = () => {
+	const [formData, setFormData] = useState<FormData>({
+		email: "",
+	});
 
-  return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
-      padding={2}
-    >
-      <Typography variant="h4" gutterBottom>
-        Reset Your Password
-      </Typography>
-      <Typography variant="body1" gutterBottom>
-        Enter your email address below to receive a password reset link.
-      </Typography>
-      <form onSubmit={handleSubmit} style={{ width: "100%", maxWidth: 400 }}>
-        <TextField
-          label="Email"
-          variant="outlined"
-          fullWidth
-          required
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          margin="normal"
-        />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Send Reset Link
-        </Button>
-      </form>
-      {successMessage && (
-        <Typography variant="body1" color="success.main" marginTop={2}>
-          {successMessage}
-        </Typography>
-      )}
-      {errorMessage && (
-        <Typography variant="body1" color="error.main" marginTop={2}>
-          {errorMessage}
-        </Typography>
-      )}
-    </Box>
-  );
+	const [errors, setErrors] = useState<FormData>({
+		email: "",
+	});
+
+	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = event.target;
+
+		setFormData({
+			...formData,
+			[name]: value,
+		});
+
+		setErrors({
+			...errors,
+			[name]: "",
+		});
+	};
+
+	//Validate the input
+	const validate = () => {
+		const newErrors: FormData = {
+			email: "",
+		};
+
+		let isValid = true;
+
+		if (!formData.email) {
+			newErrors.email = "Email is required.";
+			isValid = false;
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+			newErrors.email = "Invalid email address.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
+
+	// Handle form submission
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		if (validate()) {
+			// Proceed with form submission (e.g., API call)
+			console.log({ email: formData.email });
+
+			// Optionally reset form fields
+			// setValues({ email: "");
+			try {
+				await resetPasswordRequest(formData.email);
+				setFormData({ email: "" });
+			} catch (err: any) {
+				console.log("error", err);
+			}
+		}
+	};
+
+	return (
+		<Container
+			sx={{
+				paddingY: 3,
+				display: "flex",
+				justifyContent: "center",
+			}}
+		>
+			<Card
+				component={"form"}
+				onSubmit={handleSubmit}
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					gap: 3,
+					minWidth: "200px",
+					maxWidth: "400px",
+					bgcolor: "#f3f3f3",
+					padding: 4,
+					borderRadius: "10px",
+				}}
+			>
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						textAlign: "center",
+						gap: 3,
+					}}
+				>
+					<Typography variant="h4">Forgot Password?</Typography>
+
+					<Typography variant="body1" component={"p"}>
+						Enter your email address and we will send you instructions to reset
+						your password.
+					</Typography>
+				</Box>
+
+				<EmailInput
+					name="email"
+					value={formData.email}
+					onChange={handleInputChange}
+					error={errors.email ? true : false}
+					helperText={errors.email}
+				/>
+
+				<Button type="submit" variant="contained">
+					Reset Password
+				</Button>
+			</Card>
+		</Container>
+	);
 };
 
-export default PasswordResetRequest;
+export default ForgotPassword;

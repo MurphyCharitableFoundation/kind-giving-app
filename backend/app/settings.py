@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 
 
-BASE_FRONTEND_URL = "http://localhost:3000"
+BASE_FRONTEND_URL = "http://localhost"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -206,6 +206,5 @@ SOCIALACCOUNT_PROVIDERS = {
 # CORS
 CORS_ALLOWED_ORIGINS = [
     BASE_FRONTEND_URL,
-    #"http://localhost/"
 ]
 # CORS_ALLOW_ALL_ORIGINS = True # for dev only

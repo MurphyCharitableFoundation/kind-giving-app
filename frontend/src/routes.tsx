@@ -8,36 +8,31 @@ import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequ
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
 
 const routes = [
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <NotFoundPage />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  // {
-  //   path: "/forgot-password",
-  //   element: <ForgotPassword />,
-  // },
-  {
-    path: "/email/confirm/:key",
-    element: <ConfirmEmail />,
-  },
-  {
-    path: "/forgot-password",
-    element: <PasswordResetRequest />,
-  },
-  {
-    path: "/password-reset/confirm/:uid/:token",
-    element: <PasswordResetConfirm />,
-  },      
-
+	{
+		path: "/",
+		element: <App />,
+		errorElement: <NotFoundPage />,
+	},
+	{
+		path: "/register",
+		element: <Register />,
+	},
+	{
+		path: "/login",
+		element: <Login />,
+	},
+	{
+		path: "/email/confirm/:key",
+		element: <ConfirmEmail />,
+	},
+	{
+		path: "/forgot-password",
+		element: <PasswordResetRequest />,
+	},
+	{
+		path: "/password-reset/confirm/:uid/:token",
+		element: <PasswordResetConfirm />,
+	},
 ];
 
 export default routes;

@@ -30,7 +30,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
-      #- node_modules:/app/node_modules
+      - ./.env:/app/.env # for google auth credentials
     command: >
       sh -c "npm install && npm run dev"
     environment:
@@ -65,7 +65,5 @@ services:
       - POSTGRES_PASSWORD=changeme
 
 volumes:
-  #dev-db-data:
   backend:
   frontend:
-  # node_modules:
