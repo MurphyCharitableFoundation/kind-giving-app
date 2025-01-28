@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 
 const Header = () => {
-	return (
-		<div
-			className="flex-row align-center"
-			style={{ justifyContent: "space-between" }}
-		>
-			<Link to="/">
-				<h1>Kind Giving App</h1>
-			</Link>
+  return (
+    <div
+      className="flex-row align-center"
+      style={{ justifyContent: "space-between" }}
+    >
+      <Link to="/">
+        <h1>Kind Giving App</h1>
+      </Link>
 
 			<nav>
 				<ul className="flex-row gap20">
