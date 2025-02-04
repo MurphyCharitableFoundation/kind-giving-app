@@ -1,0 +1,23 @@
+[
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "Admin",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "Beneficiary",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "Fundraiser",
+    "permissions": []
+  }
+}
+]
