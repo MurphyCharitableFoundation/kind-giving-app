@@ -1,13 +1,12 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-# Create your tests here.
 from .models import Campaign
 
 class CampaignModelTest(TestCase):
 
     def setUp(self):
-        # Set up a sample campaign before each test with required fields
+        
         self.campaign = Campaign.objects.create(
             title='Save the Rainforest',
             description='A campaign to protect the Amazon rainforest.',
@@ -47,6 +46,6 @@ class CampaignModelTest(TestCase):
             user_id=2
         )
         with self.assertRaises(ValidationError):
-            campaign.full_clean()  # Call full_clean() on the instance, not the class
-            campaign.save()  # This will not be reached if the exception is raised
+            campaign.full_clean()
+            campaign.save()
 

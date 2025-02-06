@@ -15,7 +15,6 @@ def campaign_list(request):
     campaigns = Campaign.objects.all()
     return render(request, 'campaign/campaign_list.html', {'campaigns': campaigns})
 
-# View a single campaign
 def campaign_detail(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     return render(request, 'campaign/campaign_detail.html', {'campaign': campaign})
