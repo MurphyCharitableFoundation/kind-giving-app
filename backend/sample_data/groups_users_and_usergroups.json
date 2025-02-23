@@ -260,7 +260,7 @@
     "phone_number": "1234567890",
     "interest": "Community Development",
     "img": "",
-    "bank_account": "BG1-001"
+    "bank_account": 1
   }
 },
 {
@@ -271,7 +271,7 @@
     "phone_number": "9876543210",
     "interest": "Education",
     "img": "",
-    "bank_account": "BG2-001"
+    "bank_account": 2
   }
 }
 ]

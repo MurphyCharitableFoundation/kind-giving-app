@@ -1,0 +1,20 @@
+[
+    {
+        "model": "user.bankaccount",
+        "pk": 1,
+        "fields": {
+            "bank_account_token_id": "BG1-001",
+            "account_status": "VERIFIED",
+            "last_payout": "2025-01-22T20:38:33.933Z"
+        }
+    },
+    {
+        "model": "user.bankaccount",
+        "pk": 2,
+        "fields": {
+            "bank_account_token_id": "BG2-001",
+            "account_status": "VERIFIED",
+            "last_payout": "2025-01-23T20:38:33.933Z"
+        }
+    }
+]
