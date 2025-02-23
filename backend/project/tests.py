@@ -1,9 +1,8 @@
 """Project tests."""
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from djmoney.money import Money
-
 from project.models import Cause, Project, ProjectAssignment
 from user.models import UserGroup
 
@@ -62,7 +61,7 @@ class ProjectAssignmentTest(TestCase):
         self.group = UserGroup.objects.create(name="Group A")
 
     def test_assign_beneficiary_user(self):
-        # Assign a user beneficiary
+        """Assign a user beneficiary."""
         assignment, created = ProjectAssignment.assign_beneficiary(
             self.project, self.user1
         )
@@ -71,7 +70,7 @@ class ProjectAssignmentTest(TestCase):
         self.assertEqual(assignment.assignable_id, self.user1.pk)
 
     def test_assign_beneficiary_usergroup(self):
-        # Assign a UserGroup beneficiary
+        """Assign a UserGroup beneficiary."""
         assignment, created = ProjectAssignment.assign_beneficiary(
             self.project, self.group
         )
@@ -80,7 +79,11 @@ class ProjectAssignmentTest(TestCase):
         self.assertEqual(assignment.assignable_id, self.group.pk)
 
     def test_duplicate_assignment(self):
-        # Assign the same beneficiary twice; second call should not create a duplicate.
+        """
+        Assign the same beneficiary twice.
+
+        The second time should not create a duplicate.
+        """
         assignment1, created1 = ProjectAssignment.assign_beneficiary(
             self.project, self.user1
         )
@@ -91,6 +94,7 @@ class ProjectAssignmentTest(TestCase):
         self.assertEqual(assignment1.pk, assignment2.pk)
 
     def test_unassign_beneficiary(self):
+        """Unassign a beneficiary."""
         ProjectAssignment.assign_beneficiary(self.project, self.user1)
         result = ProjectAssignment.unassign_beneficiary(
             self.project, self.user1
@@ -105,7 +109,7 @@ class ProjectAssignmentTest(TestCase):
         )
 
     def test_reassign_beneficiary(self):
-        # Assign a user, then reassign to a different user.
+        """Assign a user, then reassign to a different user."""
         assignment, created = ProjectAssignment.assign_beneficiary(
             self.project, self.user1
         )
@@ -117,7 +121,7 @@ class ProjectAssignmentTest(TestCase):
         self.assertEqual(updated.assignable_id, self.user2.pk)
 
     def test_invalid_beneficiary(self):
-        # Passing an invalid beneficiary should raise ValueError.
+        """Passing an invalid beneficiary should raise ValueError."""
         with self.assertRaises(ValueError):
             ProjectAssignment.assign_beneficiary(
                 self.project, "invalid beneficiary"

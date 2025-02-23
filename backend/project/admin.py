@@ -1,6 +1,7 @@
 """Project admin."""
 
 from django.contrib import admin
+
 from .models import Cause, Project, ProjectAssignment
 
 

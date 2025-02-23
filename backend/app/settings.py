@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
-
 BASE_FRONTEND_URL = "http://localhost"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

@@ -1,11 +1,9 @@
 """Project models."""
 
-from django.db import models
 from django.contrib.auth import get_user_model
-from model_utils.models import TimeStampedModel
-
-
+from django.db import models
 from djmoney.models.fields import MoneyField
+from model_utils.models import TimeStampedModel
 from user.models import UserGroup
 
 User = get_user_model()
@@ -49,10 +47,11 @@ class Cause(models.Model):
     @classmethod
     def create_cause(cls, name, description="", icon=None):
         """
-        Create or retrieve a Cause instance with the given name, ensuring the
-        name is always saved in lowercase.
+        Create or retrieve a Cause instance with the given name,
+        ensuring the name is always saved in lowercase.
 
-        Returns a tuple (cause, created), where 'created' is a boolean indicating
+        Returns a tuple (cause, created),
+        where 'created' is a boolean indicating
         whether a new instance was created.
         """
         name_lower = name.lower()
