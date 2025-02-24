@@ -2,9 +2,12 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.apps import apps
 from djmoney.models.fields import MoneyField
+
+from djmoney.models.validators import MinMoneyValidator
 from model_utils.models import TimeStampedModel
-from user.models import UserGroup
+
 
 User = get_user_model()
 
@@ -32,6 +35,7 @@ class Cause(models.Model):
     )
 
     def __str__(self):
+        """Represent Cause as string."""
         return f"Cause: {self.name}"
 
     def save(self, *args, **kwargs):
@@ -47,8 +51,9 @@ class Cause(models.Model):
     @classmethod
     def create_cause(cls, name, description="", icon=None):
         """
-        Create or retrieve a Cause instance with the given name,
-        ensuring the name is always saved in lowercase.
+        Create or retrieve a Cause instance with the given name.
+
+        Ensure name is always lowercase.
 
         Returns a tuple (cause, created),
         where 'created' is a boolean indicating
@@ -86,6 +91,7 @@ class Project(TimeStampedModel):
         max_digits=14,
         decimal_places=2,
         default_currency="USD",
+        validators=[MinMoneyValidator({"USD": 0.01})],
         help_text="Financial target (money) the project aims to raise.",
     )
     campaign_limit = models.PositiveIntegerField(
@@ -107,6 +113,7 @@ class Project(TimeStampedModel):
     )
 
     def __str__(self):
+        """Represent Project as string."""
         return f"Project: {self.name}"
 
     @classmethod
@@ -142,6 +149,7 @@ class Project(TimeStampedModel):
 class ProjectAssignment(models.Model):
     """
     Represent an assignment of a project to an entity.
+
     (e.g. a User or a UserGroup).
 
     The 'assignable_type' indicates the type of entity,
@@ -169,32 +177,40 @@ class ProjectAssignment(models.Model):
     )
 
     def __str__(self):
+        """Represent ProjectAssignment as string."""
         return f"ProjectAssignment: '{self.project.name}'"
+
+    @classmethod
+    def _parse_beneficiary(cls, beneficiary):
+        """
+        Deduce the beneficiary's assignable_type and assignable_id.
+
+        Returns a tuple (assignable_type, assignable_id).
+        Valid beneficiary types are 'User' and 'UserGroup'.
+        """
+        BENEFICIARY_MODEL_MAP = {
+            "User": User,
+            "UserGroup": apps.get_model("user", "UserGroup"),
+        }
+        for key, model_class in BENEFICIARY_MODEL_MAP.items():
+            if isinstance(beneficiary, model_class):
+                return key, beneficiary.pk
+        raise ValueError(
+            "Beneficiary must be an instance of User or UserGroup."
+        )
 
     @classmethod
     def assign_beneficiary(cls, project, beneficiary):
         """
-        Assigns a beneficiary to a project.
+        Assign a beneficiary to a project.
 
-        The beneficiary must be an instance of either
-        User or UserGroup. Assumes the beneficiary exists.
-        Should prevent duplicate assignments for the same project
-        and beneficiary.
+        Uses _parse_beneficiary to deduce the assignable_type and
+        assignable_id.
 
         Returns a tuple (assignment, created), where 'created' is True
-        if a new assignment was created, or False if one already existed.
+        if a new assignment was created.
         """
-        if isinstance(beneficiary, User):
-            assignable_type = "User"
-            assignable_id = beneficiary.pk
-        elif isinstance(beneficiary, UserGroup):
-            assignable_type = "UserGroup"
-            assignable_id = beneficiary.pk
-        else:
-            raise ValueError(
-                "Beneficiary must be an instance of User or UserGroup."
-            )
-
+        assignable_type, assignable_id = cls._parse_beneficiary(beneficiary)
         assignment, created = cls.objects.get_or_create(
             project=project,
             assignable_type=assignable_type,
@@ -205,21 +221,11 @@ class ProjectAssignment(models.Model):
     @classmethod
     def unassign_beneficiary(cls, project, beneficiary):
         """
-        Removes an assignment for the given project and beneficiary.
+        Remove an assignment for the given project and beneficiary.
 
         Returns True if an assignment was found and deleted, otherwise False.
         """
-        if isinstance(beneficiary, User):
-            assignable_type = "User"
-            assignable_id = beneficiary.pk
-        elif isinstance(beneficiary, UserGroup):
-            assignable_type = "UserGroup"
-            assignable_id = beneficiary.pk
-        else:
-            raise ValueError(
-                "Beneficiary must be an instance of User or UserGroup."
-            )
-
+        assignable_type, assignable_id = cls._parse_beneficiary(beneficiary)
         qs = cls.objects.filter(
             project=project,
             assignable_type=assignable_type,
@@ -232,38 +238,18 @@ class ProjectAssignment(models.Model):
 
     @classmethod
     def assignments_for(cls, project):
-        """Retrieves all assignments for a given project."""
+        """Retrieve all assignments for a given project."""
         return cls.objects.filter(project=project)
 
     @classmethod
     def reassign(cls, project, old_beneficiary, new_beneficiary):
         """
-        Updates the assignment from one beneficiary to another.
+        Update the assignment from one beneficiary to another.
 
         Returns the updated assignment or None if not found.
         """
-        if isinstance(old_beneficiary, User):
-            old_type = "User"
-            old_id = old_beneficiary.pk
-        elif isinstance(old_beneficiary, UserGroup):
-            old_type = "UserGroup"
-            old_id = old_beneficiary.pk
-        else:
-            raise ValueError(
-                "Old beneficiary must be an instance of User or UserGroup."
-            )
-
-        if isinstance(new_beneficiary, User):
-            new_type = "User"
-            new_id = new_beneficiary.pk
-        elif isinstance(new_beneficiary, UserGroup):
-            new_type = "UserGroup"
-            new_id = new_beneficiary.pk
-        else:
-            raise ValueError(
-                "New beneficiary must be an instance of User or UserGroup."
-            )
-
+        old_type, old_id = cls._parse_beneficiary(old_beneficiary)
+        new_type, new_id = cls._parse_beneficiary(new_beneficiary)
         try:
             assignment = cls.objects.get(
                 project=project,

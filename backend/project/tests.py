@@ -2,8 +2,11 @@
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.core.exceptions import ValidationError
+
 from djmoney.money import Money
-from project.models import Cause, Project, ProjectAssignment
+
+from .models import Cause, Project, ProjectAssignment
 from user.models import UserGroup
 
 User = get_user_model()
@@ -43,6 +46,26 @@ class ProjectModelTest(TestCase):
             Project.objects.filter(name="Solar Energy").first()
         )
 
+    def test_target_minimum_validator(self):
+        """Test target minimum amount."""
+        project = Project(name="Test Project", target=Money(0, "USD"))
+        with self.assertRaises(ValidationError) as context:
+            project.full_clean()  # This triggers field validation
+
+        # Check that the error message includes 'target'
+        self.assertIn("target", context.exception.message_dict)
+
+        # Now create a project with a valid target amount
+        valid_project = Project(
+            name="Valid Project", target=Money(0.01, "USD")
+        )
+        try:
+            valid_project.full_clean()  # Should not raise an error
+        except ValidationError:
+            self.fail(
+                "Project with valid target raised a ValidationError unexpectedly."
+            )
+
 
 class ProjectAssignmentTest(TestCase):
     def setUp(self):
@@ -59,6 +82,18 @@ class ProjectAssignmentTest(TestCase):
             email="user2@example.com", password="testpass"
         )
         self.group = UserGroup.objects.create(name="Group A")
+
+    def test_parse_beneficiary_user(self):
+        """Parse a User beneficiary."""
+        type, id = ProjectAssignment._parse_beneficiary(self.user1)
+        self.assertEqual(type, "User")
+        self.assertEqual(id, self.user1.pk)
+
+    def test_parse_beneficiary_usergroup(self):
+        """Parse a UserGroup beneficiary."""
+        type, id = ProjectAssignment._parse_beneficiary(self.group)
+        self.assertEqual(type, "UserGroup")
+        self.assertEqual(id, self.group.pk)
 
     def test_assign_beneficiary_user(self):
         """Assign a user beneficiary."""
