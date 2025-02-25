@@ -9,3 +9,5 @@ django-cors-headers
 paypalrestsdk
 pillow
 django-phonenumber-field[phonenumbers]
+django-model-utils
+django-money
