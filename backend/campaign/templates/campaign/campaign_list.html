@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Campaigns</title>
+</head>
+<body>
+    <h1>All Campaigns</h1>
+    <ul>
+        {% for campaign in campaigns %}
+            <li>
+                <a href="{{ campaign.id }}/">{{ campaign.title }}</a> - ${{ campaign.target_amount }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

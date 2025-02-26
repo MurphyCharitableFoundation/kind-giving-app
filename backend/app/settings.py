@@ -30,7 +30,8 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "backend"]
+ALLOWED_HOSTS = ['localhost', 'backend', '0.0.0.0']
+
 
 
 # Application definition
@@ -57,6 +58,9 @@ INSTALLED_APPS = [
     "djmoney",
     # Project Apps:
     "core",
+    "campaign",
+    "rest_framework",
+    "corsheaders",
     "user",
     "authentication",
     "project",
@@ -71,6 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     # Third Party Middleware:
     "allauth.account.middleware.AccountMiddleware",
 ]
