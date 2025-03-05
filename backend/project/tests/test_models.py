@@ -6,8 +6,9 @@ from django.core.exceptions import ValidationError
 
 from djmoney.money import Money
 
-from .models import Cause, Project, ProjectAssignment
 from user.models import UserGroup
+from ..models import Cause, Project, ProjectAssignment
+
 
 User = get_user_model()
 
