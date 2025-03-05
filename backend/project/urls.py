@@ -1,7 +1,12 @@
 """Project urls."""
 
 from django.urls import path
-from .views import CauseListCreateView, CauseRetrieveUpdateDestroyView
+from .views import (
+    CauseListCreateView,
+    CauseRetrieveUpdateDestroyView,
+    ProjectListCreateView,
+    ProjectRetrieveUpdateDestroyView,
+)
 
 urlpatterns = [
     # Cause endpoints
@@ -10,5 +15,16 @@ urlpatterns = [
         "causes/<int:pk>/",
         CauseRetrieveUpdateDestroyView.as_view(),
         name="cause-detail",
+    ),
+    # Project endpoints
+    path(
+        "projects/",
+        ProjectListCreateView.as_view(),
+        name="project-list-create",
+    ),
+    path(
+        "projects/<int:pk>/",
+        ProjectRetrieveUpdateDestroyView.as_view(),
+        name="project-detail",
     ),
 ]

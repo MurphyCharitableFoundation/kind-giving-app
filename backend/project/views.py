@@ -6,8 +6,8 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
-from .models import Cause
-from .serializers import CauseSerializer
+from .models import Cause, Project
+from .serializers import CauseSerializer, ProjectSerializer
 from .permissions import IsAdminUser
 
 
@@ -40,3 +40,26 @@ class CauseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
                 "This cause is used by one or more projects and cannot be deleted."
             )
         super().perform_destroy(instance)
+
+
+class ProjectListCreateView(ListCreateAPIView):
+    """List & Create View for Project."""
+
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        """Ensure only admins can create projects."""
+        if self.request.user.groups.filter(name="admin").exists():
+            return serializer.save()
+        else:
+            raise PermissionDenied("Only admins can create projects.")
+
+
+class ProjectRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """Retrieve, Update, and Destroy View for Project."""
+
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
