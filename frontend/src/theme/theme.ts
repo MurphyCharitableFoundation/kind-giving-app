@@ -42,7 +42,7 @@ const theme = createTheme({
         surfaceContainer: {
             highest: '#E2E2E9',
             high: '#E7E8EE',
-            main: '#EDEDF4',
+            default: '#EDEDF4',
             low: '#F3F3FA',
             lowest: '#FFFFFF',
         },
@@ -56,7 +56,7 @@ const theme = createTheme({
             outlineVariant: '#C4C6D0',
             shadow: '#000000',
             background: '#F9F9FF',
-            onBackround: '#191C20'
+            onBackground: '#191C20'
         },
     },
     status: {
@@ -79,8 +79,165 @@ const theme = createTheme({
             onContainer: '#A86200',
         },
     },
+    
     typography: {
-        fontFamily: 'Roboto, sans-serif',
+        // fontFamily: "'Inter', sans-serif",
+        displayLarge:{
+            fontSize:"57px",
+            lineHeight:"64",
+            letterSpacing:"-0.25%"
+        },
+        displayMedium:{
+            fontSize:"45px",
+            lineHeight:"52",
+            letterSpacing:"0"
+        },
+        displaySmall:{
+            fontSize:"36px",
+            lineHeight:"44",
+            letterSpacing:"0"
+        },
+        headlineXlargeTextMedium:{
+            fontSize:"32px",
+            lineHeight:"32",
+            letterSpacing:"-6.3%"
+        },
+        headlineXlargeTextRegular:{
+            fontSize:"32px",
+            lineHeight:"40",
+            letterSpacing:"0"
+        },
+        headlineLargeTextMedium:{
+            fontSize:"30px",
+            lineHeight:"30",
+            letterSpacing:"-6.6%"
+        },
+        headlineLargeTextRegular:{
+            fontSize:"30px",
+            lineHeight:"38",
+            letterSpacing:"0"
+        },
+        headlineMediumTextMedium:{
+            fontSize:"28px",
+            lineHeight:"28",
+            letterSpacing:"-7%"
+        },
+        headlineMediumTextRegular:{
+            fontSize:"28px",
+            lineHeight:"36",
+            letterSpacing:"0"
+        },
+        headlineSmallTextMedium:{
+            fontSize:"26px",
+            lineHeight:"26",
+            letterSpacing:"-7.4%"
+        },
+        headlineSmallTextRegular:{
+            fontSize:"26px",
+            lineHeight:"34",
+            letterSpacing:"0"
+        },
+        headlineXsmallTextMedium:{
+            fontSize:"24px",
+            lineHeight:"24",
+            letterSpacing:"-7.8%"
+        },
+        headlineXsmallTextRegular:{
+            fontSize:"24px",
+            lineHeight:"32",
+            letterSpacing:"0"
+        },
+        bodyXLarge:{
+            fontSize:"20px",
+            lineHeight:"30",
+            letterSpacing:"0"
+        },
+        bodyLarge:{
+            fontSize:"18px",
+            lineHeight:"27",
+            letterSpacing:"0.4%"
+        },
+        bodyMedium:{
+            fontSize:"16px",
+            lineHeight:"24",
+            letterSpacing:"0"
+        },
+        bodySmall:{
+            fontSize:"14px",
+            lineHeight:"21",
+            letterSpacing:"1.7%"
+        },
+        bodyXSmall:{
+            fontSize:"12px",
+            lineHeight:"16",
+            letterSpacing:"3.5%"
+        },
+        labelLarge:{
+            fontSize: "14px",
+            lineHeight: "20px",
+            letterSpacing: "0.1"
+          },
+          labelMedium:{
+            fontSize: "12px",
+            lineHeight: "16px",
+            letterSpacing: "3%"
+        },
+        labelSmall:{
+          fontSize: "11px",
+          lineHeight: "16px",
+          letterSpacing: "3%"
+      },
+      titleXLargetextSemibold:{
+        fontSize: "22px",
+        lineHeight: "28",
+        letterSpacing: "0"
+      },
+      titleXLargetextMedium:{
+        fontSize: "22px",
+        lineHeight: "28",
+        letterSpacing: "0"
+        },
+        titleLargetextSemiBold:{
+            fontSize: "20px",
+            lineHeight: "24",
+            letterSpacing: "0.15%"
+        },
+        titleLargetextMedium:{
+          fontSize: "20px",
+          lineHeight: "24",
+          letterSpacing: "0.15%"
+        },
+        titleMediumtextSemiBold:{
+          fontSize: "18px",
+          lineHeight: "24",
+          letterSpacing: "0.15%"
+        },
+        titleMediumtextMedium:{
+          fontSize: "18px",
+          lineHeight: "21",
+          letterSpacing: ".2%"
+        },
+        titleSmalltextSemiBold:{
+          fontSize: "16px",
+          lineHeight: "24",
+          letterSpacing: "0.75%"   
+              },
+        titleSmalltextMedium:{
+          fontSize: "16px",
+          lineHeight: "18",
+          letterSpacing: "3%"
+        },
+        titleXSmalltextSemiBold:{
+          fontSize: "14px",
+          lineHeight: "21",
+          letterSpacing: "1%"
+      
+        },
+        titleXSmalltextMedium:{
+          fontSize: "14px",
+          lineHeight: "16",
+          letterSpacing: "5%"
+        }
     },
 });
 
