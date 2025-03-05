@@ -6,6 +6,9 @@ from .views import (
     CauseRetrieveUpdateDestroyView,
     ProjectListCreateView,
     ProjectRetrieveUpdateDestroyView,
+    AssignBeneficiaryView,
+    UnassignBeneficiaryView,
+    ListAssignmentsView,
 )
 
 urlpatterns = [
@@ -26,5 +29,20 @@ urlpatterns = [
         "projects/<int:pk>/",
         ProjectRetrieveUpdateDestroyView.as_view(),
         name="project-detail",
+    ),
+    path(
+        "projects/<int:project_id>/assign/",
+        AssignBeneficiaryView.as_view(),
+        name="assign-beneficiary",
+    ),
+    path(
+        "projects/<int:project_id>/unassign/",
+        UnassignBeneficiaryView.as_view(),
+        name="unassign-beneficiary",
+    ),
+    path(
+        "projects/<int:project_id>/assignments/",
+        ListAssignmentsView.as_view(),
+        name="list-assignments",
     ),
 ]
