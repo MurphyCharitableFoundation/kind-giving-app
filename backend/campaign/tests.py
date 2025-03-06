@@ -1,27 +1,31 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-
-from .models import Campaign
+from decimal import Decimal
+from .models import Campaign, Project
+from django.contrib.auth.models import User
 
 class CampaignModelTest(TestCase):
 
     def setUp(self):
-        
+        """Set up necessary objects before each test."""
+        self.user = User.objects.create_user(username='tester', password='password123')
+        self.project = Project.objects.create(name='Project A', description='A test project')
+
         self.campaign = Campaign.objects.create(
             title='Save the Rainforest',
             description='A campaign to protect the Amazon rainforest.',
-            target_amount=10000.00,
-            project_id=1,
-            user_id=1
+            target_amount=Decimal('10000.00'),
+            project=self.project,
+            user=self.user
         )
 
     def test_campaign_creation(self):
         """Test if the campaign is created successfully."""
         self.assertEqual(self.campaign.title, 'Save the Rainforest')
         self.assertEqual(self.campaign.description, 'A campaign to protect the Amazon rainforest.')
-        self.assertEqual(float(self.campaign.target_amount), 10000.00)
-        self.assertEqual(self.campaign.project_id, 1)
-        self.assertEqual(self.campaign.user_id, 1)
+        self.assertEqual(self.campaign.target_amount.amount, Decimal('10000.00'))  # Access amount explicitly
+        self.assertEqual(self.campaign.project, self.project)
+        self.assertEqual(self.campaign.user, self.user)
         self.assertIsNotNone(self.campaign.created_at)
         self.assertIsNotNone(self.campaign.updated_at)
 
@@ -41,11 +45,9 @@ class CampaignModelTest(TestCase):
         campaign = Campaign(
             title='Invalid Campaign',
             description='This should fail.',
-            target_amount=-500.00,
-            project_id=2,
-            user_id=2
+            target_amount=Decimal('-500.00'),
+            project=self.project,
+            user=self.user
         )
         with self.assertRaises(ValidationError):
-            campaign.full_clean()
-            campaign.save()
-
+            campaign.full_clean()  # This triggers validation before saving
