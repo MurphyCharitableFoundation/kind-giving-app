@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
-
 BASE_FRONTEND_URL = "http://localhost"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -56,6 +55,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "corsheaders",
+    "djmoney",
     # Project Apps:
     "core",
     "campaign",
@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "user",
     "authentication",
+    "project",
 ]
 
 MIDDLEWARE = [
@@ -168,7 +169,7 @@ REST_FRAMEWORK = {
 }
 
 # ALLAUTH
-ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False

@@ -6,6 +6,41 @@
 - Run `docker compose up` to start the containers
 - Run `docker compose down` to stop the containers
 
+## Task Management 
+
+### Creating Tasks: Writing User Stories
+
+Each development task must have a user-story, description, and
+acceptance-criteria (i.e what it means for the task to be done).
+
+```markdown
+
+  **User Story**
+  As a user, I want to create a campaign for a given project, so that I can support and garner support for the project.
+
+  **Description**
+  A Campaign is how users donate to a Project. A Project can have multiple Campaigns, but a Campaign can only support a single Project.
+
+  **Acceptance Criteria**
+  - fields: check ERD - https://lucid.app/lucidchart/a695fb42-6184-4905-914c-1feb7d5befbb/edit?invitationId=inv_0e8f6605-eeec-4e99-932e-207667b6ae21&page=0_0#
+  - func to create campaign; given project, owner, title, description: optional, end_date: optional
+
+```
+
+### Taking on Tasks: Contributing to the Project
+
+Models are arranged into apps; similarly, tasks about apps contain
+tasks about models as sub-issues.
+
+Always check if a task has a parent-issue before tackling it.
+
+For example:
+(Task: create campaign model) is a sub-issue under (Task: create campaign app)
+
+If you were to take on the tasks; take it on at the app level and
+complete the associated sub-issues (i.e also tackle Task: create
+campaign model & Task: create comment model)
+
 ## Backend
 
 - Django

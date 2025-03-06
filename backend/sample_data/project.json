@@ -1,0 +1,54 @@
+[
+  {
+    "model": "project.cause",
+    "pk": 1,
+    "fields": {
+      "name": "education",
+      "description": "A cause focused on education.",
+      "icon": ""
+    }
+  },
+  {
+    "model": "project.cause",
+    "pk": 2,
+    "fields": {
+      "name": "environment",
+      "description": "A cause dedicated to environmental sustainability.",
+      "icon": ""
+    }
+  },
+  {
+    "model": "project.project",
+    "pk": 1,
+    "fields": {
+      "name": "Tree Planting Initiative",
+      "img": "",
+      "target": "10000.00",
+      "target_currency": "USD",
+      "campaign_limit": 100,
+      "city": "Portland",
+      "country": "USA",
+      "created": "2025-01-01T00:00:00Z",
+      "modified": "2025-01-01T00:00:00Z",
+      "causes": [1, 2]
+    }
+  },
+  {
+    "model": "project.projectassignment",
+    "pk": 1,
+    "fields": {
+      "project": 1,
+      "assignable_type": "User",
+      "assignable_id": 1
+    }
+  },
+  {
+    "model": "project.projectassignment",
+    "pk": 2,
+    "fields": {
+      "project": 1,
+      "assignable_type": "UserGroup",
+      "assignable_id": 1
+    }
+  }
+]
