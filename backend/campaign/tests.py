@@ -50,4 +50,4 @@ class CampaignModelTest(TestCase):
             user=self.user
         )
         with self.assertRaises(ValidationError):
-            campaign.full_clean()  # This triggers validation before saving
+            campaign.full_clean()
