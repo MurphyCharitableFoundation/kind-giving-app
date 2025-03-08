@@ -6,8 +6,9 @@ from django.core.exceptions import ValidationError
 
 from djmoney.money import Money
 
-from .models import Cause, Project, ProjectAssignment
 from user.models import UserGroup
+from ..models import Cause, Project, ProjectAssignment
+
 
 User = get_user_model()
 
@@ -25,9 +26,7 @@ class CauseModelTest(TestCase):
 class ProjectModelTest(TestCase):
     def test_create_project_with_causes(self):
         # Create a cause and then create a project associated with that cause
-        cause, _ = Cause.create_cause(
-            name="environment", description="Environment cause"
-        )
+        cause = "environment"
         target = Money(10000, "USD")
         project, created = Project.create_project(
             name="Tree Planting", target=target, causes=[cause]
@@ -35,7 +34,7 @@ class ProjectModelTest(TestCase):
         self.assertTrue(created)
         self.assertEqual(project.name, "Tree Planting")
         self.assertEqual(project.target, target)
-        self.assertIn(cause, project.causes.all())
+        self.assertTrue(project.causes.filter(name=cause).exists())
 
     def test_get_project_by_name(self):
         target = Money(5000, "USD")

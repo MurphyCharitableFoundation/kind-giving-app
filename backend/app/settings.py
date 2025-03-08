@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "corsheaders",
     "djmoney",
+    "django_extensions",
     # Project Apps:
     "core",
     "user",
