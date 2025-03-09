@@ -1,0 +1,110 @@
+[
+  {
+    "model": "project.cause",
+    "pk": 1,
+    "fields": {
+      "name": "agriculture",
+      "description": "Supporting sustainable farming and food security."
+    }
+  },
+  {
+    "model": "project.cause",
+    "pk": 2,
+    "fields": {
+      "name": "transportation",
+      "description": "Enhancing infrastructure and mobility solutions."
+    }
+  },
+  {
+    "model": "project.project",
+    "pk": 1,
+    "fields": {
+      "name": "Urban Farming Initiative",
+      "target": "7500.00",
+      "target_currency": "USD",
+      "campaign_limit": 120,
+      "city": "Los Angeles",
+      "country": "USA",
+      "causes": [1]
+    }
+  },
+  {
+    "model": "project.project",
+    "pk": 2,
+    "fields": {
+      "name": "Electric Bus Expansion",
+      "target": "20000.00",
+      "target_currency": "USD",
+      "campaign_limit": 80,
+      "city": "Berlin",
+      "country": "Germany",
+      "causes": [2]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": 1,
+    "fields": {
+      "email": "campaign_admin@example.com",
+      "password": "pbkdf2_sha256$260000$...",
+      "is_superuser": true,
+      "is_staff": true
+    }
+  },
+  {
+    "model": "campaign.campaign",
+    "pk": 1,
+    "fields": {
+      "title": "Grow Food Locally",
+      "description": "Helping urban communities start their own sustainable farms.",
+      "target": "5000.00",
+      "target_currency": "USD",
+      "project": 1,
+      "owner": 1,
+      "end_date": "2025-12-31T23:59:59Z"
+    }
+  },
+  {
+    "model": "campaign.campaign",
+    "pk": 2,
+    "fields": {
+      "title": "Eco-Friendly Buses",
+      "description": "Funding electric buses to reduce emissions in major cities.",
+      "target": "15000.00",
+      "target_currency": "USD",
+      "project": 2,
+      "owner": 1,
+      "end_date": "2025-12-31T23:59:59Z"
+    }
+  },
+  {
+    "model": "campaign.comment",
+    "pk": 1,
+    "fields": {
+      "content": "This project is inspiring!",
+      "campaign": 1,
+      "author": 1,
+      "parent": null
+    }
+  },
+  {
+    "model": "campaign.comment",
+    "pk": 2,
+    "fields": {
+      "content": "Looking forward to cleaner cities with electric buses.",
+      "campaign": 2,
+      "author": 1,
+      "parent": null
+    }
+  },
+  {
+    "model": "campaign.comment",
+    "pk": 3,
+    "fields": {
+      "content": "How can we support local farmers further?",
+      "campaign": 1,
+      "author": 1,
+      "parent": 1
+    }
+  }
+]
