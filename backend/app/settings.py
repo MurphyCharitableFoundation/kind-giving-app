@@ -30,8 +30,7 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'backend', '0.0.0.0']
-
+ALLOWED_HOSTS = ["localhost", "backend", "0.0.0.0"]
 
 
 # Application definition
@@ -59,12 +58,10 @@ INSTALLED_APPS = [
     "django_extensions",
     # Project Apps:
     "core",
-    "campaign",
-    "rest_framework",
-    "corsheaders",
     "user",
     "authentication",
     "project",
+    "campaign",
 ]
 
 MIDDLEWARE = [
@@ -145,6 +142,8 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+TIMEZONE = "America/Edmonton"
 
 
 # Static files (CSS, JavaScript, Images)
