@@ -136,7 +136,7 @@ class Project(TimeStampedModel):
                     cause_objects.append(c)
                 else:
                     try:
-                        cause_obj, _ = Cause.create_cause(name=name)
+                        cause_obj, _ = Cause.create_cause(name=c)
                         cause_objects.append(cause_obj)
                     except Cause.DoesNotExist:
                         pass

@@ -19,8 +19,7 @@ from django.urls import path, include
 from campaign import views as campaign_views  
 
 urlpatterns = [
-    path('', campaign_views.home, name='home'), 
-    path("api/auth/", include("authentication.urls")),  
-    path('admin/', admin.site.urls),
-    path('campaigns/', include('campaign.urls')),  
+    path("api/auth/", include("authentication.urls")),
+    path("api/", include("project.urls")),
+    path("admin/", admin.site.urls),
 ]

@@ -61,6 +61,27 @@ campaign model & Task: create comment model)
 4. (Optional) some packages will not take effect even after that until
    their migrations are applied to the project database.
    Run migrations, see [Database Management](#database-management).
+   
+### Loading Database Fixtures (i.e. sample data)
+
+1. Load bank accounts: 
+
+    ```
+    docker compose run --rm backend sh -c "python manage.py loaddata sample_data/project.json"
+    ```
+
+1. Load groups, users and user groups: 
+
+    ```
+    docker compose run --rm backend sh -c "python manage.py loaddata sample_data/groups_users_and_usergroups.json"
+    ```
+
+1. Load projects: 
+
+    ```
+    docker compose run --rm backend sh -c "python manage.py loaddata sample_data/project.json"
+    ```
+
 
 ### Database Management
 
