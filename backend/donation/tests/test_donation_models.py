@@ -1,11 +1,12 @@
 """Donation tests."""
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from djmoney.money import Money
-from project.models import Project
+
 from campaign.models import Campaign
 from donation.models import Donation
+from project.models import Project
 
 User = get_user_model()
 
@@ -15,17 +16,11 @@ class DonationModelTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.user = User.objects.create_user(
-            email="donor@example.com", password="testpass"
-        )
+        self.user = User.objects.create_user(email="donor@example.com", password="testpass")
 
         # Create two separate projects and campaigns
-        self.project1, _ = Project.create_project(
-            name="Project A", target=Money(10000, "USD")
-        )
-        self.project2, _ = Project.create_project(
-            name="Project B", target=Money(20000, "USD")
-        )
+        self.project1, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
+        self.project2, _ = Project.create_project(name="Project B", target=Money(20000, "USD"))
 
         self.campaign1, _ = Campaign.create_campaign(
             title="Education for All",
@@ -78,9 +73,7 @@ class DonationModelTest(TestCase):
             campaign=self.campaign2,
         )
 
-        donations_for_campaign_1 = Donation.retrieve_donations(
-            campaign=self.campaign1
-        )
+        donations_for_campaign_1 = Donation.retrieve_donations(campaign=self.campaign1)
 
         self.assertEqual(donations_for_campaign_1.count(), 2)
         self.assertIn(donation1, donations_for_campaign_1)

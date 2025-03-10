@@ -1,8 +1,9 @@
-from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import TestCase
-from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework.test import APIClient
+
 from ..models import Cause, Project
 
 User = get_user_model()
@@ -20,16 +21,12 @@ class ProjectAPITestCase(TestCase):
         self.client = APIClient()
 
         # Create an admin user
-        self.admin_user = User.objects.create_user(
-            email="admin@example.com", password="adminpass"
-        )
+        self.admin_user = User.objects.create_user(email="admin@example.com", password="adminpass")
         admin_group, _ = Group.objects.get_or_create(name="admin")
         self.admin_user.groups.add(admin_group)
 
         # Create a non-admin user
-        self.non_admin_user = User.objects.create_user(
-            email="user@example.com", password="userpass"
-        )
+        self.non_admin_user = User.objects.create_user(email="user@example.com", password="userpass")
 
         # Authenticate as admin
         self.client.force_authenticate(user=self.admin_user)
@@ -60,9 +57,7 @@ class ProjectAPITestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "New Project")
-        self.assertListEqual(
-            response.data["causes"], ["education", "healthcare"]
-        )
+        self.assertListEqual(response.data["causes"], ["education", "healthcare"])
 
     def test_get_projects(self):
         """Test retrieving all projects via GET request."""
@@ -86,9 +81,7 @@ class ProjectAPITestCase(TestCase):
             "target": "7500.00",
             "causes_names": ["healthcare"],
         }
-        response = self.client.patch(
-            f"/api/projects/{self.project.id}/", payload, format="json"
-        )
+        response = self.client.patch(f"/api/projects/{self.project.id}/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "Updated Water Project")
@@ -122,9 +115,7 @@ class ProjectAPITestCase(TestCase):
         self.client.force_authenticate(user=self.non_admin_user)
 
         payload = {"name": "Hacked Project"}
-        response = self.client.patch(
-            f"/api/projects/{self.project.id}/", payload, format="json"
-        )
+        response = self.client.patch(f"/api/projects/{self.project.id}/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 

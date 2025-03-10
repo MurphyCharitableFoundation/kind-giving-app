@@ -1,14 +1,15 @@
 """Project urls."""
 
 from django.urls import path
+
 from .views import (
+    AssignBeneficiaryView,
     CauseListCreateView,
     CauseRetrieveUpdateDestroyView,
+    ListAssignmentsView,
     ProjectListCreateView,
     ProjectRetrieveUpdateDestroyView,
-    AssignBeneficiaryView,
     UnassignBeneficiaryView,
-    ListAssignmentsView,
 )
 
 urlpatterns = [

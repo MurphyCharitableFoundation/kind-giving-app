@@ -1,12 +1,11 @@
 """Donation models."""
 
+from django.contrib.auth import get_user_model
 from django.db import models
 from djmoney.models.fields import MoneyField
-from model_utils.models import TimeStampedModel
 from djmoney.models.validators import MinMoneyValidator
-from django.contrib.auth import get_user_model
 from djmoney.money import Money
-
+from model_utils.models import TimeStampedModel
 
 User = get_user_model()
 
