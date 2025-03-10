@@ -1,9 +1,9 @@
 """Campaign serializers."""
 
+from django.utils.timezone import now
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
-from django.utils.timezone import now
-from project.models import Project
+
 from .models import Campaign, Comment
 
 
@@ -61,9 +61,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
         project = validated_data.pop("project")
         target = validated_data.pop("target")
-        end_date = validated_data.pop(
-            "end_date", now().replace(year=2025, month=12, day=31)
-        )
+        end_date = validated_data.pop("end_date", now().replace(year=2025, month=12, day=31))
 
         try:
             campaign, _ = Campaign.create_campaign(
@@ -75,6 +73,4 @@ class CampaignSerializer(serializers.ModelSerializer):
             )
             return campaign
         except ValueError as e:
-            raise ValidationError(
-                detail={"non_field_errors": e}, code=status.HTTP_403_FORBIDDEN
-            )
+            raise ValidationError(detail={"non_field_errors": e}, code=status.HTTP_403_FORBIDDEN)

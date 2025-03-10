@@ -24,9 +24,7 @@ class Campaign(TimeStampedModel):
         validators=[MinMoneyValidator({"USD": 0.01})],
         help_text="Financial target (money) the project aims to raise.",
     )
-    project = models.ForeignKey(
-        "project.Project", on_delete=models.CASCADE, related_name="campaigns"
-    )
+    project = models.ForeignKey("project.Project", on_delete=models.CASCADE, related_name="campaigns")
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     end_date = models.DateTimeField(null=True, blank=True)
 

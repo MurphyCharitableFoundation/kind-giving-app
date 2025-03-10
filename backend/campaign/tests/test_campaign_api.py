@@ -2,13 +2,13 @@
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
 from django.utils.timezone import now
 from djmoney.money import Money
-from project.models import Project
-from campaign.models import Campaign, Comment
+from rest_framework import status
+from rest_framework.test import APITestCase
 
+from campaign.models import Campaign, Comment
+from project.models import Project
 
 User = get_user_model()
 
@@ -18,9 +18,7 @@ class CampaignAPITestCase(APITestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.user = User.objects.create_user(
-            email="user@example.com", password="password123"
-        )
+        self.user = User.objects.create_user(email="user@example.com", password="password123")
         self.client.force_authenticate(user=self.user)
 
         self.project, _ = Project.create_project(
@@ -37,9 +35,7 @@ class CampaignAPITestCase(APITestCase):
             end_date=now().replace(year=2025, month=12, day=31),
         )
 
-        self.campaign_url = reverse(
-            "campaign-detail", kwargs={"pk": self.campaign.id}
-        )
+        self.campaign_url = reverse("campaign-detail", kwargs={"pk": self.campaign.id})
         self.campaign_list_url = reverse("campaign-list")
 
     def test_create_campaign_success(self):
@@ -51,22 +47,16 @@ class CampaignAPITestCase(APITestCase):
             "project": self.project.id,
             "end_date": "2026-01-01T00:00:00Z",
         }
-        user_1 = User.objects.create_user(
-            email="user1@example.com", password="password123"
-        )
+        user_1 = User.objects.create_user(email="user1@example.com", password="password123")
         self.client.force_authenticate(user=user_1)
-        response = self.client.post(
-            self.campaign_list_url, payload, format="json"
-        )
+        response = self.client.post(self.campaign_list_url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["title"], "New Solar Initiative")
 
     def test_create_campaign_exceeds_limit(self):
         """Test that exceeding campaign limit raises an error."""
-        user2 = User.objects.create_user(
-            email="user2@example.com", password="password123"
-        )
+        user2 = User.objects.create_user(email="user2@example.com", password="password123")
         Campaign.create_campaign(
             title="Another Campaign",
             project=self.project,
@@ -74,9 +64,7 @@ class CampaignAPITestCase(APITestCase):
             target=Money(5000, "USD"),
         )
 
-        user3 = User.objects.create_user(
-            email="user3@example.com", password="password123"
-        )
+        user3 = User.objects.create_user(email="user3@example.com", password="password123")
         self.client.force_authenticate(user=user3)
 
         payload = {
@@ -85,9 +73,7 @@ class CampaignAPITestCase(APITestCase):
             "description": "Excess campaign description.",
             "project": self.project.id,
         }
-        response = self.client.post(
-            self.campaign_list_url, payload, format="json"
-        )
+        response = self.client.post(self.campaign_list_url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
@@ -123,14 +109,10 @@ class CommentAPITestCase(APITestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.user = User.objects.create_user(
-            email="user@example.com", password="password123"
-        )
+        self.user = User.objects.create_user(email="user@example.com", password="password123")
         self.client.force_authenticate(user=self.user)
 
-        self.project, _ = Project.create_project(
-            name="Smart Farming", target=Money(15000, "USD")
-        )
+        self.project, _ = Project.create_project(name="Smart Farming", target=Money(15000, "USD"))
 
         self.campaign, _ = Campaign.create_campaign(
             title="AI Farming",
@@ -145,17 +127,13 @@ class CommentAPITestCase(APITestCase):
             author=self.user,
         )
 
-        self.comment_url = reverse(
-            "comment-detail", kwargs={"pk": self.comment.id}
-        )
+        self.comment_url = reverse("comment-detail", kwargs={"pk": self.comment.id})
         self.comment_list_url = reverse("comment-list")
 
     def test_create_comment_success(self):
         """Test creating a comment via API."""
         payload = {"content": "I love this!", "campaign": self.campaign.id}
-        response = self.client.post(
-            self.comment_list_url, payload, format="json"
-        )
+        response = self.client.post(self.comment_list_url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["content"], "I love this!")
@@ -167,9 +145,7 @@ class CommentAPITestCase(APITestCase):
             "campaign": self.campaign.id,
             "parent": self.comment.id,
         }
-        response = self.client.post(
-            self.comment_list_url, payload, format="json"
-        )
+        response = self.client.post(self.comment_list_url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["content"], "This is a reply!")

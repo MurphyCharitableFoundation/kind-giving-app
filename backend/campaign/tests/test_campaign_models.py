@@ -16,15 +16,9 @@ class CampaignModelTestCase(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.user_a = User.objects.create_user(
-            email="a@example.com", password="password123"
-        )
-        self.user_b = User.objects.create_user(
-            email="b@example.com", password="password123"
-        )
-        self.user_c = User.objects.create_user(
-            email="c@example.com", password="password123"
-        )
+        self.user_a = User.objects.create_user(email="a@example.com", password="password123")
+        self.user_b = User.objects.create_user(email="b@example.com", password="password123")
+        self.user_c = User.objects.create_user(email="c@example.com", password="password123")
 
         self.project, _ = Project.create_project(
             name="Project A",
@@ -52,14 +46,14 @@ class CampaignModelTestCase(TestCase):
         campaign, created = Campaign.create_campaign(
             title="Education for All",
             project=self.project,
-            owner=self.user,
+            owner=self.user_a,
             target=5000,
         )
 
         self.assertTrue(created)
         self.assertEqual(campaign.title, "Education for All")
         self.assertEqual(campaign.project, self.project)
-        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.owner, self.user_a)
         self.assertEqual(campaign.target, Money(5000, "USD"))
 
     def test_campaign_with_float_target(self):
@@ -67,14 +61,14 @@ class CampaignModelTestCase(TestCase):
         campaign, created = Campaign.create_campaign(
             title="Education for All",
             project=self.project,
-            owner=self.user,
+            owner=self.user_a,
             target=5000.50,
         )
 
         self.assertTrue(created)
         self.assertEqual(campaign.title, "Education for All")
         self.assertEqual(campaign.project, self.project)
-        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.owner, self.user_a)
         self.assertEqual(campaign.target, Money(5000.50, "USD"))
 
     def test_campaign_with_money_object_target(self):
@@ -82,14 +76,14 @@ class CampaignModelTestCase(TestCase):
         campaign, created = Campaign.create_campaign(
             title="Education for All",
             project=self.project,
-            owner=self.user,
+            owner=self.user_a,
             target=Money(5000, "USD"),
         )
 
         self.assertTrue(created)
         self.assertEqual(campaign.title, "Education for All")
         self.assertEqual(campaign.project, self.project)
-        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.owner, self.user_a)
         self.assertEqual(campaign.target, Money(5000, "USD"))
 
     def test_create_duplicate_campaign_fails(self):
