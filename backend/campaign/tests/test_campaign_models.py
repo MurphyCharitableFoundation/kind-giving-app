@@ -16,11 +16,20 @@ class CampaignModelTestCase(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.user = User.objects.create_user(
-            email="user@example.com", password="password123"
+        self.user_a = User.objects.create_user(
+            email="a@example.com", password="password123"
         )
+        self.user_b = User.objects.create_user(
+            email="b@example.com", password="password123"
+        )
+        self.user_c = User.objects.create_user(
+            email="c@example.com", password="password123"
+        )
+
         self.project, _ = Project.create_project(
-            name="Project A", target=Money(10000, "USD")
+            name="Project A",
+            target=Money(10000, "USD"),
+            campaign_limit=2,
         )
 
     def test_create_campaign_success(self):
@@ -28,14 +37,14 @@ class CampaignModelTestCase(TestCase):
         campaign, created = Campaign.create_campaign(
             title="Education for All",
             project=self.project,
-            owner=self.user,
+            owner=self.user_a,
             target=Money(5000, "USD"),
         )
 
         self.assertTrue(created)
         self.assertEqual(campaign.title, "Education for All")
         self.assertEqual(campaign.project, self.project)
-        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.owner, self.user_a)
         self.assertEqual(campaign.target, Money(5000, "USD"))
 
     def test_create_duplicate_campaign_fails(self):
@@ -43,7 +52,7 @@ class CampaignModelTestCase(TestCase):
         Campaign.create_campaign(
             title="First Campaign",
             project=self.project,
-            owner=self.user,
+            owner=self.user_a,
             target=Money(10000, "USD"),
         )
 
@@ -51,7 +60,7 @@ class CampaignModelTestCase(TestCase):
             Campaign.create_campaign(
                 title="Duplicate Campaign",
                 project=self.project,
-                owner=self.user,
+                owner=self.user_a,
                 target=Money(5000, "USD"),
             )
 
@@ -66,7 +75,7 @@ class CampaignModelTestCase(TestCase):
         campaign, created = Campaign.create_campaign(
             title="Health Initiative",
             project=self.project,
-            owner=self.user,
+            owner=self.user_a,
             target=Money(15000, "USD"),
             end_date=end_date,
             description="Providing healthcare services.",
@@ -78,6 +87,57 @@ class CampaignModelTestCase(TestCase):
         )
         self.assertEqual(campaign.end_date, end_date)
         self.assertEqual(campaign.target, Money(15000, "USD"))
+
+    def test_create_campaign_respects_limit(self):
+        """Test that campaigns can be created up to the project limit."""
+        campaign1, created1 = Campaign.create_campaign(
+            title="First Campaign",
+            project=self.project,
+            owner=self.user_a,
+            target=Money(5000, "USD"),
+        )
+
+        campaign2, created2 = Campaign.create_campaign(
+            title="Second Campaign",
+            project=self.project,
+            owner=self.user_b,
+            target=Money(5000, "USD"),
+        )
+
+        self.assertTrue(created1)
+        self.assertTrue(created2)
+        self.assertEqual(self.project.campaigns.count(), 2)
+
+    def test_create_campaign_exceeds_limit(self):
+        """Test that creating more campaigns than the limit is prevented."""
+        Campaign.create_campaign(
+            title="First Campaign",
+            project=self.project,
+            owner=self.user_a,
+            target=Money(5000, "USD"),
+        )
+
+        Campaign.create_campaign(
+            title="Second Campaign",
+            project=self.project,
+            owner=self.user_b,
+            target=Money(5000, "USD"),
+        )
+
+        with self.assertRaises(ValueError) as context:
+            Campaign.create_campaign(
+                title="Third Campaign",
+                project=self.project,
+                owner=self.user_c,
+                target=Money(5000, "USD"),
+            )
+
+        self.assertEqual(
+            str(context.exception),
+            "Project already has enough campaigns.",
+        )
+
+        self.assertEqual(self.project.campaigns.count(), 2)
 
 
 class CommentModelTestCase(TestCase):
