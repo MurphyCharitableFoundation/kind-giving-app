@@ -4,28 +4,15 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:13-alpine
-        env:
-          POSTGRES_DB: devdb
-          POSTGRES_USER: devuser
-          POSTGRES_PASSWORD: changeme
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U devuser -d devdb"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Checkout repository
@@ -34,14 +21,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker images
-        run: docker compose build
+      - name: Build test containers
+        run: docker compose -f docker-compose.test.yml build
 
-      - name: Run migrations
-        run: docker compose run --rm backend sh -c "python manage.py migrate"
+      - name: Run Django tests
+        run: docker compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from backend
 
-      - name: Run tests
-        run: docker compose run --rm backend sh -c "python manage.py test"
-
-      - name: Stop and clean up
-        run: docker compose down
+      - name: Cleanup
+        run: docker compose -f docker-compose.test.yml down
