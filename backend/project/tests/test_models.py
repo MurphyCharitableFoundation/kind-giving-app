@@ -65,6 +65,34 @@ class ProjectModelTest(TestCase):
                 "Project with valid target raised a ValidationError unexpectedly."
             )
 
+    def test_create_project_with_integer_target(self):
+        """Test that a project can be created with an integer target amount."""
+        project, created = Project.create_project(
+            name="Eco Transport", target=100  # Integer amount
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(project.target, Money(100, "USD"))
+
+    def test_create_project_with_float_target(self):
+        """Test that a project can be created with a float target amount."""
+        project, created = Project.create_project(
+            name="Clean Energy", target=100.50  # Float amount
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(project.target, Money(100.50, "USD"))
+
+    def test_create_project_with_money_object_target(self):
+        """Test that a project can be created with a Money object as target."""
+        amount = Money(250.75, "USD")
+        project, created = Project.create_project(
+            name="Solar Panels Expansion", target=amount  # Money object
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(project.target, amount)
+
 
 class ProjectAssignmentTest(TestCase):
     def setUp(self):

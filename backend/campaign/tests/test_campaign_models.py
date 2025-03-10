@@ -38,6 +38,51 @@ class CampaignModelTestCase(TestCase):
         self.assertEqual(campaign.owner, self.user)
         self.assertEqual(campaign.target, Money(5000, "USD"))
 
+    def test_campaign_with_integer_target(self):
+        """Test that a Campaign can be created with an integer target."""
+        campaign, created = Campaign.create_campaign(
+            title="Education for All",
+            project=self.project,
+            owner=self.user,
+            target=5000,
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(campaign.title, "Education for All")
+        self.assertEqual(campaign.project, self.project)
+        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.target, Money(5000, "USD"))
+
+    def test_campaign_with_float_target(self):
+        """Test that a Campaign can be created with a float target."""
+        campaign, created = Campaign.create_campaign(
+            title="Education for All",
+            project=self.project,
+            owner=self.user,
+            target=5000.50,
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(campaign.title, "Education for All")
+        self.assertEqual(campaign.project, self.project)
+        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.target, Money(5000.50, "USD"))
+
+    def test_campaign_with_money_object_target(self):
+        """Test that a Campaign can be created with a Money-object target."""
+        campaign, created = Campaign.create_campaign(
+            title="Education for All",
+            project=self.project,
+            owner=self.user,
+            target=Money(5000, "USD"),
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(campaign.title, "Education for All")
+        self.assertEqual(campaign.project, self.project)
+        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.target, Money(5000, "USD"))
+
     def test_create_duplicate_campaign_fails(self):
         """Test that a user cannot create multiple campaigns for the same project."""
         Campaign.create_campaign(

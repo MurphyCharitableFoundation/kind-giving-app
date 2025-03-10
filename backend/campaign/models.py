@@ -3,6 +3,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from djmoney.money import Money
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
 
@@ -54,7 +55,14 @@ class Campaign(TimeStampedModel):
             title=title,
             project=project,
             owner=owner,
-            defaults={"target": target, **extra_fields},
+            defaults={
+                "target": (
+                    target
+                    if isinstance(target, Money)
+                    else Money(target, "USD")
+                ),
+                **extra_fields,
+            },
         )
         return campaign, created
 
