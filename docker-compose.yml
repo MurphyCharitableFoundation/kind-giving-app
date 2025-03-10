@@ -13,13 +13,8 @@ services:
       sh -c "python manage.py wait_for_db &&
               python manage.py migrate &&
               python manage.py runserver 0.0.0.0:8000"
-    environment:
-      - DB_HOST=db
-      - DB_NAME=devdb
-      - DB_USER=devuser
-      - DB_PASS=changeme
-      - GOOGLE_AUTH_CLIENT_ID=${GOOGLE_AUTH_CLIENT_ID}
-      - GOOGLE_AUTH_SECRET=${GOOGLE_AUTH_SECRET}
+    env_file:
+      - .env
     depends_on:
       - db
 
@@ -59,10 +54,8 @@ services:
       # support access through db-tools: dbeaver
       # https://stackoverflow.com/a/73870873
       - "54320:5432"
-    environment:
-      - POSTGRES_DB=devdb
-      - POSTGRES_USER=devuser
-      - POSTGRES_PASSWORD=changeme
+    env_file:
+      - .env
 
 volumes:
   backend:
