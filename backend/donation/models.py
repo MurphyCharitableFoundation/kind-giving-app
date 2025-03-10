@@ -1,22 +1,26 @@
+"""Donation models."""
+
 from django.db import models
 from djmoney.models.fields import MoneyField
 from model_utils.models import TimeStampedModel
 from djmoney.models.validators import MinMoneyValidator
 from django.contrib.auth import get_user_model
 from djmoney.money import Money
-from decimal import Decimal
+
 
 User = get_user_model()
+
 
 class Donation(TimeStampedModel):
     """
     Represent a donation that has been made to a campaign.
     *campaign will be adjusted to a foreign key type as soon as the Campaign app is created.
     """
+
     donor = models.ForeignKey(
         User,
         on_delete=models.DO_NOTHING,
-        help_text="Donor user who made the donation"
+        help_text="Donor user who made the donation",
     )
     amount = MoneyField(
         max_digits=14,
@@ -24,29 +28,30 @@ class Donation(TimeStampedModel):
         default_currency="USD",
         currency_choices=[("USD", "USD")],
         help_text="Amount of money donated",
-        validators=[
-            MinMoneyValidator({"USD": 0.01})
-        ]
+        validators=[MinMoneyValidator({"USD": 0.01})],
     )
     description = models.CharField(
         max_length=255,
         blank=True,
-        null=True ,
+        null=True,
         help_text="Description of the donation",
     )
-    campaign = models.PositiveIntegerField(
-        help_text="Primary key of the campaign being donated to."
+    campaign = models.ForeignKey(
+        "campaign.Campaign",
+        on_delete=models.CASCADE,
+        help_text="Campaign supported by donation.",
+        related_name="donations",
     )
     payment = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        help_text="Reference of the payment transaction from PayPal/Stripe"
-    )   
+        help_text="Reference of the payment transaction from PayPal/Stripe",
+    )
 
     def __str__(self):
-        return f"Donor: {self.donor.email}, donated: {self.amount} USD"
-    
+        """Represent Donation as string."""
+        return f"Donation: {self.amount} USD by {self.donor.email}."
 
     @classmethod
     def create_donation(cls, donor, amount, description, campaign):
@@ -61,14 +66,14 @@ class Donation(TimeStampedModel):
             raise ValueError("Donation amount must be positive.")
 
         donation = cls.objects.create(
-            donor = donor,
-            amount = amount,
-            description = description,
-            campaign = campaign
+            donor=donor,
+            amount=amount,
+            description=description,
+            campaign=campaign,
         )
         return donation
-    
+
     @classmethod
     def retrieve_donations(cls, campaign):
         """Retrieve all donations for a given campaign."""
-        return cls.objects.filter(campaign = campaign)
+        return cls.objects.filter(campaign=campaign)

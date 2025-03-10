@@ -3,8 +3,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.apps import apps
-from djmoney.models.fields import MoneyField
 
+from djmoney.money import Money
+from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
 from model_utils.models import TimeStampedModel
 
@@ -127,7 +128,15 @@ class Project(TimeStampedModel):
         Returns (project, created).
         """
         project, created = cls.objects.get_or_create(
-            name=name, defaults={"target": target, **kwargs}
+            name=name,
+            defaults={
+                "target": (
+                    target
+                    if isinstance(target, Money)
+                    else Money(target, "USD")
+                ),
+                **kwargs,
+            },
         )
         if created and causes:
             cause_objects = []
