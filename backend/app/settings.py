@@ -60,9 +60,9 @@ INSTALLED_APPS = [
     "core",
     "user",
     "authentication",
-    "donation",
     "project",
     "campaign",
+    "donation",
 ]
 
 MIDDLEWARE = [
