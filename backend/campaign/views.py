@@ -1,16 +1,21 @@
-"""Campaign Views."""
+"""Campaign views."""
 
-from .models import Campaign
-from rest_framework import viewsets
-from .serializers import CampaignSerializer
+from rest_framework import viewsets, permissions
+from campaign.models import Campaign, Comment
+from campaign.serializers import CampaignSerializer, CommentSerializer
 
 
 class CampaignViewSet(viewsets.ModelViewSet):
-    """
-    Campaign ViewSet.
-
-    Includes list and detail GET, POST, PATCH, UPDATE & DELETE endpoints.
-    """
+    """Campaign views."""
 
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """Comment views."""
+
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
