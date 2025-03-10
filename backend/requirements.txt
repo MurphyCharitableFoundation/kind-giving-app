@@ -8,3 +8,4 @@ django-cors-headers==4.7.0
 django-phonenumber-field[phonenumbers]==8.0.0
 django-model-utils==5.0.0
 django-money
+django-extensions==3.2.3
