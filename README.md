@@ -2,6 +2,7 @@
 
 ## Setup
 
+- Ensure to set up project configurations in `.env` file, check `.env.example`
 - Run `docker compose build` to build the docker images
 - Run `docker compose up` to start the containers
 - Run `docker compose down` to stop the containers
