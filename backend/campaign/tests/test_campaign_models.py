@@ -1,12 +1,12 @@
 """Test Campaign models."""
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
-from django.contrib.auth import get_user_model
-from project.models import Project
-from campaign.models import Campaign, Comment
-
 from djmoney.money import Money
+
+from campaign.models import Campaign, Comment
+from project.models import Project
 
 User = get_user_model()
 
@@ -47,6 +47,51 @@ class CampaignModelTestCase(TestCase):
         self.assertEqual(campaign.owner, self.user_a)
         self.assertEqual(campaign.target, Money(5000, "USD"))
 
+    def test_campaign_with_integer_target(self):
+        """Test that a Campaign can be created with an integer target."""
+        campaign, created = Campaign.create_campaign(
+            title="Education for All",
+            project=self.project,
+            owner=self.user,
+            target=5000,
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(campaign.title, "Education for All")
+        self.assertEqual(campaign.project, self.project)
+        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.target, Money(5000, "USD"))
+
+    def test_campaign_with_float_target(self):
+        """Test that a Campaign can be created with a float target."""
+        campaign, created = Campaign.create_campaign(
+            title="Education for All",
+            project=self.project,
+            owner=self.user,
+            target=5000.50,
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(campaign.title, "Education for All")
+        self.assertEqual(campaign.project, self.project)
+        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.target, Money(5000.50, "USD"))
+
+    def test_campaign_with_money_object_target(self):
+        """Test that a Campaign can be created with a Money-object target."""
+        campaign, created = Campaign.create_campaign(
+            title="Education for All",
+            project=self.project,
+            owner=self.user,
+            target=Money(5000, "USD"),
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(campaign.title, "Education for All")
+        self.assertEqual(campaign.project, self.project)
+        self.assertEqual(campaign.owner, self.user)
+        self.assertEqual(campaign.target, Money(5000, "USD"))
+
     def test_create_duplicate_campaign_fails(self):
         """Test that a user cannot create multiple campaigns for the same project."""
         Campaign.create_campaign(
@@ -82,9 +127,7 @@ class CampaignModelTestCase(TestCase):
         )
 
         self.assertTrue(created)
-        self.assertEqual(
-            campaign.description, "Providing healthcare services."
-        )
+        self.assertEqual(campaign.description, "Providing healthcare services.")
         self.assertEqual(campaign.end_date, end_date)
         self.assertEqual(campaign.target, Money(15000, "USD"))
 
@@ -145,12 +188,8 @@ class CommentModelTestCase(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.user = User.objects.create_user(
-            email="user@example.com", password="password123"
-        )
-        self.project, _ = Project.create_project(
-            name="Project A", target=Money(10000, "USD")
-        )
+        self.user = User.objects.create_user(email="user@example.com", password="password123")
+        self.project, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
         self.campaign = Campaign.create_campaign(
             title="Education for All",
             project=self.project,
@@ -172,9 +211,7 @@ class CommentModelTestCase(TestCase):
 
     def test_create_comment_reply(self):
         """Test creating a reply to a comment."""
-        parent_comment = Comment.create_comment(
-            content="Parent comment.", campaign=self.campaign, author=self.user
-        )
+        parent_comment = Comment.create_comment(content="Parent comment.", campaign=self.campaign, author=self.user)
         reply = Comment.create_comment(
             content="This is a reply.",
             campaign=self.campaign,
@@ -187,9 +224,7 @@ class CommentModelTestCase(TestCase):
 
     def test_get_top_level_comments(self):
         """Test retrieving only top-level comments (no replies)."""
-        parent_comment = Comment.create_comment(
-            content="Parent comment.", campaign=self.campaign, author=self.user
-        )
+        parent_comment = Comment.create_comment(content="Parent comment.", campaign=self.campaign, author=self.user)
         Comment.create_comment(
             content="Reply 1",
             campaign=self.campaign,
@@ -198,15 +233,11 @@ class CommentModelTestCase(TestCase):
         )
 
         comments = Comment.get_comments(self.campaign, include_replies=False)
-        self.assertEqual(
-            comments.count(), 1
-        )  # Only the parent comment should be retrieved
+        self.assertEqual(comments.count(), 1)  # Only the parent comment should be retrieved
 
     def test_get_all_comments(self):
         """Test retrieving all comments including replies."""
-        parent_comment = Comment.create_comment(
-            content="Parent comment.", campaign=self.campaign, author=self.user
-        )
+        parent_comment = Comment.create_comment(content="Parent comment.", campaign=self.campaign, author=self.user)
         Comment.create_comment(
             content="Reply 1",
             campaign=self.campaign,

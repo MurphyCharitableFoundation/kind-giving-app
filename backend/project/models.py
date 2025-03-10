@@ -1,13 +1,12 @@
 """Project models."""
 
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.apps import apps
 from djmoney.models.fields import MoneyField
-
 from djmoney.models.validators import MinMoneyValidator
+from djmoney.money import Money
 from model_utils.models import TimeStampedModel
-
 
 User = get_user_model()
 
@@ -24,9 +23,7 @@ class Cause(models.Model):
         unique=True,
         help_text="Human-readable name of the cause.",
     )
-    description = models.TextField(
-        blank=True, null=True, help_text="Longer explanation of the cause."
-    )
+    description = models.TextField(blank=True, null=True, help_text="Longer explanation of the cause.")
     icon = models.ImageField(
         upload_to="causes/",
         blank=True,
@@ -63,18 +60,14 @@ class Cause(models.Model):
         defaults = {"description": description}
         if icon:
             defaults["icon"] = icon
-        cause, created = cls.objects.get_or_create(
-            name=name_lower, defaults=defaults
-        )
+        cause, created = cls.objects.get_or_create(name=name_lower, defaults=defaults)
         return cause, created
 
 
 class Project(TimeStampedModel):
     """Represents a fundraising or campaign project."""
 
-    name = models.CharField(
-        max_length=255, help_text="Short name or title of the project."
-    )
+    name = models.CharField(max_length=255, help_text="Short name or title of the project.")
     img = models.ImageField(
         upload_to="projects/",
         blank=True,
@@ -127,7 +120,11 @@ class Project(TimeStampedModel):
         Returns (project, created).
         """
         project, created = cls.objects.get_or_create(
-            name=name, defaults={"target": target, **kwargs}
+            name=name,
+            defaults={
+                "target": (target if isinstance(target, Money) else Money(target, "USD")),
+                **kwargs,
+            },
         )
         if created and causes:
             cause_objects = []
@@ -172,9 +169,7 @@ class ProjectAssignment(models.Model):
         choices=ASSIGNABLE_TYPE_CHOICES,
         help_text="Whether this assignment is for a User or a UserGroup.",
     )
-    assignable_id = models.PositiveIntegerField(
-        help_text="Primary key of the assigned entity (User or UserGroup)."
-    )
+    assignable_id = models.PositiveIntegerField(help_text="Primary key of the assigned entity (User or UserGroup).")
 
     def __str__(self):
         """Represent ProjectAssignment as string."""
@@ -195,9 +190,7 @@ class ProjectAssignment(models.Model):
         for key, model_class in BENEFICIARY_MODEL_MAP.items():
             if isinstance(beneficiary, model_class):
                 return key, beneficiary.pk
-        raise ValueError(
-            "Beneficiary must be an instance of User or UserGroup."
-        )
+        raise ValueError("Beneficiary must be an instance of User or UserGroup.")
 
     @classmethod
     def assign_beneficiary(cls, project, beneficiary):

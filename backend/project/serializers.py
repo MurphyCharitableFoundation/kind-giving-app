@@ -1,6 +1,7 @@
 """Project Serializers."""
 
 from rest_framework import serializers
+
 from .models import Cause, Project, ProjectAssignment
 
 
@@ -28,9 +29,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     )
 
     # Write-only: Accept cause names for creation/update
-    causes_names = serializers.ListField(
-        child=serializers.CharField(), required=False, write_only=True
-    )
+    causes_names = serializers.ListField(child=serializers.CharField(), required=False, write_only=True)
 
     class Meta:
         model = Project
@@ -52,9 +51,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         causes_names = validated_data.pop("causes_names", [])
 
         # Use existing method to create project and ensure causes exist
-        project, _ = Project.create_project(
-            causes=causes_names, **validated_data
-        )
+        project, _ = Project.create_project(causes=causes_names, **validated_data)
         return project
 
     def update(self, instance, validated_data):
@@ -67,9 +64,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         # If causes_names is provided, update the causes relationship
         if causes_names is not None:
-            cause_objects = [
-                Cause.create_cause(name)[0] for name in causes_names
-            ]
+            cause_objects = [Cause.create_cause(name)[0] for name in causes_names]
             instance.causes.set(cause_objects)
 
         instance.save()
@@ -79,9 +74,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 class ProjectAssignmentSerializer(serializers.ModelSerializer):
     """Serializer for ProjectAssignment."""
 
-    assignable_type = serializers.ChoiceField(
-        choices=ProjectAssignment.ASSIGNABLE_TYPE_CHOICES
-    )
+    assignable_type = serializers.ChoiceField(choices=ProjectAssignment.ASSIGNABLE_TYPE_CHOICES)
     assignable_id = serializers.IntegerField()
 
     class Meta:

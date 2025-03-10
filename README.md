@@ -2,6 +2,7 @@
 
 ## Setup
 
+- Ensure to set up project configurations in `.env` file, check `.env.example`
 - Run `docker compose build` to build the docker images
 - Run `docker compose up` to start the containers
 - Run `docker compose down` to stop the containers
@@ -148,15 +149,5 @@ npm run lint
 npm run fix
 ```
 
-Files will be automatically formatted on save if your editor is configured correctly.
-
-## Questions
-
-- paypal-integration:
-  Paypal Developer has a few [APIs](https://developer.paypal.com/api/rest/current-resources/) that we can work with.
-
-  Both these examples need you to create a paypal dev account and transactions
-  can be mocked in the Paypal Sandbox:
-
-  - [backend integration example](https://www.youtube.com/watch?v=IXxEdhA7fig)
-  - [frontend integration example](https://www.youtube.com/watch?v=f7NWToOjtKI)
+Files will be automatically formatted on save if your editor is
+configured correctly.
