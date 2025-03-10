@@ -2,13 +2,10 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models
-
-from djmoney.money import Money
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
-
+from djmoney.money import Money
 from model_utils.models import TimeStampedModel
-
 
 User = get_user_model()
 
@@ -56,11 +53,7 @@ class Campaign(TimeStampedModel):
             project=project,
             owner=owner,
             defaults={
-                "target": (
-                    target
-                    if isinstance(target, Money)
-                    else Money(target, "USD")
-                ),
+                "target": (target if isinstance(target, Money) else Money(target, "USD")),
                 **extra_fields,
             },
         )
@@ -74,12 +67,8 @@ class Comment(TimeStampedModel):
     """Representation of a comment."""
 
     content = models.TextField()
-    campaign = models.ForeignKey(
-        Campaign, on_delete=models.CASCADE, related_name="comments"
-    )
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="comments"
-    )
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -104,9 +93,7 @@ class Comment(TimeStampedModel):
         Optionally as a reply to another comment.
         Returns the created comment instance.
         """
-        comment = cls.objects.create(
-            campaign=campaign, author=author, content=content, parent=parent
-        )
+        comment = cls.objects.create(campaign=campaign, author=author, content=content, parent=parent)
         return comment
 
     @classmethod

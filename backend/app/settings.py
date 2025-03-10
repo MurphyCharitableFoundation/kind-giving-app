@@ -23,9 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-qjgj-)=c88!*)$@8qbm7n4jc4#rsi1a_h@p8g8$g19oyq)q18-"
-)
+SECRET_KEY = "django-insecure-qjgj-)=c88!*)$@8qbm7n4jc4#rsi1a_h@p8g8$g19oyq)q18-"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -181,9 +179,7 @@ ACCOUNT_EMAIL_VERIFICATION = True  # Always verify through email
 # <EMAIL_CONFIRM_REDIRECT_BASE_URL>/<key>
 EMAIL_CONFIRM_REDIRECT_BASE_URL = f"{BASE_FRONTEND_URL}/email/confirm/"
 # <PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL>/<uidb64>/<token>/
-PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = (
-    f"{BASE_FRONTEND_URL}/password-reset/confirm/"
-)
+PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = f"{BASE_FRONTEND_URL}/password-reset/confirm/"
 
 # SITE
 SITE_ID = 1

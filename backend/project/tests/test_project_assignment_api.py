@@ -1,11 +1,12 @@
 """ProjectAssignment View."""
 
-from django.contrib.auth.models import Group
-from django.contrib.auth import get_user_model
 from django.apps import apps
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import TestCase
-from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework.test import APIClient
+
 from ..models import Cause, Project, ProjectAssignment
 
 User = get_user_model()
@@ -24,16 +25,12 @@ class ProjectAssignmentAPITestCase(TestCase):
         self.client = APIClient()
 
         # Create an admin user
-        self.admin_user = User.objects.create_user(
-            email="admin@example.com", password="adminpass"
-        )
+        self.admin_user = User.objects.create_user(email="admin@example.com", password="adminpass")
         admin_group, _ = Group.objects.get_or_create(name="admin")
         self.admin_user.groups.add(admin_group)
 
         # Create a non-admin user
-        self.non_admin_user = User.objects.create_user(
-            email="user@example.com", password="userpass"
-        )
+        self.non_admin_user = User.objects.create_user(email="user@example.com", password="userpass")
 
         # Create sample causes
         self.cause1 = Cause.objects.create(name="education")
@@ -48,9 +45,7 @@ class ProjectAssignmentAPITestCase(TestCase):
         )
 
         # Create a user and user group for assignments
-        self.beneficiary_user = User.objects.create_user(
-            email="beneficiary@example.com", password="testpass"
-        )
+        self.beneficiary_user = User.objects.create_user(email="beneficiary@example.com", password="testpass")
         self.beneficiary_group = UserGroup.objects.create(name="TestGroup")
 
         # Authenticate as admin
@@ -62,9 +57,7 @@ class ProjectAssignmentAPITestCase(TestCase):
             "assignable_type": "User",
             "assignable_id": self.beneficiary_user.id,
         }
-        response = self.client.post(
-            f"/api/projects/{self.project.id}/assign/", payload, format="json"
-        )
+        response = self.client.post(f"/api/projects/{self.project.id}/assign/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(
@@ -81,9 +74,7 @@ class ProjectAssignmentAPITestCase(TestCase):
             "assignable_type": "UserGroup",
             "assignable_id": self.beneficiary_group.id,
         }
-        response = self.client.post(
-            f"/api/projects/{self.project.id}/assign/", payload, format="json"
-        )
+        response = self.client.post(f"/api/projects/{self.project.id}/assign/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(
@@ -96,26 +87,18 @@ class ProjectAssignmentAPITestCase(TestCase):
 
     def test_list_project_assignments(self):
         """Test retrieving all assignments for a project."""
-        ProjectAssignment.assign_beneficiary(
-            self.project, self.beneficiary_user
-        )
+        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_user)
 
-        response = self.client.get(
-            f"/api/projects/{self.project.id}/assignments/"
-        )
+        response = self.client.get(f"/api/projects/{self.project.id}/assignments/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["assignable_type"], "User")
-        self.assertEqual(
-            response.data[0]["assignable_id"], self.beneficiary_user.id
-        )
+        self.assertEqual(response.data[0]["assignable_id"], self.beneficiary_user.id)
 
     def test_unassign_user_from_project(self):
         """Test unassigning a User from a Project."""
-        ProjectAssignment.assign_beneficiary(
-            self.project, self.beneficiary_user
-        )
+        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_user)
 
         payload = {
             "assignable_type": "User",
@@ -138,9 +121,7 @@ class ProjectAssignmentAPITestCase(TestCase):
 
     def test_unassign_usergroup_from_project(self):
         """Test unassigning a UserGroup from a Project."""
-        ProjectAssignment.assign_beneficiary(
-            self.project, self.beneficiary_group
-        )
+        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_group)
 
         payload = {
             "assignable_type": "UserGroup",
@@ -163,21 +144,15 @@ class ProjectAssignmentAPITestCase(TestCase):
 
     def test_cannot_assign_same_user_twice(self):
         """Test that assigning the same User to a project twice does not create duplicates."""
-        ProjectAssignment.assign_beneficiary(
-            self.project, self.beneficiary_user
-        )
+        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_user)
 
         payload = {
             "assignable_type": "User",
             "assignable_id": self.beneficiary_user.id,
         }
-        response = self.client.post(
-            f"/api/projects/{self.project.id}/assign/", payload, format="json"
-        )
+        response = self.client.post(f"/api/projects/{self.project.id}/assign/", payload, format="json")
 
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )  # Should not create duplicate
+        self.assertEqual(response.status_code, status.HTTP_200_OK)  # Should not create duplicate
         self.assertEqual(
             ProjectAssignment.objects.filter(
                 project=self.project,
@@ -190,21 +165,15 @@ class ProjectAssignmentAPITestCase(TestCase):
     def test_cannot_assign_same_usergroup_twice(self):
         """Test that assigning the same UserGroup to a project twice does not create duplicates."""
         assignable_type = "UserGroup"
-        ProjectAssignment.assign_beneficiary(
-            self.project, self.beneficiary_group
-        )
+        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_group)
 
         payload = {
             "assignable_type": assignable_type,
             "assignable_id": self.beneficiary_group.id,
         }
-        response = self.client.post(
-            f"/api/projects/{self.project.id}/assign/", payload, format="json"
-        )
+        response = self.client.post(f"/api/projects/{self.project.id}/assign/", payload, format="json")
 
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )  # Should not create duplicate
+        self.assertEqual(response.status_code, status.HTTP_200_OK)  # Should not create duplicate
         self.assertEqual(
             ProjectAssignment.objects.filter(
                 project=self.project,
@@ -222,9 +191,7 @@ class ProjectAssignmentAPITestCase(TestCase):
             "assignable_type": "User",
             "assignable_id": self.beneficiary_user.id,
         }
-        response = self.client.post(
-            f"/api/projects/{self.project.id}/assign/", payload, format="json"
-        )
+        response = self.client.post(f"/api/projects/{self.project.id}/assign/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 

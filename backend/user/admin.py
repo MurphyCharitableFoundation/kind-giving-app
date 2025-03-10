@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import UserChangeForm, UserCreationForm
-from .models import User, UserGroup, BankAccount
+from .models import BankAccount, User, UserGroup
 
 
 class UserAdmin(UserAdmin):
@@ -52,6 +52,7 @@ class UserAdmin(UserAdmin):
     )
     search_fields = ("email",)
     ordering = ("email",)
+
 
 admin.site.register(BankAccount)
 admin.site.register(UserGroup)

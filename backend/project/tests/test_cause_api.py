@@ -1,10 +1,11 @@
 """Test Cause API."""
 
-from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import TestCase
-from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework.test import APIClient
+
 from ..models import Cause, Project
 
 User = get_user_model()
@@ -22,24 +23,18 @@ class CauseAPITestCase(TestCase):
         self.client = APIClient()
 
         # Create an admin user
-        self.admin_user = User.objects.create_user(
-            email="admin@example.com", password="adminpass"
-        )
+        self.admin_user = User.objects.create_user(email="admin@example.com", password="adminpass")
         admin_group, _ = Group.objects.get_or_create(name="admin")
         self.admin_user.groups.add(admin_group)
 
         # Create a non-admin user
-        self.non_admin_user = User.objects.create_user(
-            email="user@example.com", password="userpass"
-        )
+        self.non_admin_user = User.objects.create_user(email="user@example.com", password="userpass")
 
         # Authenticate as admin
         self.client.force_authenticate(user=self.admin_user)
 
         # Create a sample cause
-        self.cause = Cause.objects.create(
-            name="education", description="Education-related projects."
-        )
+        self.cause = Cause.objects.create(name="education", description="Education-related projects.")
 
     def test_create_cause(self):
         """Test creating a new cause via POST request (Admin Only)."""
@@ -73,9 +68,7 @@ class CauseAPITestCase(TestCase):
             "name": "updated-education",
             "description": "Updated description.",
         }
-        response = self.client.patch(
-            f"/api/causes/{self.cause.id}/", payload, format="json"
-        )
+        response = self.client.patch(f"/api/causes/{self.cause.id}/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "updated-education")
@@ -117,9 +110,7 @@ class CauseAPITestCase(TestCase):
             "name": "updated-environment",
             "description": "Updated description.",
         }
-        response = self.client.patch(
-            f"/api/causes/{self.cause.id}/", payload, format="json"
-        )
+        response = self.client.patch(f"/api/causes/{self.cause.id}/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
