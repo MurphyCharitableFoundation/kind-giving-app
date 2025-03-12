@@ -47,4 +47,11 @@ export default tseslint.config({
     ...react.configs['jsx-runtime'].rules,
   },
 })
-```
+
+**Styling & Theming
+
+---Adding custom variant to Typography
+- can customize the typography settings in MUI theme using the createTheme function (/src/theme/theme.ts)
+
+-- use theming
+ <Typography variant="headlineSmallTextRegular" sx={{color: theme.palette.primary.fixedDim}}> Using Custom typography+ theme color using sx for inline</Typography>
