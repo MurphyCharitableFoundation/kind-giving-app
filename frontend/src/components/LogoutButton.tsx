@@ -2,6 +2,7 @@ import { logout } from "../utils/endpoints";
 import { googleLogout } from "@react-oauth/google";
 import { Button,  } from "@mui/material";
 import theme from "../theme/theme";
+
 import Typography from "@mui/material/Typography";
 
 
@@ -15,8 +16,6 @@ const LogoutButton = () => {
       console.error("Logout failed", error);
     }
   };
-
-  
   return (
     <>
       <Button 
@@ -33,3 +32,4 @@ const LogoutButton = () => {
 };
 
 export default LogoutButton;
+
