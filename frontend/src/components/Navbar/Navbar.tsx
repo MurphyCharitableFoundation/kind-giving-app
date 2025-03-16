@@ -47,19 +47,19 @@ export const NavBar = () => {
 <Box
 component="img"
 sx={{
-height: 120,
-width: 120,
-display: { xs: 'none', md: 'flex', sm:"none", lg:"flex", xl:"flex" },
+height: 200,
+width: 200,
+display: { xs: 'none', md: 'flex', sm:"flex", lg:"flex", xl:"flex" },
 
 maxHeight: { xs: 60, md: 60 },
-maxWidth: { xs:60, md: 250 },
+maxWidth: { xs:60, md: 250, lg:200, sm: 180 },
 }}
 alt="Logo"
 src={Logo}
 />
          
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none',sm:"none", lg:"none", xl:"none" } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -110,19 +110,19 @@ src={Logo}
           >
             LOGO
           </Typography> */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', justifyContent: "end"} }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none',sm: "flex", md: 'flex', lg:"flex", xl:"flex", justifyContent: "end"} }}>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, ml:5, color: 'white', display: 'block' , textTransform: "none",fontSize: "22px", lineHeight: "28px", letterSpacing: "0%"}}
+                sx={{ my: 2, ml:5, color: 'white', display: 'block' , textTransform: "none",fontSize: "137%", lineHeight: "28px", letterSpacing: "0%"}}
               >
                 {page}
               </Button>
             ))}
           </Box>
           {/* Avatar */}
-          <Box sx={{ flexGrow: 0 , pl:10}}>
+          <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Gemy Sharp" src="/static/images/avatar/2.jpg" />
