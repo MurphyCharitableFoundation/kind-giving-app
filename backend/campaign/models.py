@@ -24,7 +24,7 @@ class Campaign(TimeStampedModel):
         validators=[MinMoneyValidator({"USD": 0.01})],
         help_text="Financial target (money) the project aims to raise.",
     )
-    project = models.ForeignKey("project.Project", on_delete=models.CASCADE)
+    project = models.ForeignKey("project.Project", on_delete=models.CASCADE, related_name="campaigns")
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     end_date = models.DateTimeField(null=True, blank=True)
 
@@ -38,6 +38,7 @@ class Campaign(TimeStampedModel):
         Create a campaign for a project by an owner.
 
         - Prevents a user from having multiple campaigns in the same project.
+        - Prevents breaking the limit of Campaigns on project.
         - Extra fields like `end_date` and `description` can
         be passed via `**extra_fields`.
 
@@ -47,6 +48,10 @@ class Campaign(TimeStampedModel):
         """
         if cls.objects.filter(project=project, owner=owner).exists():
             raise ValueError("User already has a campaign for given project.")
+
+        if project.campaign_limit:
+            if project.campaigns.count() >= project.campaign_limit:
+                raise ValueError("Project already has enough campaigns.")
 
         campaign, created = cls.objects.get_or_create(
             title=title,
