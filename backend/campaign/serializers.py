@@ -35,8 +35,6 @@ class CommentSerializer(serializers.ModelSerializer):
 class CampaignSerializer(serializers.ModelSerializer):
     """Serializer for Campaigns, using `create_campaign()`."""
 
-    comments = serializers.SerializerMethodField()
-
     class Meta:
         model = Campaign
         fields = [
@@ -46,13 +44,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "target",
             "project",
             "end_date",
-            "comments",
         ]
-
-    def get_comments(self, obj):
-        """Retrieve all comments for the campaign, including replies."""
-        comments = Comment.get_comments(obj, include_replies=True)
-        return CommentSerializer(comments, many=True).data
 
     def create(self, validated_data):
         """Create a campaign."""

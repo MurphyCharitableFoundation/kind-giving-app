@@ -172,3 +172,51 @@ class CommentAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Comment.objects.filter(id=self.comment.id).exists())
+
+
+class CampaignCommentsAPITestCase(APITestCase):
+    """Test suite for the campaign_comments API view."""
+
+    def setUp(self):
+        """Set up test data."""
+        self.user = User.objects.create_user(email="test@example.com", password="password123")
+
+        self.project, _ = Project.create_project(name="Smart Farming", target=Money(15000, "USD"))
+
+        self.campaign, _ = Campaign.create_campaign(
+            title="AI Farming",
+            project=self.project,
+            owner=self.user,
+            target=Money(5000, "USD"),
+        )
+
+        # Create some comments
+        self.comment1 = Comment.objects.create(
+            content="Great campaign!",
+            campaign=self.campaign,
+            author=self.user,
+        )
+        self.comment2 = Comment.objects.create(
+            content="I support this initiative!",
+            campaign=self.campaign,
+            author=self.user,
+        )
+
+        self.url = reverse("campaign-comments-list", args=[self.campaign.id])
+
+    def test_get_comments_success(self):
+        """Test retrieving comments of a campaign successfully."""
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Ensure both comments are returned
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["content"], "Great campaign!")
+        self.assertEqual(response.data[1]["content"], "I support this initiative!")
+
+    def test_get_comments_campaign_not_found(self):
+        """Test retrieving comments for a non-existent campaign."""
+        url = reverse("campaign-comments-list", args=[999])  # Invalid campaign ID
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
