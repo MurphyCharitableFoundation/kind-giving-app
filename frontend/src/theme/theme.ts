@@ -81,7 +81,7 @@ const theme = createTheme({
     },
     
     typography: {
-        // fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Inter', sans-serif",
         displayLarge:{
             fontSize:"57px",
             lineHeight:"64",

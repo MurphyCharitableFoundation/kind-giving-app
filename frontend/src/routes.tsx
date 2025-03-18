@@ -6,12 +6,17 @@ import NotFoundPage from "./pages/NotFound/NotFound";
 import ConfirmEmail from "./pages/ConfirmEmail/ConfirmEmail";
 import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequest";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
+import { NavBar } from "./components/Navbar/Navbar";
 
 const routes = [
   {
     path: "/",
     element: <App />,
     errorElement: <NotFoundPage />,
+  },
+  {
+    path: "/layout",
+    element: <NavBar />,
   },
   {
     path: "/register",
