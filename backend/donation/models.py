@@ -62,8 +62,3 @@ class Donation(TimeStampedModel):
 
         if self.amount <= to_money(0):
             raise ValidationError({"amount": "Amount cannot be negative or zero."})
-
-    @classmethod
-    def retrieve_donations(cls, campaign):
-        """Retrieve all donations for a given campaign."""
-        return cls.objects.filter(campaign=campaign)

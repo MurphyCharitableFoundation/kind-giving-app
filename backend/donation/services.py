@@ -14,7 +14,7 @@ User = get_user_model()
 
 
 @transaction.atomic
-def create_donation(
+def donation_create(
     *,
     donor: User,
     amount: Amount,
