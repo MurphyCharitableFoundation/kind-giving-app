@@ -1,12 +1,15 @@
 """Donation tests."""
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from djmoney.money import Money
 
 from campaign.models import Campaign
-from donation.models import Donation
 from project.models import Project
+
+from ..selectors import campaign_donations
+from ..services import create_donation
 
 User = get_user_model()
 
@@ -39,7 +42,7 @@ class DonationModelTest(TestCase):
         """Test creating a donation with valid data."""
         amount = Money(100.00, "USD")
         description = "Supporting education campaign."
-        donation = Donation.create_donation(
+        donation = create_donation(
             donor=self.user,
             amount=amount,
             description=description,
@@ -54,26 +57,26 @@ class DonationModelTest(TestCase):
 
     def test_retrieve_donations_for_given_campaign(self):
         """Test retrieving donations for a specific campaign."""
-        donation1 = Donation.create_donation(
+        donation1 = create_donation(
             donor=self.user,
             amount=Money(100.00, "USD"),
             description="Donation 1 for campaign 1",
             campaign=self.campaign1,
         )
-        donation2 = Donation.create_donation(
+        donation2 = create_donation(
             donor=self.user,
             amount=Money(200.00, "USD"),
             description="Donation 2 for campaign 1",
             campaign=self.campaign1,
         )
-        donation3 = Donation.create_donation(
+        donation3 = create_donation(
             donor=self.user,
             amount=Money(50.00, "USD"),
             description="Donation 1 for campaign 2",
             campaign=self.campaign2,
         )
 
-        donations_for_campaign_1 = Donation.retrieve_donations(campaign=self.campaign1)
+        donations_for_campaign_1 = campaign_donations(campaign=self.campaign1)
 
         self.assertEqual(donations_for_campaign_1.count(), 2)
         self.assertIn(donation1, donations_for_campaign_1)
@@ -82,8 +85,8 @@ class DonationModelTest(TestCase):
 
     def test_donation_with_negative_amount(self):
         """Test that a donation cannot be created with a negative amount."""
-        with self.assertRaises(ValueError):
-            Donation.create_donation(
+        with self.assertRaises(ValidationError):
+            create_donation(
                 donor=self.user,
                 amount=Money(-100.00, "USD"),
                 description="Invalid donation",
@@ -92,8 +95,8 @@ class DonationModelTest(TestCase):
 
     def test_donation_with_no_amount(self):
         """Test that a donation cannot be created with zero amount."""
-        with self.assertRaises(ValueError):
-            Donation.create_donation(
+        with self.assertRaises(ValidationError):
+            create_donation(
                 donor=self.user,
                 amount=Money(0.00, "USD"),
                 description="Invalid donation",
@@ -102,7 +105,7 @@ class DonationModelTest(TestCase):
 
     def test_donation_with_integer_amount(self):
         """Test that a donation can be created with an integer amount."""
-        donation = Donation.create_donation(
+        donation = create_donation(
             donor=self.user,
             amount=100,  # Integer amount
             description="Integer amount donation",
@@ -113,7 +116,7 @@ class DonationModelTest(TestCase):
 
     def test_donation_with_float_amount(self):
         """Test that a donation can be created with a float amount."""
-        donation = Donation.create_donation(
+        donation = create_donation(
             donor=self.user,
             amount=100.50,  # Float amount
             description="Float amount donation",
@@ -125,7 +128,7 @@ class DonationModelTest(TestCase):
     def test_donation_with_money_object_amount(self):
         """Test that a donation can be created with a Money object."""
         amount = Money(250.75, "USD")
-        donation = Donation.create_donation(
+        donation = create_donation(
             donor=self.user,
             amount=amount,  # Money object
             description="Money object donation",

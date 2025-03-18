@@ -1,20 +1,19 @@
 """Donation models."""
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
-from djmoney.money import Money
 from model_utils.models import TimeStampedModel
+
+from core.services import to_money
 
 User = get_user_model()
 
 
 class Donation(TimeStampedModel):
-    """
-    Represent a donation that has been made to a campaign.
-    *campaign will be adjusted to a foreign key type as soon as the Campaign app is created.
-    """
+    """Represent a donation that has been made to a campaign."""
 
     donor = models.ForeignKey(
         User,
@@ -52,25 +51,17 @@ class Donation(TimeStampedModel):
         """Represent Donation as string."""
         return f"Donation: {self.amount} USD by {self.donor.email}."
 
-    @classmethod
-    def create_donation(cls, donor, amount, description, campaign):
+    def clean(self):
         """
-        Create a donation with a given donor, amount, description and campaign.
-        Also ensure amount is Money Instance and > 0
+        Validate model data before saving.
+
+        Ensure to use services, so that validation is performed.
         """
-        if not isinstance(amount, Money):
-            amount = Money(amount, "USD")
+        if self.donor.groups.filter(name="beneficiary").exists():
+            raise ValidationError({"donor": "Donor cannot be a beneficiary."})
 
-        if amount.amount <= 0:
-            raise ValueError("Donation amount must be positive.")
-
-        donation = cls.objects.create(
-            donor=donor,
-            amount=amount,
-            description=description,
-            campaign=campaign,
-        )
-        return donation
+        if self.amount <= to_money(0):
+            raise ValidationError({"amount": "Amount cannot be negative or zero."})
 
     @classmethod
     def retrieve_donations(cls, campaign):
