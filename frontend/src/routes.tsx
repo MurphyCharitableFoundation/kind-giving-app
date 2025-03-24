@@ -6,6 +6,8 @@ import NotFoundPage from "./pages/NotFound/NotFound";
 import ConfirmEmail from "./pages/ConfirmEmail/ConfirmEmail";
 import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequest";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
+import ProjectManagement from "./pages/admin/ProjectManagement/ProjectManagement";
+import ProjectDetails from "./pages/admin/ProjectManagement/ProjectDetails";
 
 const routes = [
   {
@@ -33,6 +35,14 @@ const routes = [
     path: "/password-reset/confirm/:uid/:token",
     element: <PasswordResetConfirm />,
   },
+  {
+    path: "/admin/projects",
+    element: <ProjectManagement/>
+  },
+  {
+    path: "/admin/project-details",
+    element: <ProjectDetails/>
+  }
 ];
 
 export default routes;
