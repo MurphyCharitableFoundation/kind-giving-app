@@ -140,13 +140,13 @@ Install your editor's equivalent plugins/packages for:
 
 ```bash
 # Format all files
-npm run format
+docker compose run --rm frontend sh -c "npm run format"
 
 # Lint and fix all files
-npm run lint
+docker compose run --rm frontend sh -c "npm run lint"
 
 # Run both format and lint
-npm run fix
+docker compose run --rm frontend sh -c "npm run fix"
 ```
 
 Files will be automatically formatted on save if your editor is
