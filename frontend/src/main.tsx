@@ -13,9 +13,9 @@ const googleClientId: string = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId={googleClientId}>
     <ThemeProvider theme={theme}>
-    <StrictMode>
+      <StrictMode>
         <RouterProvider router={router} />
-    </StrictMode>
+      </StrictMode>
     </ThemeProvider>
   </GoogleOAuthProvider>
 );
