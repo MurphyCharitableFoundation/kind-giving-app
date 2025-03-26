@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect}from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,10 +13,10 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import AdbIcon from '@mui/icons-material/Adb';
 import theme from '../../theme/theme';
 
 import Logo from '../../assets/logo.svg';
+import { useNavigate } from 'react-router-dom';
 
 const pages = ['Projects', 'Campaigns', 'Causes'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -39,7 +39,37 @@ export const NavBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+const navigate = useNavigate();
 
+const handleClick = (e: string) => {
+  if (pages.includes(e)) {
+    console.log(e, "clicked");
+    for (let i = 0; i < pages.length; i++) {
+      if (pages[i] === e) {
+        console.log(pages[i]);
+      }
+      navigate("/" + e);
+    }
+  }
+}
+
+const updateFavicon = () => {
+  let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/png";
+    document.head.appendChild(link);
+  }
+
+  link.href = Logo;
+  link.sizes = "128x128";
+
+    };
+
+useEffect(() => {
+    updateFavicon();
+}, []);
   return (
     <AppBar position="static">
       <Container maxWidth="xl" sx={{color:{ lg:theme.palette.primary, xl:theme.palette.primary, md:theme.palette.primary, sm:theme.palette.primary.fixedDim, xs:theme.palette.primary.fixedDim }}}>
@@ -57,7 +87,7 @@ maxWidth: { xs:60, md: 250, lg:200, sm: 180 },
 alt="Logo"
 src={Logo}
 />
-         
+
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none',sm:"none", lg:"none", xl:"none" } }}>
             <IconButton
@@ -87,8 +117,8 @@ src={Logo}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'right' }}>{page}</Typography>
+                <MenuItem key={page} onClick={(e)=>{handleClick(page); handleCloseNavMenu}}>
+                  <Typography sx={{ textAlign: 'right' }} >{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>

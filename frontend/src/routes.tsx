@@ -15,7 +15,7 @@ const routes = [
     errorElement: <NotFoundPage />,
   },
   {
-    path: "/layout",
+    path: "/navbar",
     element: <NavBar />,
   },
   {
