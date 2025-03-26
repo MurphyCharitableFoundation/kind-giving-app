@@ -1,29 +1,33 @@
-import React, {useEffect}from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import React, { useEffect } from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
 
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import theme from '../../theme/theme';
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import theme from "../../theme/theme";
 
-import Logo from '../../assets/logo.svg';
-import { useNavigate } from 'react-router-dom';
+import Logo from "../../assets/logo.svg";
+import { useNavigate } from "react-router-dom";
 
-const pages = ['Projects', 'Campaigns', 'Causes'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ["Projects", "Campaigns", "Causes"];
+const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 export const NavBar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -39,57 +43,83 @@ export const NavBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleClick = (e: string) => {
-  if (pages.includes(e)) {
-    console.log(e, "clicked");
-    for (let i = 0; i < pages.length; i++) {
-      if (pages[i] === e) {
-        console.log(pages[i]);
+  const handleClick = (e: string) => {
+    if (pages.includes(e)) {
+      console.log(e, "clicked");
+      for (let i = 0; i < pages.length; i++) {
+        if (pages[i] === e) {
+          console.log(pages[i]);
+        }
+        navigate("/" + e);
       }
-      navigate("/" + e);
     }
-  }
-}
+  };
 
-const updateFavicon = () => {
-  let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-  if (!link) {
-    link = document.createElement("link");
-    link.rel = "icon";
-    link.type = "image/png";
-    document.head.appendChild(link);
-  }
+  const updateFavicon = () => {
+    let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/png";
+      document.head.appendChild(link);
+    }
 
-  link.href = Logo;
-  link.sizes = "128x128";
+    link.href = Logo;
+    link.sizes = "128x128";
+  };
 
-    };
-
-useEffect(() => {
+  useEffect(() => {
     updateFavicon();
-}, []);
+  }, []);
   return (
     <AppBar position="static">
-      <Container maxWidth="xl" sx={{color:{ lg:theme.palette.primary, xl:theme.palette.primary, md:theme.palette.primary, sm:theme.palette.primary.fixedDim, xs:theme.palette.primary.fixedDim }}}>
+      <Container
+        maxWidth="xl"
+        sx={{
+          color: {
+            lg: theme.palette.primary.main,
+            xl: theme.palette.primary.main,
+            md: theme.palette.primary.main,
+            sm: theme.palette.primary.fixedDim,
+            xs: theme.palette.primary.fixedDim,
+          },
+        }}
+      >
         <Toolbar disableGutters>
-<Box
-component="img"
-sx={{
-height: 200,
-width: 200,
-display: { xs: 'none', md: 'flex', sm:"flex", lg:"flex", xl:"flex" },
+          <Box
+            component="img"
+            sx={{
+              height: 200,
+              width: 200,
+              display: {
+                xs: "none",
+                md: "flex",
+                sm: "flex",
+                lg: "flex",
+                xl: "flex",
+              },
 
-maxHeight: { xs: 60, md: 60 },
-maxWidth: { xs:60, md: 250, lg:200, sm: 180 },
-}}
-alt="Logo"
-src={Logo}
-/>
+              maxHeight: { xs: 60, md: 60 },
+              maxWidth: { xs: 60, md: 250, lg: 200, sm: 180 },
+            }}
+            alt="Logo"
+            src={Logo}
+          />
 
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none',sm:"none", lg:"none", xl:"none" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: {
+                xs: "flex",
+                md: "none",
+                sm: "none",
+                lg: "none",
+                xl: "none",
+              },
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -104,21 +134,27 @@ src={Logo}
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: "bottom",
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
+                vertical: "top",
+                horizontal: "left",
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: 'block', md: 'none' } }}
+              sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={(e)=>{handleClick(page); handleCloseNavMenu}}>
-                  <Typography sx={{ textAlign: 'right' }} >{page}</Typography>
+                <MenuItem
+                  key={page}
+                  onClick={() => {
+                    handleClick(page);
+                    handleCloseNavMenu();
+                  }}
+                >
+                  <Typography sx={{ textAlign: "right" }}>{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -140,12 +176,33 @@ src={Logo}
           >
             LOGO
           </Typography> */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none',sm: "flex", md: 'flex', lg:"flex", xl:"flex", justifyContent: "end"} }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: {
+                xs: "none",
+                sm: "flex",
+                md: "flex",
+                lg: "flex",
+                xl: "flex",
+                justifyContent: "end",
+              },
+            }}
+          >
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, ml:5, color: 'white', display: 'block' , textTransform: "none",fontSize: "137%", lineHeight: "28px", letterSpacing: "0%"}}
+                sx={{
+                  my: 2,
+                  ml: 5,
+                  color: "white",
+                  display: "block",
+                  textTransform: "none",
+                  fontSize: "137%",
+                  lineHeight: "28px",
+                  letterSpacing: "0%",
+                }}
               >
                 {page}
               </Button>
@@ -159,34 +216,37 @@ src={Logo}
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '45px' }}
+              sx={{ mt: "45px" }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                  <Typography sx={{ textAlign: "center" }}>
+                    {setting}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-<IconButton onClick={handleOpenUserMenu}>
-  <KeyboardArrowDownIcon  sx={{ display:{xs: 'none'},color: 'white'}}/>
-</IconButton>
-
+          <IconButton onClick={handleOpenUserMenu}>
+            <KeyboardArrowDownIcon
+              sx={{ display: { xs: "none" }, color: "white" }}
+            />
+          </IconButton>
         </Toolbar>
       </Container>
     </AppBar>
   );
-}
+};
