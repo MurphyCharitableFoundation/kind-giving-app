@@ -1,26 +1,480 @@
 [
-  {
+{
     "model": "donation.donation",
     "pk": 1,
     "fields": {
-      "donor": 3,
-      "amount_currency": "USD",
-      "amount": "100.00",
-      "description": null,
-      "campaign": 1,
-      "payment": null
+        "created": "2025-03-18T05:04:35.847Z",
+        "modified": "2025-03-18T05:04:35.847Z",
+        "donor": 3,
+        "amount_currency": "USD",
+        "amount": "100.00",
+        "description": null,
+        "campaign": 1,
+        "payment": null
     }
-  },
-  {
+},
+{
     "model": "donation.donation",
     "pk": 2,
     "fields": {
-      "donor": 3,
-      "amount_currency": "USD",
-      "amount": "100.00",
-      "description": null,
-      "campaign": 1,
-      "payment": null
+        "created": "2025-03-18T05:14:15.507Z",
+        "modified": "2025-03-18T05:14:15.507Z",
+        "donor": 3,
+        "amount_currency": "USD",
+        "amount": "100.00",
+        "description": null,
+        "campaign": 1,
+        "payment": null
     }
-  }
+},
+{
+    "model": "user.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$600000$oDyT1vo5PzKz4viEal9eRJ$SX9zjD3JAVKUmuuEJY8oXlLwDyztc8GmimRWlu0CXV8=",
+        "last_login": "2025-03-18T05:04:13.182Z",
+        "is_superuser": true,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-03-05T02:57:38.469Z",
+        "email": "ayo@example.com",
+        "phone_number": null,
+        "group_membership": null,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            6
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 2,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "F_John",
+        "last_name": "Doe",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.571Z",
+        "email": "f_john@example.com",
+        "phone_number": "5551234561",
+        "group_membership": null,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            4
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 3,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "F_Jane",
+        "last_name": "Doe",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.573Z",
+        "email": "f_jane@example.com",
+        "phone_number": "5551234562",
+        "group_membership": null,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            4
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 4,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "F_Sam",
+        "last_name": "Smith",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.573Z",
+        "email": "f_sam@example.com",
+        "phone_number": "5551234563",
+        "group_membership": null,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            4
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 5,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "B_Alice",
+        "last_name": "Brown",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.574Z",
+        "email": "b_alice@example.com",
+        "phone_number": "5551234564",
+        "group_membership": 1,
+        "is_group_leader": true,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            5
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 6,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "B_Bob",
+        "last_name": "White",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.574Z",
+        "email": "b_bob@example.com",
+        "phone_number": "5551234565",
+        "group_membership": 1,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            5
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 7,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "B_Charlie",
+        "last_name": "Green",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.574Z",
+        "email": "b_charlie@example.com",
+        "phone_number": "5551234566",
+        "group_membership": 1,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            5
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 8,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "B_Diana",
+        "last_name": "Blue",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.575Z",
+        "email": "b_diana@example.com",
+        "phone_number": "5551134567",
+        "group_membership": 2,
+        "is_group_leader": true,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            5
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 9,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "B_Luke",
+        "last_name": "Greenish",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.575Z",
+        "email": "b_luke@example.com",
+        "phone_number": "5551214567",
+        "group_membership": 2,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            5
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 10,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "A_Richard",
+        "last_name": "MCF",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:37:45.575Z",
+        "email": "a_richard@example.com",
+        "phone_number": "555121497",
+        "group_membership": null,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [
+            6
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 11,
+    "fields": {
+        "password": "pbkdf2_sha256$600000$aacrrUZjH2ED181Tcqgpr4$D1ZWIMW0cfAKdATr8AgQOpMM9xnKYEHXrH18mb4A0Lo=",
+        "last_login": "2025-01-22T20:38:33.933Z",
+        "is_superuser": true,
+        "first_name": "dev_admin",
+        "last_name": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-01-22T20:38:28.459Z",
+        "email": "admin@example.com",
+        "phone_number": "",
+        "group_membership": null,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "user.user",
+    "pk": 999,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$...",
+        "last_login": null,
+        "is_superuser": true,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-03-09T22:38:09.403Z",
+        "email": "campaign_admin@example.com",
+        "phone_number": null,
+        "group_membership": null,
+        "is_group_leader": false,
+        "img": "",
+        "bank_account": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "campaign.campaign",
+    "pk": 1,
+    "fields": {
+        "created": "2025-03-09T22:38:09.406Z",
+        "modified": "2025-03-09T22:38:09.406Z",
+        "title": "Grow Food Locally",
+        "description": "Helping urban communities start their own sustainable farms.",
+        "target_currency": "USD",
+        "target": "5000.00",
+        "project": 1,
+        "owner": 1,
+        "end_date": "2025-12-31T23:59:59Z"
+    }
+},
+{
+    "model": "campaign.campaign",
+    "pk": 2,
+    "fields": {
+        "created": "2025-03-09T22:38:09.409Z",
+        "modified": "2025-03-09T22:38:09.406Z",
+        "title": "Eco-Friendly Buses",
+        "description": "Funding electric buses to reduce emissions in major cities.",
+        "target_currency": "USD",
+        "target": "15000.00",
+        "project": 2,
+        "owner": 1,
+        "end_date": "2025-12-31T23:59:59Z"
+    }
+},
+{
+    "model": "campaign.comment",
+    "pk": 1,
+    "fields": {
+        "created": "2025-03-09T22:38:09.409Z",
+        "modified": "2025-03-09T22:38:09.409Z",
+        "content": "This project is inspiring!",
+        "campaign": 1,
+        "author": 1,
+        "parent": null
+    }
+},
+{
+    "model": "campaign.comment",
+    "pk": 2,
+    "fields": {
+        "created": "2025-03-09T22:38:09.411Z",
+        "modified": "2025-03-09T22:38:09.409Z",
+        "content": "Looking forward to cleaner cities with electric buses.",
+        "campaign": 2,
+        "author": 1,
+        "parent": null
+    }
+},
+{
+    "model": "campaign.comment",
+    "pk": 3,
+    "fields": {
+        "created": "2025-03-09T22:38:09.411Z",
+        "modified": "2025-03-09T22:38:09.409Z",
+        "content": "How can we support local farmers further?",
+        "campaign": 1,
+        "author": 1,
+        "parent": 1
+    }
+},
+{
+    "model": "project.cause",
+    "pk": 1,
+    "fields": {
+        "name": "agriculture",
+        "description": "Supporting sustainable farming and food security.",
+        "icon": ""
+    }
+},
+{
+    "model": "project.cause",
+    "pk": 2,
+    "fields": {
+        "name": "transportation",
+        "description": "Enhancing infrastructure and mobility solutions.",
+        "icon": ""
+    }
+},
+{
+    "model": "project.cause",
+    "pk": 7,
+    "fields": {
+        "name": "healthcare",
+        "description": "",
+        "icon": ""
+    }
+},
+{
+    "model": "project.project",
+    "pk": 1,
+    "fields": {
+        "created": "2025-03-09T22:38:09.385Z",
+        "modified": "2025-03-09T22:38:09.385Z",
+        "name": "Urban Farming Initiative",
+        "img": "",
+        "target_currency": "USD",
+        "target": "7500.00",
+        "campaign_limit": 120,
+        "city": "Los Angeles",
+        "country": "USA",
+        "causes": [
+            1
+        ]
+    }
+},
+{
+    "model": "project.project",
+    "pk": 2,
+    "fields": {
+        "created": "2025-03-09T22:38:09.399Z",
+        "modified": "2025-03-09T22:38:09.385Z",
+        "name": "Electric Bus Expansion",
+        "img": "",
+        "target_currency": "USD",
+        "target": "20000.00",
+        "campaign_limit": 80,
+        "city": "Berlin",
+        "country": "Germany",
+        "causes": [
+            2
+        ]
+    }
+},
+{
+    "model": "project.project",
+    "pk": 5,
+    "fields": {
+        "created": "2025-03-05T06:46:49.450Z",
+        "modified": "2025-03-05T06:46:49.474Z",
+        "name": "Updated Water Project",
+        "img": "",
+        "target_currency": "USD",
+        "target": "10000.00",
+        "campaign_limit": null,
+        "city": "Nairobi",
+        "country": "Kenya",
+        "causes": [
+            2,
+            7
+        ]
+    }
+},
+{
+    "model": "project.projectassignment",
+    "pk": 1,
+    "fields": {
+        "project": 1,
+        "assignable_type": "User",
+        "assignable_id": 1
+    }
+},
+{
+    "model": "project.projectassignment",
+    "pk": 2,
+    "fields": {
+        "project": 1,
+        "assignable_type": "UserGroup",
+        "assignable_id": 1
+    }
+}
 ]
