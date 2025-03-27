@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "djmoney",
     "django_extensions",
+    "django_filters",
     # Project Apps:
     "core",
     "user",
