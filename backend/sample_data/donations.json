@@ -1,0 +1,26 @@
+[
+  {
+    "model": "donation.donation",
+    "pk": 1,
+    "fields": {
+      "donor": 3,
+      "amount_currency": "USD",
+      "amount": "100.00",
+      "description": null,
+      "campaign": 1,
+      "payment": null
+    }
+  },
+  {
+    "model": "donation.donation",
+    "pk": 2,
+    "fields": {
+      "donor": 3,
+      "amount_currency": "USD",
+      "amount": "100.00",
+      "description": null,
+      "campaign": 1,
+      "payment": null
+    }
+  }
+]
