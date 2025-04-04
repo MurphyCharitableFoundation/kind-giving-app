@@ -1,3 +1,5 @@
+"""User models."""
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -7,24 +9,43 @@ from .managers import UserManager
 
 
 class BankAccount(models.Model):
+    """Bank Account model."""
+
     class AccountStatus(models.TextChoices):
+        """Account Status choices."""
+
         VERIFIED = "VERIFIED", _("Verified")
         PENDING = "PENDING", _("Pending")
         FAILED = "FAILED", _("Failed")
 
-    bank_account_token_id = models.CharField(max_length=255, blank=True, null=True)
-    account_status = models.CharField(max_length=10, choices=AccountStatus.choices, default=AccountStatus.PENDING.value)
+    bank_account_token_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    account_status = models.CharField(
+        max_length=10,
+        choices=AccountStatus.choices,
+        default=AccountStatus.PENDING.value,
+    )
     last_payout = models.DateTimeField()
 
     def __str__(self):
+        """Represent BankAccount as str."""
         return f"BankAccount: {self.bank_account_token_id}"
 
 
 class UserGroup(models.Model):
+    """User Group model."""
+
     name = models.CharField(max_length=255)
     phone_number = PhoneNumberField(blank=True, null=True)
     interest = models.CharField(max_length=255, blank=True, null=True)
-    img = models.ImageField(upload_to="usergroup_images/", blank=True, null=True)
+    img = models.ImageField(
+        upload_to="usergroup_images/",
+        blank=True,
+        null=True,
+    )
 
     bank_account = models.OneToOneField(
         BankAccount,
@@ -35,10 +56,13 @@ class UserGroup(models.Model):
     )
 
     def __str__(self):
+        """Represent UserGroup as str."""
         return f"UserGroup: {self.name}"
 
 
 class User(AbstractUser):
+    """User model."""
+
     username = None
     email = models.EmailField(_("email address"), unique=True)
     phone_number = PhoneNumberField(blank=True, null=True)
@@ -51,7 +75,11 @@ class User(AbstractUser):
     )
     is_group_leader = models.BooleanField(default=False)
 
-    img = models.ImageField(upload_to="user_images/", blank=True, null=True)
+    img = models.ImageField(
+        upload_to="user_images/",
+        blank=True,
+        null=True,
+    )
 
     bank_account = models.OneToOneField(
         BankAccount,
@@ -67,4 +95,5 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
+        """Represent User as str."""
         return f"User: {self.email}"

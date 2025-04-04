@@ -3,6 +3,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+from user.services import user_create
+
 from ..services import model_update
 
 User = get_user_model()
@@ -10,7 +12,7 @@ User = get_user_model()
 
 class ModelUpdateUserTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
+        self.user = user_create(
             email="user@example.com",
             password="pass1234",
             phone_number="+19059629763",
