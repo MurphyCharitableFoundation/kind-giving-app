@@ -1,6 +1,7 @@
 """Campaign views."""
 
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -25,6 +26,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+@extend_schema(responses={200: CommentSerializer(many=True)})
 @api_view(["GET"])
 def campaign_comments(request, campaign_id) -> Response:
     """Retrieve comments of campaign by campaign-id."""

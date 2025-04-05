@@ -3,6 +3,7 @@
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import (
@@ -81,6 +82,14 @@ class AssignBeneficiaryView(APIView):
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
+    @extend_schema(
+        request=ProjectAssignmentSerializer,
+        responses={
+            201: OpenApiResponse(description="Beneficiary assigned successfully."),
+            200: OpenApiResponse(description="Beneficiary already assigned."),
+            400: OpenApiResponse(description="Validation error."),
+        },
+    )
     def post(self, request, project_id):
         """Create project assignment for beneficiary."""
         project = get_object_or_404(Project, id=project_id)
@@ -109,6 +118,13 @@ class UnassignBeneficiaryView(APIView):
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
+    @extend_schema(
+        request=ProjectAssignmentSerializer,
+        responses={
+            204: OpenApiResponse(description="Beneficiary unassigned successfully."),
+            400: OpenApiResponse(description="No assignment found or validation error."),
+        },
+    )
     def delete(self, request, project_id):
         """Delete project assignment for beneficiary."""
         project = get_object_or_404(Project, id=project_id)
