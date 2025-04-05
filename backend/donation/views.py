@@ -2,6 +2,7 @@
 
 from django.contrib.auth import get_user_model
 from django.http import Http404
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,6 +20,9 @@ class DonationDetailAPI(APIView):
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
+    @extend_schema(
+        responses={200: OutputSerializer},
+    )
     def get(self, request, donation_id):
         donation = donation_get(donation_id)
 
@@ -36,6 +40,9 @@ class DonationListAPI(APIView):
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
+    @extend_schema(
+        responses={200: OutputSerializer},
+    )
     def get(self, request):
         donations = donation_list()
 
@@ -50,6 +57,10 @@ class DonationCreateAPI(APIView):
             model = Donation
             fields = ["id", "donor", "amount", "campaign"]
 
+    @extend_schema(
+        request=InputSerializer,
+        responses={200: DonationDetailAPI.OutputSerializer},
+    )
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
