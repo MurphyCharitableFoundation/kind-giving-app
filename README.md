@@ -50,7 +50,22 @@ campaign model & Task: create comment model)
 
 ### Important URLs
 
-- localhost:8000/admin - Django admin
+- `localhost:8000/admin` - Django admin
+- `localhost:8000/api/schema/` - Kind Giving App. API Schema as YAML
+- `localhost:8000/api/schema/swagger-ui` - Kind Giving App. API Schema served on Swagger UI
+- `localhost:8000/api/schema/redoc` - Kind Giving App. API Schema served on Redoc UI
+
+### API Docs/Schema
+#### Generating Schema as YAML
+
+Run the following command to verify and generate a schema file
+describing the JSON API exposed by the Kind Giving Application.
+
+```
+
+docker compose run --rm backend sh -c "python manage.py spectacular --color --file schema.yml"
+
+```
 
 ### Installing Project Dependencies
 
@@ -140,13 +155,13 @@ Install your editor's equivalent plugins/packages for:
 
 ```bash
 # Format all files
-npm run format
+docker compose run --rm frontend sh -c "npm run format"
 
 # Lint and fix all files
-npm run lint
+docker compose run --rm frontend sh -c "npm run lint"
 
 # Run both format and lint
-npm run fix
+docker compose run --rm frontend sh -c "npm run fix"
 ```
 
 Files will be automatically formatted on save if your editor is

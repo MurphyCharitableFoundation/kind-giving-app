@@ -1,6 +1,6 @@
 import { PaletteColor, PaletteColorOptions } from "@mui/material/styles";
 
-declare module '@mui/material/styles' {
+declare module "@mui/material/styles" {
   interface Theme {
     custom: {
       surface: {
@@ -141,150 +141,149 @@ declare module '@mui/material/styles' {
       lineHeight: string;
       letterSpacing: string;
     };
-    headlineXlargeTextMedium:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineXlargeTextRegular:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineLargeTextMedium:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineLargeTextRegular:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineMediumTextMedium:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineMediumTextRegular:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineSmallTextMedium:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineSmallTextRegular:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineXsmallTextMedium:{
-      fontSize: string;
-      lineHeight: string;
-      letterSpacing: string;
-    }
-    headlineXsmallTextRegular:{
+    headlineXlargeTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
     };
-    bodyXLarge:{
+    headlineXlargeTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    bodyLarge:{
+    };
+    headlineLargeTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-     bodyMedium:{
+    };
+    headlineLargeTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-     bodySmall:{
+    };
+    headlineMediumTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-     bodyXSmall:{
+    };
+    headlineMediumTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    labelLarge:{
+    };
+    headlineSmallTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    labelMedium:{
+    };
+    headlineSmallTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
+    };
+    headlineXsmallTextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    headlineXsmallTextRegular: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    bodyXLarge: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    bodyLarge: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    bodyMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    bodySmall: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    bodyXSmall: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    labelLarge: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    labelMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    labelSmall: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXLargetextSemibold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXLargetextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleLargetextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleLargetextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleMediumtextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleMediumtextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleSmalltextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleSmalltextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXSmalltextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXSmalltextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
   }
-  labelSmall:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-}
-titleXLargetextSemibold:{
-  fontSize: string;
-  lineHeight: string;
-  letterSpacing: string;
-}
-titleXLargetextMedium:{
-  fontSize: string; 
-  lineHeight: string;
-    letterSpacing: string;
-  }
-  titleLargetextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleLargetextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleMediumtextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleMediumtextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleSmalltextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleSmalltextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleXSmalltextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
 
-  }
-  titleXSmalltextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  }
-  
- interface TypographyVariantsOptions {
+  interface TypographyVariantsOptions {
     displayLarge?: {
       fontSize: string;
       lineHeight: string;
@@ -300,147 +299,145 @@ titleXLargetextMedium:{
       lineHeight: string;
       letterSpacing: string;
     };
-    headlineXlargeTextMedium:{
+    headlineXlargeTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineXlargeTextRegular:{
+    };
+    headlineXlargeTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineLargeTextMedium:{
+    };
+    headlineLargeTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineLargeTextRegular:{
+    };
+    headlineLargeTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineMediumTextMedium:{
+    };
+    headlineMediumTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineMediumTextRegular:{
+    };
+    headlineMediumTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineSmallTextMedium:{
+    };
+    headlineSmallTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineSmallTextRegular:{
+    };
+    headlineSmallTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    headlineXsmallTextMedium:{
+    };
+    headlineXsmallTextMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-  headlineXsmallTextRegular:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-    }
-    bodyXLarge:{
+    };
+    headlineXsmallTextRegular: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    bodyLarge:{
+    };
+    bodyXLarge: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-     bodyMedium:{
+    };
+    bodyLarge: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-     bodySmall:{
+    };
+    bodyMedium: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-     bodyXSmall:{
+    };
+    bodySmall: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    labelLarge:{
+    };
+    bodyXSmall: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-    }
-    labelMedium:{
+    };
+    labelLarge: {
       fontSize: string;
       lineHeight: string;
       letterSpacing: string;
-  }
-  labelSmall:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-}
-titleXLargetextSemibold:{
-  fontSize: string;
-  lineHeight: string;
-  letterSpacing: string;
-}
-titleXLargetextMedium:{
-  fontSize: string; 
-  lineHeight: string;
-    letterSpacing: string;
-  }
-  titleLargetextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleLargetextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleMediumtextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleMediumtextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleSmalltextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleSmalltextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-  titleXSmalltextSemiBold:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-
-  }
-  titleXSmalltextMedium:{
-    fontSize: string;
-    lineHeight: string;
-    letterSpacing: string;
-  }
-
+    };
+    labelMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    labelSmall: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXLargetextSemibold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXLargetextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleLargetextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleLargetextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleMediumtextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleMediumtextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleSmalltextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleSmalltextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXSmalltextSemiBold: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
+    titleXSmalltextMedium: {
+      fontSize: string;
+      lineHeight: string;
+      letterSpacing: string;
+    };
   }
 }

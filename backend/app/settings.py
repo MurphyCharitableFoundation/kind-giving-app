@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "djmoney",
     "django_extensions",
+    "django_filters",
+    "drf_spectacular",
     # Project Apps:
     "core",
     "user",
@@ -164,7 +166,17 @@ AUTH_USER_MODEL = "user.User"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
-    ]
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# DRF-SPECTACULAR
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Kind Giving Application API",
+    "DESCRIPTION": "API docs for Kind Giving Application",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
 }
 
 # ALLAUTH
