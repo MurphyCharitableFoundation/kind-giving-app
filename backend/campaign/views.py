@@ -15,7 +15,12 @@ class CampaignViewSet(viewsets.ModelViewSet):
 
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        """Get permissions by action."""
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -23,7 +28,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        """Get permissions by action."""
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
 
 
 @extend_schema(responses={200: CommentSerializer(many=True)})
