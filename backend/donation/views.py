@@ -15,14 +15,16 @@ User = get_user_model()
 
 
 class DonationDetailAPI(APIView):
+    """Donation Detail API."""
+
     class OutputSerializer(serializers.ModelSerializer):
+        """Donation Detail Output Serializer."""
+
         class Meta:
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
-    @extend_schema(
-        responses={200: OutputSerializer},
-    )
+    @extend_schema(responses={200: OutputSerializer})
     def get(self, request, donation_id):
         donation = donation_get(donation_id)
 
@@ -35,14 +37,16 @@ class DonationDetailAPI(APIView):
 
 
 class DonationListAPI(APIView):
+    """Donation List API."""
+
     class OutputSerializer(serializers.ModelSerializer):
+        """Donation List Output Serializer."""
+
         class Meta:
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
-    @extend_schema(
-        responses={200: OutputSerializer},
-    )
+    @extend_schema(responses={200: OutputSerializer})
     def get(self, request):
         donations = donation_list()
 
@@ -52,7 +56,11 @@ class DonationListAPI(APIView):
 
 
 class DonationCreateAPI(APIView):
+    """Donation Create API."""
+
     class InputSerializer(serializers.ModelSerializer):
+        """Donation Create Input Serializer."""
+
         class Meta:
             model = Donation
             fields = ["id", "donor", "amount", "campaign"]
