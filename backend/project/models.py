@@ -23,11 +23,7 @@ class Cause(models.Model):
         unique=True,
         help_text="Human-readable name of the cause.",
     )
-    description = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Longer explanation of the cause.",
-    )
+    description = models.TextField(blank=True, null=True, help_text="Longer explanation of the cause.")
     icon = models.ImageField(
         upload_to="causes/",
         blank=True,
@@ -64,20 +60,14 @@ class Cause(models.Model):
         defaults = {"description": description}
         if icon:
             defaults["icon"] = icon
-        cause, created = cls.objects.get_or_create(
-            name=name_lower,
-            defaults=defaults,
-        )
+        cause, created = cls.objects.get_or_create(name=name_lower, defaults=defaults)
         return cause, created
 
 
 class Project(TimeStampedModel):
     """Represents a fundraising or campaign project."""
 
-    name = models.CharField(
-        max_length=255,
-        help_text="Short name or title of the project.",
-    )
+    name = models.CharField(max_length=255, help_text="Short name or title of the project.")
     img = models.ImageField(
         upload_to="projects/",
         blank=True,
@@ -132,14 +122,7 @@ class Project(TimeStampedModel):
         project, created = cls.objects.get_or_create(
             name=name,
             defaults={
-                "target": (
-                    target
-                    if isinstance(
-                        target,
-                        Money,
-                    )
-                    else Money(target, "USD")
-                ),
+                "target": (target if isinstance(target, Money) else Money(target, "USD")),
                 **kwargs,
             },
         )
