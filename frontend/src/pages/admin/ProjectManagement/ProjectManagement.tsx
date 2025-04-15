@@ -1,5 +1,5 @@
-import { Box, Button, Card, CardContent, CardMedia, Container, InputBase, Stack, Typography } from '@mui/material'
-import React from 'react'
+import { Box, Button, Card, CardActionArea, CardContent, CardMedia, Container, InputBase, Stack, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AddIcon from '@mui/icons-material/Add';
@@ -9,15 +9,23 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import projectImage from '../../../assets/images/project-image-sample.png';
 import TargetProgressBar from '../../../components/TargetProgressBar';
 import theme from '../../../theme/theme';
+import { fetchAllProjects, Project } from '../../../utils/projectsEndpoints';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectManagement: React.FC = () => {
+    const navigate = useNavigate();
+    const [projects, setProjects] = useState<Project[]>([]);
 
-    const projects = [
-        { title: "Project Title", description: "Lupita needs a medical fee for her son’s surgery", progress: 40, goal: 1000, raised: 400 },
-        { title: "Another Project", description: "Helping kids get school supplies", progress: 60, goal: 500, raised: 300 },
-        { title: "Project Title", description: "Lupita needs a medical fee for her son’s surgery", progress: 40, goal: 1000, raised: 400 },
-        { title: "Another Project", description: "Helping kids get school supplies", progress: 60, goal: 500, raised: 300 },
-    ];
+    useEffect(() => {
+        fetchAllProjects()
+            .then(setProjects)
+            .catch((err) => console.error("Failed to fetch projects: ", err))
+    }, [])
+
+    const handleProjectPress = (projectId: number) => {
+        console.log(projectId)
+        navigate(`/admin/projects/${projectId}`)
+    }
 
     return (
         <Container sx={{ padding: 0 }}>
@@ -47,7 +55,8 @@ const ProjectManagement: React.FC = () => {
                     marginTop: '10px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '16px'
+                    gap: '16px',
+                    minHeight: '100vh'
                 }}
             >
                 {/* Search Projects Input */}
@@ -88,43 +97,58 @@ const ProjectManagement: React.FC = () => {
                     spacing='10px'
                 >
                     {projects.map((project) => (
-                        <Card
-                            sx={{ borderRadius: '12px' }}
-                            elevation={4}
+                        <CardActionArea
+                            onClick={() => handleProjectPress(project.id)}
                         >
-                            <CardMedia
-                                sx={{ height: 188 }}
-                                image={projectImage}
-                            />
-                            <CardContent
-                                sx={{ paddingY: '20px' }}
+                            <Card
+                                sx={{
+                                    borderRadius: '12px',
+                                    transition: 'box-shadow 0.3s ease-in-out',
+                                    cursor: 'pointer',
+                                    '&:hover': {
+                                        boxShadow: 8,
+                                    }
+                                }}
+                                elevation={4}
                             >
-                                <Box
-                                    sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+                                <CardMedia
+                                    sx={{ height: 188 }}
+                                    image={projectImage}
+                                />
+                                <CardContent
+                                    sx={{ paddingY: '20px' }}
                                 >
                                     <Box
-                                        sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                                        sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
                                     >
+                                        <Box
+                                            sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                                        >
+                                            <Typography>
+                                                {/* {project.title} */}
+                                                {project.name}
+                                            </Typography>
+                                            <CircleIcon sx={{ fontSize: '24px', color: theme.status.success.main }} />
+                                        </Box>
                                         <Typography>
-                                            {project.title}
+                                            {/* {project.description} */}
+                                            No description
                                         </Typography>
-                                        <CircleIcon sx={{ fontSize: '24px', color: theme.status.success.main }} />
+                                        <TargetProgressBar progress={80} />
+                                        <Typography>
+                                            <Typography component="span" sx={{ color: theme.palette.primary.main, fontWeight: "bold", mr: 0.5 }}>
+                                                {/* ${project.raised} */}
+                                                $800
+                                            </Typography>
+                                            <Typography component="span" sx={{ fontWeight: "bold" }}>
+                                                {/* of ${project.goal} */}
+                                                of $1000
+                                            </Typography>
+                                        </Typography>
                                     </Box>
-                                    <Typography>
-                                        {project.description}
-                                    </Typography>
-                                        <TargetProgressBar progress={project.progress} />
-                                    <Typography>
-                                        <Typography component="span" sx={{ color: theme.palette.primary.main, fontWeight: "bold", mr: 0.5 }}>
-                                            ${project.raised}
-                                        </Typography>
-                                        <Typography component="span" sx={{ fontWeight: "bold" }}>
-                                            of ${project.goal}
-                                        </Typography>
-                                    </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
+                                </CardContent>
+                            </Card>
+                        </CardActionArea>
                     ))}
                 </Stack>
             </Box>

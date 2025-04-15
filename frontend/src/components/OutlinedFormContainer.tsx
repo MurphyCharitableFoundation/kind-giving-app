@@ -1,6 +1,6 @@
 import React from "react";
 import { FormControl, OutlinedInput, InputLabel, Box } from "@mui/material";
-import { styled } from '@mui/material/styles';
+import { styled, SxProps, Theme } from '@mui/material/styles';
 
 const NotchedOutlinedInput = styled(OutlinedInput)`
   & .MuiOutlinedInput-notchedOutline legend{
@@ -20,6 +20,7 @@ const OutlinedFormControl = styled(FormControl)`
 interface OutlinedFormContainerProps {
     label: string;
     children: React.ReactNode;
+    sx?: SxProps<Theme>;
 }
 
 const OutlinedFormContainer: React.FC<OutlinedFormContainerProps> = ({ label, children }) => {

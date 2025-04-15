@@ -2,26 +2,73 @@ import { Avatar, Box, Button, Card, CardContent, CardMedia, Container, Divider, 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import theme from '../../../theme/theme';
 import projectImage from '../../../assets/images/project-image-sample.png';
 import SaveIcon from '@mui/icons-material/Save';
 import OutlinedFormContainer from '../../../components/OutlinedFormContainer';
+import ProjectImagesCarousel from '../../../components/ProjectImagesCarousel';
+import CausesInput from '../../../components/CausesInput';
+import { fetchProjectById, updateProject } from '../../../utils/projectsEndpoints';
+import { useParams } from 'react-router-dom';
+
+interface ProjectFormData {
+    causes: string[];
+    title: string;
+    description: string;
+    status: string;
+}
 
 const ProjectDetails: React.FC = () => {
+    const projectId = Number(useParams().projectId);
+    const [originalData, setOriginalData] = useState<ProjectFormData | null>(null);
+    const [editableData, setEditableData] = useState<ProjectFormData | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const handleEditClick = () => setIsEditing(true);
-    const handleCancelClick = () => setIsEditing(false);
 
-    const [editableData, setEditableData] = useState({
-        causes: ['Women', 'Children'],
-        title: 'Lorem ipsum dolor sit amet, consectetur adipiscing',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        status: 'Running',
-    });
+    useEffect(() => {
+        fetchProjectById(projectId).then((project) => {
+            const formattedData = {
+                causes: project.causes || [],
+                title: project.name,
+                description: 'Description',
+                status: 'Active',
+            };
+            setOriginalData(formattedData);
+            setEditableData(formattedData);
+        }).finally(() => setIsLoading(false));
+    }, [projectId]);
 
-    const handleChange = (field: keyof typeof editableData, value: string) => {
-        setEditableData(prev => ({ ...prev, [field]: value }));
+    const handleCancelClick = () => {
+        if (originalData) setEditableData(originalData);
+        setIsEditing(false);
+    };
+
+    const handleSaveClick = async () => {
+        if (!editableData) return;
+        try {
+            const patchData = {
+                name: editableData.title,
+                causes_names: editableData.causes
+                //todo -> more possible fields to edit
+            };
+            console.log('Request payload:', JSON.stringify(patchData));
+            await updateProject(projectId, patchData);
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Failed to update project:", error);
+        }
+    }
+
+    const handleChange = (field: keyof ProjectFormData, value: string | string[]) => {
+        setEditableData(prev => {
+            if (!prev) return null;
+            return {
+                ...prev,
+                [field]: value
+            };
+        });
     };
 
     return (
@@ -64,29 +111,15 @@ const ProjectDetails: React.FC = () => {
             <Box
                 sx={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '10px', padding: '15px', bgcolor: isEditing ? 'white' : theme.custom.misc.background }}
             >
-                {/* Causes */}
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {!isEditing && (
-                        <Typography color={theme.palette.primary.main}>Causes</Typography>
-                    )}
-                    {isEditing ? (
-                        <TextField
-                            fullWidth
-                            label='Causes'
-                            variant="outlined"
-                            value={editableData.causes.join(', ')}
-                            onChange={(e) => handleChange('causes', e.target.value)}
-                        />
-                    ) : (
-                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: '13px' }}>
-                            {editableData.causes.map((cause, index) => (
-                                <Button key={index} variant="contained" disableElevation sx={{ borderRadius: '40px', bgcolor: theme.palette.secondary.container, textTransform: 'none' }}>
-                                    <Typography color={theme.palette.primary.main}>{cause}</Typography>
-                                </Button>
-                            ))}
-                        </Box>
-                    )}
-                </Box>
+                <CausesInput
+                    isEditing={isEditing}
+                    causes={editableData?.causes || []}  // Provide fallback empty array
+                    onCausesChange={(newCauses) => {
+                        if (editableData) {
+                            handleChange('causes', newCauses);
+                        }
+                    }}
+                />
                 {/* Title */}
                 <Box
                     sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -98,11 +131,11 @@ const ProjectDetails: React.FC = () => {
                             fullWidth
                             variant="outlined"
                             label="Title"
-                            value={editableData.title}
+                            value={editableData?.title}
                             onChange={(e) => handleChange('title', e.target.value)}
                         />
                     ) : (
-                        <Typography color={theme.custom.surface.onColor}>{editableData.title}</Typography>
+                        <Typography color={theme.custom.surface.onColor}>{editableData?.title}</Typography>
                     )}
                 </Box>
                 {/* Description */}
@@ -117,23 +150,18 @@ const ProjectDetails: React.FC = () => {
                             multiline
                             label="Description"
                             variant="outlined"
-                            value={editableData.description}
+                            value={editableData?.description}
                             onChange={(e) => handleChange('description', e.target.value)}
                         />
                     ) : (
-                        <Typography color={theme.custom.surface.onColor}>{editableData.description}</Typography>
+                        <Typography color={theme.custom.surface.onColor}>{editableData?.description}</Typography>
                     )}
                 </Box>
                 {/* Images Carousel */}
                 {!isEditing && (
                     <>
                         <Typography color={theme.palette.primary.main}>Images</Typography>
-                        <Card>
-                            <CardMedia
-                                sx={{ height: 188 }}
-                                image={projectImage}
-                            />
-                        </Card>
+                        <ProjectImagesCarousel />
                     </>
                 )}
                 {/* Project details */}
@@ -154,7 +182,7 @@ const ProjectDetails: React.FC = () => {
                     ) : (
                         <>
                             <Typography color={theme.palette.primary.main}>Status</Typography>
-                            <Typography color={theme.custom.surface.onColor}>{editableData.status}</Typography>
+                            <Typography color={theme.custom.surface.onColor}>{editableData?.status}</Typography>
                         </>
                     )}
                 </Box>
@@ -333,6 +361,7 @@ const ProjectDetails: React.FC = () => {
                         variant="contained"
                         disableElevation={true}
                         sx={{ borderRadius: '40px', paddingY: '12px', paddingX: '42px', textTransform: 'none', width: '131px', height: '47px' }}
+                        onClick={handleSaveClick}
                     >
                         Save
                     </Button>

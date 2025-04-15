@@ -40,7 +40,7 @@ const routes = [
     element: <ProjectManagement/>
   },
   {
-    path: "/admin/project-details",
+    path: "/admin/projects/:projectId",
     element: <ProjectDetails/>
   }
 ];

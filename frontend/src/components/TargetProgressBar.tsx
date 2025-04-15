@@ -4,7 +4,7 @@ import theme from '../theme/theme';
 
 interface TargetProgressBarProps {
     progress: number;
-  }
+}
 
 const TargetProgressBar: React.FC<TargetProgressBarProps> = ({progress}) => {
 
