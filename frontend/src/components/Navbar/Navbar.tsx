@@ -11,6 +11,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 
 import theme from "../../theme/theme";
 
@@ -84,7 +85,7 @@ const Navbar = ({ children }: NavbarProps) => {
       <Container
         maxWidth="xl"
         sx={{
-          backgroundColor: {
+          bgcolor: {
             lg: theme.palette.primary.main,
             xl: theme.palette.primary.main,
             md: theme.palette.primary.main,
@@ -239,7 +240,14 @@ const Navbar = ({ children }: NavbarProps) => {
           <Box sx={{ flexGrow: 0, marginLeft: 5 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Gemy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar sx={{ backgroundColor: "inherit" }}>
+                  <AccountCircleOutlinedIcon
+                    sx={{
+                      fontSize: "24px",
+                      color: theme.custom.surface.onColor,
+                    }}
+                  />
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
