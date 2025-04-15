@@ -6,7 +6,6 @@ import theme from "../../theme/theme";
 const SearchBar = () => {
   return (
     <>
-      {/* Search bar for Causes */}
       <Box
         sx={{
           display: "flex",
