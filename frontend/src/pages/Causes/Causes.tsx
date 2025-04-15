@@ -1,9 +1,9 @@
-import Header from "../../components/Header/Header";
+import Navbar from "../../components/Navbar/Navbar";
 
 const Causes = () => {
   return (
     <>
-      <Header>Causes</Header>
+      <Navbar>Causes</Navbar>
     </>
   );
 };

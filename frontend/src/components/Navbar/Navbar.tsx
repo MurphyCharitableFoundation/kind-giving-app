@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,27 +12,26 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import theme from "../../theme/theme";
 
 import Logo from "../../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 
+interface NavbarProps {
+  children?: string;
+}
+
 const pages = ["Projects", "Campaigns", "Causes"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export const NavBar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
+const Navbar = ({ children }: NavbarProps) => {
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 
@@ -45,14 +44,13 @@ export const NavBar = () => {
   };
   const navigate = useNavigate();
 
+  // function to handle redirecting the user to the clicked route
   const handleClick = (e: string) => {
     if (pages.includes(e)) {
-      console.log(e, "clicked");
       for (let i = 0; i < pages.length; i++) {
         if (pages[i] === e) {
-          console.log(pages[i]);
+          navigate("/" + e.toLowerCase());
         }
-        navigate("/" + e);
       }
     }
   };
@@ -73,21 +71,30 @@ export const NavBar = () => {
   useEffect(() => {
     updateFavicon();
   }, []);
+
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      sx={{
+        boxShadow: {
+          xs: "none",
+        },
+      }}
+    >
       <Container
         maxWidth="xl"
         sx={{
-          color: {
+          backgroundColor: {
             lg: theme.palette.primary.main,
             xl: theme.palette.primary.main,
             md: theme.palette.primary.main,
-            sm: theme.palette.primary.fixedDim,
-            xs: theme.palette.primary.fixedDim,
+            sm: theme.palette.primary.main,
+            xs: theme.custom.surface.main,
           },
         }}
       >
         <Toolbar disableGutters>
+          {/* logo div */}
           <Box
             component="img"
             sx={{
@@ -108,9 +115,10 @@ export const NavBar = () => {
             src={Logo}
           />
 
+          {/* left part of the navbar */}
           <Box
             sx={{
-              flexGrow: 1,
+              flexGrow: 0,
               display: {
                 xs: "flex",
                 md: "none",
@@ -120,16 +128,22 @@ export const NavBar = () => {
               },
             }}
           >
+            {/* hamburger menu button */}
             <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              sx={{
+                marginRight: "16px",
+                color: theme.custom.surface.onColor,
+              }}
             >
               <MenuIcon />
             </IconButton>
+
+            {/* dropdown list that appears when we click the hamburger button */}
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
@@ -159,23 +173,35 @@ export const NavBar = () => {
               ))}
             </Menu>
           </Box>
-          {/* <Typography
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+
+          {/* navbar options for smaller screens*/}
+          <Box
             sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
+              display: {
+                xs: "flex",
+                sm: "none",
+                md: "none",
+                lg: "none",
+                xl: "none",
+                justifyContent: "center",
+              },
             }}
           >
-            LOGO
-          </Typography> */}
+            <Typography
+              variant="titleXLargetextMedium"
+              sx={{
+                my: 2,
+                color: theme.custom.surface.onColor,
+                display: "block",
+                textTransform: "none",
+              }}
+            >
+              {children}
+            </Typography>
+          </Box>
+
+          {/* navbar options for larger screens*/}
           <Box
             sx={{
               flexGrow: 1,
@@ -186,16 +212,16 @@ export const NavBar = () => {
                 lg: "flex",
                 xl: "flex",
                 justifyContent: "end",
+                gap: 40,
               },
             }}
           >
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handleClick(page)}
                 sx={{
                   my: 2,
-                  ml: 5,
                   color: "white",
                   display: "block",
                   textTransform: "none",
@@ -208,8 +234,9 @@ export const NavBar = () => {
               </Button>
             ))}
           </Box>
+
           {/* Avatar */}
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, marginLeft: 5 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Gemy Sharp" src="/static/images/avatar/2.jpg" />
@@ -240,13 +267,10 @@ export const NavBar = () => {
               ))}
             </Menu>
           </Box>
-          <IconButton onClick={handleOpenUserMenu}>
-            <KeyboardArrowDownIcon
-              sx={{ display: { xs: "none" }, color: "white" }}
-            />
-          </IconButton>
         </Toolbar>
       </Container>
     </AppBar>
   );
 };
+
+export default Navbar;
