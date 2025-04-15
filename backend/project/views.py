@@ -14,8 +14,9 @@ from rest_framework.generics import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.permissions import IsAdminUser
+
 from .models import Cause, Project, ProjectAssignment
-from .permissions import IsAdminUser
 from .serializers import (
     CauseSerializer,
     ProjectAssignmentSerializer,
@@ -30,7 +31,6 @@ class CauseListCreateView(ListCreateAPIView):
 
     queryset = Cause.objects.all()
     serializer_class = CauseSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         """Ensure only admins can create causes."""
@@ -45,7 +45,12 @@ class CauseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Cause.objects.all()
     serializer_class = CauseSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get_permissions(self):
+        """Get permissions by action."""
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated(), IsAdminUser()]
 
     def perform_destroy(self, instance):
         """Prevent delete if any project is using this cause."""
@@ -59,7 +64,6 @@ class ProjectListCreateView(ListCreateAPIView):
 
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         """Ensure only admins can create projects."""
@@ -74,7 +78,12 @@ class ProjectRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get_permissions(self):
+        """Get permissions by action."""
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated(), IsAdminUser()]
 
 
 class AssignBeneficiaryView(APIView):
@@ -156,7 +165,6 @@ class ListAssignmentsView(ListAPIView):
     """List all assignments for a given Project."""
 
     serializer_class = ProjectAssignmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         project_id = self.kwargs["project_id"]

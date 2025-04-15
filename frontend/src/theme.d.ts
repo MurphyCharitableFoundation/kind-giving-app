@@ -1,4 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PaletteColor, PaletteColorOptions } from "@mui/material/styles";
+import "@mui/material/Typography";
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -439,5 +441,56 @@ declare module "@mui/material/styles" {
       lineHeight: string;
       letterSpacing: string;
     };
+  }
+}
+
+declare module "@mui/material/Typography" {
+  interface TypographyPropsVariantOverrides {
+    displayLarge: true;
+    displayMedium: true;
+    displaySmall: true;
+    headlineXlargeTextMedium: true;
+    headlineXlargeTextRegular: true;
+    headlineLargeTextMedium: true;
+    headlineLargeTextRegular: true;
+    headlineMediumTextMedium: true;
+    headlineMediumTextRegular: true;
+    headlineSmallTextMedium: true;
+    headlineSmallTextRegular: true;
+    headlineXsmallTextMedium: true;
+    headlineXsmallTextRegular: true;
+    bodyXLarge: true;
+    bodyLarge: true;
+    bodyMedium: true;
+    bodySmall: true;
+    bodyXSmall: true;
+    labelLarge: true;
+    labelMedium: true;
+    labelSmall: true;
+    titleXLargetextSemibold: true;
+    titleXLargetextMedium: true;
+    titleLargetextSemiBold: true;
+    titleLargetextMedium: true;
+    titleMediumtextSemiBold: true;
+    titleMediumtextMedium: true;
+    titleSmalltextSemiBold: true;
+    titleSmalltextMedium: true;
+    titleXSmalltextSemiBold: true;
+    titleXSmalltextMedium: true;
+
+    h1: true;
+    h2: true;
+    h3: true;
+    h4: true;
+    h5: true;
+    h6: true;
+    subtitle1: true;
+    subtitle2: true;
+    body1: true;
+    body2: true;
+    caption: true;
+    button: true;
+    overline: true;
+    inherit: true;
   }
 }

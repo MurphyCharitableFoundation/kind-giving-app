@@ -8,6 +8,7 @@ import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequ
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
 import ProjectManagement from "./pages/admin/ProjectManagement/ProjectManagement";
 import ProjectDetails from "./pages/admin/ProjectManagement/ProjectDetails";
+import Causes from "./pages/Causes/Causes";
 
 const routes = [
   {
@@ -42,6 +43,10 @@ const routes = [
   {
     path: "/admin/projects/:projectId",
     element: <ProjectDetails/>
+  },
+  {
+    path: "/causes",
+    element: <Causes />
   }
 ];
 
