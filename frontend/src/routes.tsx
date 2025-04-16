@@ -37,11 +37,11 @@ const routes = [
     element: <PasswordResetConfirm />,
   },
   {
-    path: "/admin/projects",
+    path: "/projects",
     element: <ProjectManagement/>
   },
   {
-    path: "/admin/projects/:projectId",
+    path: "/projects/:projectId",
     element: <ProjectDetails/>
   },
   {

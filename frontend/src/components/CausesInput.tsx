@@ -35,7 +35,7 @@ const CausesInput: React.FC<CausesInputProps> = ({
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {!isEditing && (
-                <Typography color={theme.palette.primary.main}>Causes</Typography>
+                <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Causes</Typography>
             )}
             {isEditing ? (
                 <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1, p: 1, border: '1px solid #ccc', borderRadius: '8px' }}>

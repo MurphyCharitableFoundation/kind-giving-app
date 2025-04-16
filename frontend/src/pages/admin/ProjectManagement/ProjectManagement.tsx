@@ -11,6 +11,9 @@ import TargetProgressBar from '../../../components/TargetProgressBar';
 import theme from '../../../theme/theme';
 import { fetchAllProjects, Project } from '../../../utils/projectsEndpoints';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../../components/Navbar/Navbar';
+import NewItemButton from '../../../components/NewItemButton/NewItemButton';
+import SearchBar from '../../../components/SearchBar/SearchBar';
 
 const ProjectManagement: React.FC = () => {
     const navigate = useNavigate();
@@ -24,30 +27,14 @@ const ProjectManagement: React.FC = () => {
 
     const handleProjectPress = (projectId: number) => {
         console.log(projectId)
-        navigate(`/admin/projects/${projectId}`)
+        navigate(`/projects/${projectId}`)
     }
 
     return (
         <Container sx={{ padding: 0 }}>
             {/* Header */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    paddingY: '18px',
-                    paddingX: '16px',
-                    bgcolor: theme.custom.misc.background,
-                }}
-            >
-                <Box
-                    sx={{ display: 'flex', flexDirection: 'row', gap: '18px' }}
-                >
-                    <MenuIcon sx={{ fontSize: '24px' }} />
-                    <Typography>Projects</Typography>
-                </Box>
-                <AccountCircleIcon sx={{ fontSize: '24px' }} />
-            </Box>
+            <Navbar>Projects</Navbar>
+            {/* Main container */}
             <Box
                 sx={{
                     padding: '15px',
@@ -60,37 +47,9 @@ const ProjectManagement: React.FC = () => {
                 }}
             >
                 {/* Search Projects Input */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        borderRadius: '40px',
-                        padding: '16px',
-                        alignItems: 'center',
-                        gap: '4px',
-                        bgcolor: theme.custom.surfaceContainer.high,
-                    }}
-                >
-                    <FilterListIcon sx={{ fontSize: '24px', color: theme.custom.surface.onColor }} />
-                    <InputBase placeholder='Search projects' sx={{ flex: 1 }} />
-                    <SearchIcon sx={{ fontSize: '24px', marginRight: '40px', color: theme.custom.surface.onColorVariant }} />
-                </Box>
+                <SearchBar />
                 {/* New project button */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', }}>
-                    <Button
-                        startIcon={<AddIcon sx={{ fontSize: '18px' }} />}
-                        variant='contained'
-                        disableElevation
-                        sx={{
-                            borderRadius: '40px',
-                            textTransform: 'none',
-                            paddingY: '10px',
-                            paddingX: '24px',
-                            alignItems: 'center'
-                        }}>
-                        <Typography>New Project</Typography>
-                    </Button>
-                </Box>
+                <NewItemButton>New Project</NewItemButton>
                 {/* List of projects */}
                 <Stack
                     direction='column'
@@ -124,19 +83,19 @@ const ProjectManagement: React.FC = () => {
                                         <Box
                                             sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                                         >
-                                            <Typography>
+                                            <Typography variant='titleLargetextSemiBold'>
                                                 {/* {project.title} */}
                                                 {project.name}
                                             </Typography>
                                             <CircleIcon sx={{ fontSize: '24px', color: theme.status.success.main }} />
                                         </Box>
-                                        <Typography>
+                                        <Typography variant='bodySmall'>
                                             {/* {project.description} */}
                                             No description
                                         </Typography>
                                         <TargetProgressBar progress={80} />
                                         <Typography>
-                                            <Typography component="span" sx={{ color: theme.palette.primary.main, fontWeight: "bold", mr: 0.5 }}>
+                                            <Typography component="span" sx={{ color: theme.palette.primary.main, fontWeight: 'bold', mr: 0.5 }}>
                                                 {/* ${project.raised} */}
                                                 $800
                                             </Typography>

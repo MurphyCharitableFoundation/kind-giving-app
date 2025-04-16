@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, CardContent, CardMedia, Container, Divider, FormControlLabel, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material'
+import { Avatar, Box, Button, Card, CardContent, CardMedia, Container, Divider, FormControlLabel, IconButton, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,7 +10,9 @@ import OutlinedFormContainer from '../../../components/OutlinedFormContainer';
 import ProjectImagesCarousel from '../../../components/ProjectImagesCarousel';
 import CausesInput from '../../../components/CausesInput';
 import { fetchProjectById, updateProject } from '../../../utils/projectsEndpoints';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import Navbar from '../../../components/Navbar/Navbar';
+import { Padding } from '@mui/icons-material';
 
 interface ProjectFormData {
     causes: string[];
@@ -20,6 +22,7 @@ interface ProjectFormData {
 }
 
 const ProjectDetails: React.FC = () => {
+    const navigate = useNavigate();
     const projectId = Number(useParams().projectId);
     const [originalData, setOriginalData] = useState<ProjectFormData | null>(null);
     const [editableData, setEditableData] = useState<ProjectFormData | null>(null);
@@ -74,6 +77,7 @@ const ProjectDetails: React.FC = () => {
     return (
         <Container sx={{ padding: 0 }}>
             {/* Header */}
+            <Navbar>Projects</Navbar>
             <Box
                 sx={{
                     display: 'flex',
@@ -87,12 +91,16 @@ const ProjectDetails: React.FC = () => {
                 }}
             >
                 <Box
-                    sx={{ display: 'flex', flexDirection: 'row', gap: '8px' }}
+                    sx={{ display: 'flex', flexDirection: 'row', gap: '8px', alignItems: 'center'}}
                 >
-                    <Box>
-                        <ArrowBackIcon />
-                    </Box>
-                    <Typography>Project details</Typography>
+                    <IconButton 
+                    aria-label='navigate back to projects' 
+                    onClick={() => navigate('/projects')}
+                    sx={{padding: 0, display: 'flex', alignItems: 'center'}}
+                    >  
+                        <ArrowBackIcon/>
+                    </IconButton>
+                    <Typography variant='titleXLargetextMedium'>Project details</Typography>
                 </Box>
                 {!isEditing && (
                     <Box
@@ -124,7 +132,7 @@ const ProjectDetails: React.FC = () => {
                 <Box
                     sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {!isEditing && (
-                        <Typography color={theme.palette.primary.main}>Title</Typography>
+                        <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Title</Typography>
                     )}
                     {isEditing ? (
                         <TextField
@@ -135,14 +143,14 @@ const ProjectDetails: React.FC = () => {
                             onChange={(e) => handleChange('title', e.target.value)}
                         />
                     ) : (
-                        <Typography color={theme.custom.surface.onColor}>{editableData?.title}</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>{editableData?.title}</Typography>
                     )}
                 </Box>
                 {/* Description */}
                 <Box
                     sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {!isEditing && (
-                        <Typography color={theme.palette.primary.main}>Description</Typography>
+                        <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Description</Typography>
                     )}
                     {isEditing ? (
                         <TextField
@@ -154,13 +162,13 @@ const ProjectDetails: React.FC = () => {
                             onChange={(e) => handleChange('description', e.target.value)}
                         />
                     ) : (
-                        <Typography color={theme.custom.surface.onColor}>{editableData?.description}</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>{editableData?.description}</Typography>
                     )}
                 </Box>
                 {/* Images Carousel */}
                 {!isEditing && (
                     <>
-                        <Typography color={theme.palette.primary.main}>Images</Typography>
+                        <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Images</Typography>
                         <ProjectImagesCarousel />
                     </>
                 )}
@@ -181,8 +189,8 @@ const ProjectDetails: React.FC = () => {
                         </OutlinedFormContainer>
                     ) : (
                         <>
-                            <Typography color={theme.palette.primary.main}>Status</Typography>
-                            <Typography color={theme.custom.surface.onColor}>{editableData?.status}</Typography>
+                            <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Status</Typography>
+                            <Typography color={theme.custom.surface.onColor} variant='bodySmall'>{editableData?.status}</Typography>
                         </>
                     )}
                 </Box>
@@ -193,14 +201,14 @@ const ProjectDetails: React.FC = () => {
                     <Box
                         sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'start' }}
                     >
-                        <Typography color={theme.palette.primary.main}>Start</Typography>
-                        <Typography color={theme.custom.surface.onColor}>19/19/2022</Typography>
+                        <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Start</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>19/19/2022</Typography>
                     </Box>
                     <Box
                         sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'start' }}
                     >
-                        <Typography color={theme.palette.primary.main}>End</Typography>
-                        <Typography color={theme.custom.surface.onColor}>19/19/2292</Typography>
+                        <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>End</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>19/19/2292</Typography>
                     </Box>
                 </Box>
                 <Box
@@ -209,14 +217,14 @@ const ProjectDetails: React.FC = () => {
                     <Box
                         sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'start' }}
                     >
-                        <Typography color={theme.palette.primary.main}>Target</Typography>
-                        <Typography color={theme.custom.surface.onColor}>$500</Typography>
+                        <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Target</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>$500</Typography>
                     </Box>
                     <Box
                         sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'start' }}
                     >
-                        <Typography color={theme.palette.primary.main}>Achieved</Typography>
-                        <Typography color={theme.custom.surface.onColor}>$444</Typography>
+                        <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Achieved</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>$444</Typography>
                     </Box>
                 </Box>
                 {/* Beneficaries list */}
@@ -226,7 +234,7 @@ const ProjectDetails: React.FC = () => {
                         <Box
                             sx={{ display: 'flex', flexDirection: 'column' }}
                         >
-                            <Typography color={theme.custom.surface.onColor}>Beneficaries</Typography>
+                            <Typography color={theme.custom.surface.onColor} variant='titleXLargetextMedium'>Beneficaries</Typography>
                             <Stack
                                 direction='column'
                                 spacing='7px'
@@ -245,18 +253,18 @@ const ProjectDetails: React.FC = () => {
                                             <Box
                                                 sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
                                             >
-                                                <Typography color={theme.custom.misc.shadow}>Group name</Typography>
+                                                <Typography color={theme.custom.misc.shadow} variant='titleSmalltextMedium'>Group name</Typography>
                                                 {/* Beneficiaries interests */}
-                                                <Typography color={theme.custom.surface.onColorVariant}>
+                                                <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
                                                     Interests: {" "}
-                                                    <Typography component="span" color={theme.custom.surface.onColorVariant}>
+                                                    <Typography component="span" color={theme.custom.surface.onColorVariant} variant='bodySmall'>
                                                         Women loan supports, babysit,
                                                     </Typography>
                                                 </Typography>
                                                 {/* Amount disbursed to beneficiary */}
-                                                <Typography color={theme.custom.surface.onColorVariant}>
+                                                <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
                                                     Disbursed: {" "}
-                                                    <Typography component="span" color={theme.status.success.main} fontWeight="bold">
+                                                    <Typography component="span" color={theme.status.success.main} fontWeight="bold" variant='bodyLarge'>
                                                         $75.00
                                                     </Typography>
                                                 </Typography>
@@ -267,7 +275,7 @@ const ProjectDetails: React.FC = () => {
                                 <Button
                                     variant='contained'
                                     disableElevation
-                                    sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px' }}
+                                    sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px', textTransform: 'none'}}
                                 >
                                     <Typography color={theme.palette.primary.main}>View all</Typography>
                                 </Button>
@@ -281,7 +289,7 @@ const ProjectDetails: React.FC = () => {
                     <Box
                         sx={{ display: 'flex', flexDirection: 'column' }}
                     >
-                        <Typography color={theme.custom.surface.onColor}>Campaigns</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='titleXLargetextMedium'>Campaigns</Typography>
                         <Stack
                             direction='column'
                             spacing='7px'
@@ -300,22 +308,22 @@ const ProjectDetails: React.FC = () => {
                                         <Box
                                             sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
                                         >
-                                            <Typography color={theme.custom.misc.shadow}>Group name</Typography>
-                                            <Typography color={theme.custom.surface.onColorVariant}>Description duis aute irure dolor in voluptate velit.</Typography>
+                                            <Typography color={theme.custom.misc.shadow} variant='titleSmalltextMedium'>Group name</Typography>
+                                            <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>Description duis aute irure dolor in voluptate velit.</Typography>
                                         </Box>
                                     </CardContent>
                                 </Box>
                                 <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                     {/* Campaign collected amount */}
-                                    <Typography color={theme.custom.surface.onColorVariant}>
+                                    <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
                                         Collected:{" "}
-                                        <Typography component="span" color={theme.status.success.main} fontWeight="bold">
+                                        <Typography component="span" color={theme.status.success.main} fontWeight="bold" variant='bodyLarge'>
                                             $75.00
                                         </Typography>
                                     </Typography>
                                     {/* Campaign donations count */}
-                                    <Typography color={theme.custom.surface.onColorVariant}>
-                                        <Typography component="span" color={theme.status.success.main} fontWeight="bold">
+                                    <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
+                                        <Typography component="span" color={theme.status.success.main} fontWeight="bold" variant='bodyLarge'>
                                             9
                                         </Typography>{" "}
                                         Donations
@@ -325,7 +333,7 @@ const ProjectDetails: React.FC = () => {
                             <Button
                                 variant='contained'
                                 disableElevation
-                                sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px' }}
+                                sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px', textTransform: 'none' }}
                             >
                                 <Typography color={theme.palette.primary.main}>View all</Typography>
                             </Button>
