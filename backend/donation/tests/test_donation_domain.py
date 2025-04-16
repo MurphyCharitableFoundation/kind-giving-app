@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from djmoney.money import Money
 
-from campaign.models import Campaign
+from campaign.services import campaign_create
 from project.models import Project
 
 from ..selectors import campaign_donations, donation_get, donation_list
@@ -25,14 +25,16 @@ class DonationModelTest(TestCase):
         self.project1, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
         self.project2, _ = Project.create_project(name="Project B", target=Money(20000, "USD"))
 
-        self.campaign1, _ = Campaign.create_campaign(
+        self.campaign1 = campaign_create(
             title="Education for All",
+            description="Education for All.",
             project=self.project1,
             owner=self.user,
             target=Money(5000, "USD"),
         )
-        self.campaign2, _ = Campaign.create_campaign(
+        self.campaign2 = campaign_create(
             title="Clean Water Initiative",
+            description="Clean Water Initiative.",
             project=self.project2,
             owner=self.user,
             target=Money(8000, "USD"),
@@ -121,14 +123,16 @@ class DonationSelectorTest(TestCase):
         self.project1, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
         self.project2, _ = Project.create_project(name="Project B", target=Money(20000, "USD"))
 
-        self.campaign1, _ = Campaign.create_campaign(
+        self.campaign1 = campaign_create(
             title="Education for All",
+            description="Education for All",
             project=self.project1,
             owner=self.user,
             target=Money(5000, "USD"),
         )
-        self.campaign2, _ = Campaign.create_campaign(
+        self.campaign2 = campaign_create(
             title="Clean Water Initiative",
+            description="Clean Water Initiative",
             project=self.project2,
             owner=self.user,
             target=Money(8000, "USD"),

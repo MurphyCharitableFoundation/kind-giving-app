@@ -6,7 +6,7 @@ from djmoney.money import Money
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from campaign.models import Campaign
+from campaign.services import campaign_create
 from core.services import to_money
 from donation.models import Donation
 from project.models import Project
@@ -23,8 +23,9 @@ class DonationAPITestCase(APITestCase):
 
         # Create a project and campaign
         self.project, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
-        self.campaign, _ = Campaign.create_campaign(
+        self.campaign = campaign_create(
             title="Education for All",
+            description="Education for All",
             project=self.project,
             owner=self.user,
             target=Money(5000, "USD"),
