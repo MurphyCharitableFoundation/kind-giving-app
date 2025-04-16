@@ -3,6 +3,7 @@
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
 from djmoney.money import Money
@@ -23,7 +24,11 @@ class Cause(models.Model):
         unique=True,
         help_text="Human-readable name of the cause.",
     )
-    description = models.TextField(blank=True, null=True, help_text="Longer explanation of the cause.")
+    description = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Longer explanation of the cause.",
+    )
     icon = models.ImageField(
         upload_to="causes/",
         blank=True,
@@ -60,12 +65,24 @@ class Cause(models.Model):
         defaults = {"description": description}
         if icon:
             defaults["icon"] = icon
-        cause, created = cls.objects.get_or_create(name=name_lower, defaults=defaults)
+        cause, created = cls.objects.get_or_create(
+            name=name_lower,
+            defaults=defaults,
+        )
         return cause, created
 
 
 class Project(TimeStampedModel):
     """Represents a fundraising or campaign project."""
+
+    class StatusChoices(models.TextChoices):
+        """Represents status choices for a project."""
+
+        DRAFT = "draft", _("Draft")
+        ACTIVE = "active", _("Active")
+        FUNDED = "funded", _("Funded")
+        EXPIRED = "expired", _("Expired")
+        CANCELLED = "cancelled", _("Cancelled")
 
     name = models.CharField(max_length=255, help_text="Short name or title of the project.")
     img = models.ImageField(
@@ -80,6 +97,12 @@ class Project(TimeStampedModel):
         blank=True,
         help_text="One or more causes that this project addresses.",
     )
+    status = models.CharField(
+        max_length=50,
+        choices=StatusChoices.choices,
+        default=StatusChoices.DRAFT,
+        help_text="Status of project, default is DRAFT.",
+    )
     target = MoneyField(
         max_digits=14,
         decimal_places=2,
@@ -91,6 +114,11 @@ class Project(TimeStampedModel):
         blank=True,
         null=True,
         help_text="Maximum number of campaigns or participants allowed.",
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Description of the project.",
     )
     city = models.CharField(
         max_length=255,
