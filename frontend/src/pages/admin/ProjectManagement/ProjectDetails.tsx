@@ -12,7 +12,6 @@ import CausesInput from '../../../components/CausesInput';
 import { fetchProjectById, updateProject } from '../../../utils/projectsEndpoints';
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../../components/Navbar/Navbar';
-import { Padding } from '@mui/icons-material';
 
 interface ProjectFormData {
     causes: string[];

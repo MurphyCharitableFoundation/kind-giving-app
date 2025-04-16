@@ -1,11 +1,6 @@
-import { Box, Button, Card, CardActionArea, CardContent, CardMedia, Container, InputBase, Stack, Typography } from '@mui/material'
+import { Box, Card, CardActionArea, CardContent, CardMedia, Container, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import AddIcon from '@mui/icons-material/Add';
 import CircleIcon from '@mui/icons-material/Circle';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import projectImage from '../../../assets/images/project-image-sample.png';
 import TargetProgressBar from '../../../components/TargetProgressBar';
 import theme from '../../../theme/theme';
