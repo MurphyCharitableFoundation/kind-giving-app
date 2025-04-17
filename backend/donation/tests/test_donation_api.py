@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 from campaign.services import campaign_create
 from core.services import to_money
 from donation.models import Donation
-from project.models import Project
+from project.services import project_create
 
 User = get_user_model()
 
@@ -22,7 +22,12 @@ class DonationAPITestCase(APITestCase):
         self.user = User.objects.create_user(email="donor@example.com", password="testpass")
 
         # Create a project and campaign
-        self.project, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
+        self.project = project_create(
+            name="Project A",
+            target=Money(10000, "USD"),
+            city="City",
+            country="Country",
+        )
         self.campaign = campaign_create(
             title="Education for All",
             description="Education for All",

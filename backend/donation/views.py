@@ -17,21 +17,21 @@ User = get_user_model()
 class DonationDetailAPI(APIView):
     """Donation Detail API."""
 
-    class OutputSerializer(serializers.ModelSerializer):
+    class DonationOutputSerializer(serializers.ModelSerializer):
         """Donation Detail Output Serializer."""
 
         class Meta:
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
-    @extend_schema(responses={200: OutputSerializer})
+    @extend_schema(responses={200: DonationOutputSerializer})
     def get(self, request, donation_id):
         donation = donation_get(donation_id)
 
         if not donation:
             raise Http404
 
-        data = self.OutputSerializer(donation).data
+        data = self.DonationOutputSerializer(donation).data
 
         return Response(data)
 
@@ -46,11 +46,11 @@ class DonationListAPI(APIView):
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
-    @extend_schema(responses={200: OutputSerializer})
+    @extend_schema(responses={200: DonationDetailAPI.DonationOutputSerializer})
     def get(self, request):
         donations = donation_list()
 
-        data = self.OutputSerializer(donations, many=True).data
+        data = DonationDetailAPI.DonationOutputSerializer(donations, many=True).data
 
         return Response(data)
 
@@ -58,7 +58,7 @@ class DonationListAPI(APIView):
 class DonationCreateAPI(APIView):
     """Donation Create API."""
 
-    class InputSerializer(serializers.ModelSerializer):
+    class DonationInputSerializer(serializers.ModelSerializer):
         """Donation Create Input Serializer."""
 
         class Meta:
@@ -66,15 +66,15 @@ class DonationCreateAPI(APIView):
             fields = ["id", "donor", "amount", "campaign"]
 
     @extend_schema(
-        request=InputSerializer,
-        responses={200: DonationDetailAPI.OutputSerializer},
+        request=DonationInputSerializer,
+        responses={200: DonationDetailAPI.DonationOutputSerializer},
     )
     def post(self, request):
-        serializer = self.InputSerializer(data=request.data)
+        serializer = self.DonationInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         donation = donation_create(**serializer.validated_data)
 
-        data = DonationDetailAPI.OutputSerializer(donation).data
+        data = DonationDetailAPI.DonationOutputSerializer(donation).data
 
         return Response(data)

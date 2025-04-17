@@ -1,49 +1,55 @@
 """Project urls."""
 
-from django.urls import path
+from django.urls import include, path
 
 from .views import (
-    AssignBeneficiaryView,
-    CauseListCreateView,
-    CauseRetrieveUpdateDestroyView,
-    ListAssignmentsView,
-    ProjectListCreateView,
-    ProjectRetrieveUpdateDestroyView,
-    UnassignBeneficiaryView,
+    AssignBeneficiaryAPI,
+    CauseListCreateAPI,
+    CauseRetrieveUpdateDestroyAPI,
+    ListAssignmentsAPI,
+    ProjectListCreateAPI,
+    ProjectRetrieveUpdateDestroyAPI,
+    UnassignBeneficiaryAPI,
 )
 
-urlpatterns = [
-    # Cause endpoints
-    path("causes/", CauseListCreateView.as_view(), name="cause-list-create"),
+cause_patterns = [
+    path("", CauseListCreateAPI.as_view(), name="list-create"),
     path(
-        "causes/<int:pk>/",
-        CauseRetrieveUpdateDestroyView.as_view(),
-        name="cause-detail",
+        "<int:cause_id>/",
+        CauseRetrieveUpdateDestroyAPI.as_view(),
+        name="detail",
     ),
-    # Project endpoints
+]
+
+project_patterns = [
     path(
-        "projects/",
-        ProjectListCreateView.as_view(),
-        name="project-list-create",
-    ),
-    path(
-        "projects/<int:pk>/",
-        ProjectRetrieveUpdateDestroyView.as_view(),
-        name="project-detail",
+        "",
+        ProjectListCreateAPI.as_view(),
+        name="list-create",
     ),
     path(
-        "projects/<int:project_id>/assign/",
-        AssignBeneficiaryView.as_view(),
+        "<int:project_id>/",
+        ProjectRetrieveUpdateDestroyAPI.as_view(),
+        name="detail",
+    ),
+    path(
+        "<int:project_id>/assign/",
+        AssignBeneficiaryAPI.as_view(),
         name="assign-beneficiary",
     ),
     path(
-        "projects/<int:project_id>/unassign/",
-        UnassignBeneficiaryView.as_view(),
+        "<int:project_id>/unassign/",
+        UnassignBeneficiaryAPI.as_view(),
         name="unassign-beneficiary",
     ),
     path(
-        "projects/<int:project_id>/assignments/",
-        ListAssignmentsView.as_view(),
-        name="list-assignments",
+        "<int:project_id>/assignments/",
+        ListAssignmentsAPI.as_view(),
+        name="list-beneficiary",
     ),
+]
+
+urlpatterns = [
+    path("causes/", include((cause_patterns, "causes"))),
+    path("projects/", include((project_patterns, "projects"))),
 ]

@@ -2,11 +2,11 @@
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
-from djmoney.money import Money
 from model_utils.models import TimeStampedModel
 
 User = get_user_model()
@@ -50,26 +50,15 @@ class Cause(models.Model):
             self.name = self.name.lower()
         super().save(*args, **kwargs)
 
-    @classmethod
-    def create_cause(cls, name, description="", icon=None):
+    def delete(self, *args, **kwargs):
         """
-        Create or retrieve a Cause instance with the given name.
+        Delete.
 
-        Ensure name is always lowercase.
-
-        Returns a tuple (cause, created),
-        where 'created' is a boolean indicating
-        whether a new instance was created.
+        Prevent delete if there are project associations.
         """
-        name_lower = name.lower()
-        defaults = {"description": description}
-        if icon:
-            defaults["icon"] = icon
-        cause, created = cls.objects.get_or_create(
-            name=name_lower,
-            defaults=defaults,
-        )
-        return cause, created
+        if self.projects.exists():
+            raise ValidationError("Cannot delete cause while it is associated with projects.")
+        super().delete(*args, **kwargs)
 
 
 class Project(TimeStampedModel):
@@ -136,39 +125,6 @@ class Project(TimeStampedModel):
     def __str__(self):
         """Represent Project as string."""
         return f"Project: {self.name}"
-
-    @classmethod
-    def create_project(cls, name, target, causes=None, **kwargs):
-        """
-        Create or retrieve a project with a given ID, name, and target amount.
-
-        'causes' can be Union[List[str], List[Cause]]
-        Additional fields (e.g., campaign_limit, location) can be passed in
-        kwargs.
-        Returns (project, created).
-        """
-        project, created = cls.objects.get_or_create(
-            name=name,
-            defaults={
-                "target": (target if isinstance(target, Money) else Money(target, "USD")),
-                **kwargs,
-            },
-        )
-        if created and causes:
-            cause_objects = []
-            for c in causes:
-                if isinstance(c, Cause):
-                    cause_objects.append(c)
-                else:
-                    try:
-                        cause_obj, _ = Cause.create_cause(name=c)
-                        cause_objects.append(cause_obj)
-                    except Cause.DoesNotExist:
-                        pass
-            project.causes.set(cause_objects)
-            project.save()
-
-        return project, created
 
 
 class ProjectAssignment(models.Model):

@@ -6,7 +6,7 @@ from django.test import TestCase
 from djmoney.money import Money
 
 from campaign.services import campaign_create
-from project.models import Project
+from project.services import project_create
 
 from ..selectors import campaign_donations, donation_get, donation_list
 from ..services import donation_create
@@ -22,8 +22,18 @@ class DonationModelTest(TestCase):
         self.user = User.objects.create_user(email="donor@example.com", password="testpass")
 
         # Create two separate projects and campaigns
-        self.project1, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
-        self.project2, _ = Project.create_project(name="Project B", target=Money(20000, "USD"))
+        self.project1 = project_create(
+            name="Project A",
+            target=Money(10000, "USD"),
+            city="City",
+            country="Country",
+        )
+        self.project2 = project_create(
+            name="Project B",
+            target=Money(20000, "USD"),
+            city="City",
+            country="Country",
+        )
 
         self.campaign1 = campaign_create(
             title="Education for All",
@@ -120,8 +130,18 @@ class DonationSelectorTest(TestCase):
 
         self.user = User.objects.create_user(email="donor@example.com", password="testpass")
 
-        self.project1, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
-        self.project2, _ = Project.create_project(name="Project B", target=Money(20000, "USD"))
+        self.project1 = project_create(
+            name="Project A",
+            target=Money(10000, "USD"),
+            city="City",
+            country="Country",
+        )
+        self.project2 = project_create(
+            name="Project B",
+            target=Money(20000, "USD"),
+            city="City",
+            country="Country",
+        )
 
         self.campaign1 = campaign_create(
             title="Education for All",

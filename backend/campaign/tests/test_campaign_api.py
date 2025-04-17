@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 
 from campaign.models import Campaign, Comment
 from campaign.services import campaign_create, comment_create
-from project.models import Project
+from project.services import project_create
 
 User = get_user_model()
 
@@ -22,10 +22,12 @@ class CampaignAPITestCase(APITestCase):
         self.user = User.objects.create_user(email="user@example.com", password="password123")
         self.client.force_authenticate(user=self.user)
 
-        self.project, _ = Project.create_project(
+        self.project = project_create(
             name="Green Transport",
             target=Money(20000, "USD"),
             campaign_limit=2,
+            city="City",
+            country="Country",
         )
 
         self.campaign = campaign_create(
@@ -52,7 +54,7 @@ class CampaignAPITestCase(APITestCase):
 
         response = self.client.post(reverse("campaigns:list-create"), payload, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["title"], "New Solar Initiative")
 
     def test_create_campaign_exceeds_limit(self):
@@ -132,7 +134,12 @@ class CommentAPITestCase(APITestCase):
         self.user = User.objects.create_user(email="user@example.com", password="password123")
         self.client.force_authenticate(user=self.user)
 
-        self.project, _ = Project.create_project(name="Smart Farming", target=Money(15000, "USD"))
+        self.project = project_create(
+            name="Smart Farming",
+            target=Money(15000, "USD"),
+            city="City",
+            country="Country",
+        )
 
         self.campaign = campaign_create(
             title="AI Farming",
@@ -161,7 +168,7 @@ class CommentAPITestCase(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["content"], "I love this!")
 
     def test_create_comment_reply(self):
@@ -178,7 +185,7 @@ class CommentAPITestCase(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["content"], "This is a reply!")
         self.assertEqual(response.data["parent"], self.comment.id)
 
@@ -219,7 +226,12 @@ class CampaignCommentsAPITestCase(APITestCase):
         """Set up test data."""
         self.user = User.objects.create_user(email="test@example.com", password="password123")
 
-        self.project, _ = Project.create_project(name="Smart Farming", target=Money(15000, "USD"))
+        self.project = project_create(
+            name="Smart Farming",
+            target=Money(15000, "USD"),
+            city="City",
+            country="Country",
+        )
 
         self.campaign = campaign_create(
             title="AI Farming",

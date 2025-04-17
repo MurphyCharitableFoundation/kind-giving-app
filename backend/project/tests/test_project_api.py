@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -49,11 +50,11 @@ class ProjectAPITestCase(TestCase):
         payload = {
             "name": "New Project",
             "target": "10000.00",
-            "causes_names": ["education", "healthcare"],  # Using cause names
+            "causes": ["education", "healthcare"],  # Using cause names
             "city": "Lagos",
             "country": "Nigeria",
         }
-        response = self.client.post("/api/projects/", payload, format="json")
+        response = self.client.post(reverse("projects:list-create"), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "New Project")
@@ -79,7 +80,7 @@ class ProjectAPITestCase(TestCase):
         payload = {
             "name": "Updated Water Project",
             "target": "7500.00",
-            "causes_names": ["healthcare"],
+            "causes": ["healthcare"],
         }
         response = self.client.patch(f"/api/projects/{self.project.id}/", payload, format="json")
 

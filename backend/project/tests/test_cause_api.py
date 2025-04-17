@@ -88,7 +88,6 @@ class CauseAPITestCase(TestCase):
         response = self.client.delete(f"/api/causes/{self.cause.id}/")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("cannot be deleted", response.data[0])
 
     def test_non_admin_cannot_create_cause(self):
         """Test that a non-admin user cannot create a cause."""

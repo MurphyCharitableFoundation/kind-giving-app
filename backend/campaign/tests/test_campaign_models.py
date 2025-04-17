@@ -11,7 +11,7 @@ from campaign.services import (
     campaign_create,
     comment_create,
 )
-from project.models import Project
+from project.services import project_create
 
 User = get_user_model()
 
@@ -25,10 +25,12 @@ class CampaignModelTestCase(TestCase):
         self.user_b = User.objects.create_user(email="b@example.com", password="password123")
         self.user_c = User.objects.create_user(email="c@example.com", password="password123")
 
-        self.project, _ = Project.create_project(
+        self.project = project_create(
             name="Project A",
             target=Money(10000, "USD"),
             campaign_limit=2,
+            city="City",
+            country="Country",
         )
 
     def test_create_campaign_success(self):
@@ -187,7 +189,12 @@ class CommentModelTestCase(TestCase):
     def setUp(self):
         """Set up test data."""
         self.user = User.objects.create_user(email="user@example.com", password="password123")
-        self.project, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
+        self.project = project_create(
+            name="Project A",
+            target=Money(10000, "USD"),
+            city="City",
+            country="Country",
+        )
         self.campaign = campaign_create(
             title="Education for All",
             description="Education for All",
