@@ -30,6 +30,7 @@ from .selectors import (
     project_list,
 )
 from .serializers import (
+    BeneficiarySerializer,
     ProjectAssignmentSerializer,
 )
 from .services import (
@@ -247,7 +248,7 @@ class ProjectRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
 class ProjectBeneficiaryListAPI(ListAPIView):
     """List all beneficiaries for a given Project."""
 
-    serializer_class = ProjectAssignmentSerializer
+    serializer_class = BeneficiarySerializer
 
     def get_queryset(self):  # noqa
         project_id = self.kwargs["project_id"]
