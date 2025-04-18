@@ -9,8 +9,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import OutlinedFormContainer from '../../../components/OutlinedFormContainer';
 import ProjectImagesCarousel from '../../../components/ProjectImagesCarousel';
 import CausesInput from '../../../components/CausesInput';
-import { fetchProjectById, updateProject } from '../../../utils/projectsEndpoints';
-import { useNavigate, useParams } from 'react-router-dom';
+import { fetchProjectById, Project, updateProject } from '../../../utils/projectsEndpoints';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../../components/Navbar/Navbar';
 
 interface ProjectFormData {
@@ -23,6 +23,7 @@ interface ProjectFormData {
 const ProjectDetails: React.FC = () => {
     const navigate = useNavigate();
     const projectId = Number(useParams().projectId);
+    const [project, setProject] = useState<Project | null>(null);
     const [originalData, setOriginalData] = useState<ProjectFormData | null>(null);
     const [editableData, setEditableData] = useState<ProjectFormData | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -31,11 +32,12 @@ const ProjectDetails: React.FC = () => {
 
     useEffect(() => {
         fetchProjectById(projectId).then((project) => {
+            setProject(project);
             const formattedData = {
                 causes: project.causes || [],
                 title: project.name,
-                description: 'Description',
-                status: 'Active',
+                description: project.description,
+                status: project.status,
             };
             setOriginalData(formattedData);
             setEditableData(formattedData);
@@ -52,11 +54,19 @@ const ProjectDetails: React.FC = () => {
         try {
             const patchData = {
                 name: editableData.title,
-                causes_names: editableData.causes
-                //todo -> more possible fields to edit
+                causes_names: editableData.causes,
+                description: editableData.description,
+                status: editableData.status
             };
             console.log('Request payload:', JSON.stringify(patchData));
-            await updateProject(projectId, patchData);
+            const updatedProject = await updateProject(projectId, patchData);
+            setProject(updatedProject);
+            setOriginalData({
+                causes: updatedProject.causes || [],
+                title: updatedProject.name,
+                description: updatedProject.description,
+                status: updatedProject.status,
+            });
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to update project:", error);
@@ -72,6 +82,13 @@ const ProjectDetails: React.FC = () => {
             };
         });
     };
+
+    if (!project && !isLoading) {
+        {/* Redirecting to 404 page if project, for some reason, is not founded. */ }
+        return (
+            <Navigate to="*" replace />
+        );
+    }
 
     return (
         <Container sx={{ padding: 0 }}>
@@ -90,14 +107,14 @@ const ProjectDetails: React.FC = () => {
                 }}
             >
                 <Box
-                    sx={{ display: 'flex', flexDirection: 'row', gap: '8px', alignItems: 'center'}}
+                    sx={{ display: 'flex', flexDirection: 'row', gap: '8px', alignItems: 'center' }}
                 >
-                    <IconButton 
-                    aria-label='navigate back to projects' 
-                    onClick={() => navigate('/projects')}
-                    sx={{padding: 0, display: 'flex', alignItems: 'center'}}
-                    >  
-                        <ArrowBackIcon/>
+                    <IconButton
+                        aria-label='navigate back to projects'
+                        onClick={() => navigate('/projects')}
+                        sx={{ padding: 0, display: 'flex', alignItems: 'center' }}
+                    >
+                        <ArrowBackIcon />
                     </IconButton>
                     <Typography variant='titleXLargetextMedium'>Project details</Typography>
                 </Box>
@@ -179,11 +196,15 @@ const ProjectDetails: React.FC = () => {
                     {isEditing ? (
                         <OutlinedFormContainer label="Status">
                             <RadioGroup
+                                value={editableData?.status || ''}
                                 row={true}
                                 sx={{ paddingLeft: '28px', gap: '20px' }}
+                                onChange={(e) => {
+                                    handleChange('status', e.target.value)
+                                }}
                             >
                                 <FormControlLabel value="active" control={<Radio />} label="Active" />
-                                <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
+                                <FormControlLabel value="draft" control={<Radio />} label="Draft" />
                             </RadioGroup>
                         </OutlinedFormContainer>
                     ) : (
@@ -217,7 +238,7 @@ const ProjectDetails: React.FC = () => {
                         sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'start' }}
                     >
                         <Typography color={theme.palette.primary.main} variant='titleXSmalltextMedium'>Target</Typography>
-                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>$500</Typography>
+                        <Typography color={theme.custom.surface.onColor} variant='bodySmall'>${project?.target}</Typography>
                     </Box>
                     <Box
                         sx={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'start' }}
@@ -274,7 +295,7 @@ const ProjectDetails: React.FC = () => {
                                 <Button
                                     variant='contained'
                                     disableElevation
-                                    sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px', textTransform: 'none'}}
+                                    sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px', textTransform: 'none' }}
                                 >
                                     <Typography color={theme.palette.primary.main}>View all</Typography>
                                 </Button>

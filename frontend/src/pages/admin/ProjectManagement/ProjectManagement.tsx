@@ -85,10 +85,9 @@ const ProjectManagement: React.FC = () => {
                                             <CircleIcon sx={{ fontSize: '24px', color: theme.status.success.main }} />
                                         </Box>
                                         <Typography variant='bodySmall'>
-                                            {/* {project.description} */}
-                                            No description
+                                            {project.description}
                                         </Typography>
-                                        <TargetProgressBar progress={80} />
+                                        <TargetProgressBar progress={project.donation_percentage} />
                                         <Typography>
                                             <Typography component="span" sx={{ color: theme.palette.primary.main, fontWeight: 'bold', mr: 0.5 }}>
                                                 {/* ${project.raised} */}
@@ -96,7 +95,7 @@ const ProjectManagement: React.FC = () => {
                                             </Typography>
                                             <Typography component="span" sx={{ fontWeight: "bold" }}>
                                                 {/* of ${project.goal} */}
-                                                of $1000
+                                                of ${project.target}
                                             </Typography>
                                         </Typography>
                                     </Box>

@@ -9,6 +9,9 @@ export interface Project {
     campaign_limit: number;
     city: string;
     country: string;
+    description: string;
+    status: string;
+    donation_percentage: number;
 }
 
 export const fetchAllProjects = async (): Promise<Project[]> => {
