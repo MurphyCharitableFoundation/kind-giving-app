@@ -5,8 +5,8 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from djmoney.money import Money
 
-from campaign.models import Campaign
-from project.models import Project
+from campaign.services import campaign_create
+from project.services import project_create
 
 from ..selectors import campaign_donations, donation_get, donation_list
 from ..services import donation_create
@@ -22,17 +22,29 @@ class DonationModelTest(TestCase):
         self.user = User.objects.create_user(email="donor@example.com", password="testpass")
 
         # Create two separate projects and campaigns
-        self.project1, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
-        self.project2, _ = Project.create_project(name="Project B", target=Money(20000, "USD"))
+        self.project1 = project_create(
+            name="Project A",
+            target=Money(10000, "USD"),
+            city="City",
+            country="Country",
+        )
+        self.project2 = project_create(
+            name="Project B",
+            target=Money(20000, "USD"),
+            city="City",
+            country="Country",
+        )
 
-        self.campaign1, _ = Campaign.create_campaign(
+        self.campaign1 = campaign_create(
             title="Education for All",
+            description="Education for All.",
             project=self.project1,
             owner=self.user,
             target=Money(5000, "USD"),
         )
-        self.campaign2, _ = Campaign.create_campaign(
+        self.campaign2 = campaign_create(
             title="Clean Water Initiative",
+            description="Clean Water Initiative.",
             project=self.project2,
             owner=self.user,
             target=Money(8000, "USD"),
@@ -118,17 +130,29 @@ class DonationSelectorTest(TestCase):
 
         self.user = User.objects.create_user(email="donor@example.com", password="testpass")
 
-        self.project1, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
-        self.project2, _ = Project.create_project(name="Project B", target=Money(20000, "USD"))
+        self.project1 = project_create(
+            name="Project A",
+            target=Money(10000, "USD"),
+            city="City",
+            country="Country",
+        )
+        self.project2 = project_create(
+            name="Project B",
+            target=Money(20000, "USD"),
+            city="City",
+            country="Country",
+        )
 
-        self.campaign1, _ = Campaign.create_campaign(
+        self.campaign1 = campaign_create(
             title="Education for All",
+            description="Education for All",
             project=self.project1,
             owner=self.user,
             target=Money(5000, "USD"),
         )
-        self.campaign2, _ = Campaign.create_campaign(
+        self.campaign2 = campaign_create(
             title="Clean Water Initiative",
+            description="Clean Water Initiative",
             project=self.project2,
             owner=self.user,
             target=Money(8000, "USD"),

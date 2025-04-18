@@ -1,45 +1,208 @@
 """Campaign views."""
 
+from django.http import Http404
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, status, viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_serializer
+from rest_framework import permissions, serializers, status
 from rest_framework.decorators import api_view
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework.response import Response
 
 from campaign.models import Campaign, Comment
-from campaign.serializers import CampaignSerializer, CommentSerializer
+from campaign.selectors import (
+    campaign_comments as campaign_comments_get,
+)
+from campaign.selectors import (
+    campaign_get,
+    campaign_list,
+    comment_get,
+    comment_list,
+)
+from campaign.services import (
+    campaign_create,
+    campaign_update,
+    comment_create,
+    comment_update,
+)
 
 
-class CampaignViewSet(viewsets.ModelViewSet):
-    """Campaign views."""
+@extend_schema_serializer(component_name="CampaignListCreate")
+class CampaignListCreateAPI(ListCreateAPIView):
+    """Campaign List Create API."""
 
-    queryset = Campaign.objects.all()
-    serializer_class = CampaignSerializer
+    class CampaignInputSerializer(serializers.ModelSerializer):
+        """Campaign Create Input Serializer."""
+
+        class Meta:  # noqa
+            model = Campaign
+            fields = [
+                "title",
+                "description",
+                "target",
+                "project",
+                "owner",
+            ]
+
+        def create(self, validated_data):  # noqa
+            return campaign_create(**validated_data)
+
+        def update(self, instance, validated_data):  # noqa
+            return campaign_update(campaign=instance, data=validated_data)
+
+    class CampaignOutputSerializer(serializers.ModelSerializer):
+        """Campaign List Create Output Serializer."""
+
+        class Meta:  # noqa
+            model = Campaign
+            fields = (
+                "id",
+                "title",
+                "description",
+                "target",
+                "project",
+                "end_date",
+            )
 
     def get_permissions(self):
         """Get permissions by action."""
-        if self.request.method == "GET":
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["POST"]:
+            return self.CampaignInputSerializer
+        return self.CampaignOutputSerializer
+
+    @extend_schema(responses={200: CampaignOutputSerializer})
+    def list(self, request, *args, **kwargs):  # noqa
+        queryset = campaign_list()
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.CampaignOutputSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.CampaignOutputSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-class CommentViewSet(viewsets.ModelViewSet):
-    """Comment views."""
+@extend_schema_serializer(component_name="CampaignRetrieveUpdateDestroy")
+class CampaignRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
+    """Campaign Retrieve Update Destroy API."""
 
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    queryset = campaign_list()
+    lookup_url_kwarg = "campaign_id"
+
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["PATCH", "PUT"]:
+            return CampaignListCreateAPI.CampaignInputSerializer
+        return CampaignListCreateAPI.CampaignOutputSerializer
+
+    @extend_schema(responses={200: CampaignListCreateAPI.CampaignOutputSerializer})
+    def get(self, request, campaign_id):  # noqa
+        campaign = campaign_get(campaign_id)
+
+        if not campaign:
+            raise Http404
+
+        data = CampaignListCreateAPI.CampaignOutputSerializer(campaign).data
+
+        return Response(data)
+
+
+@extend_schema_serializer(component_name="CommentListCreate")
+class CommentListCreateAPI(ListCreateAPIView):
+    """Comment List Create API."""
+
+    class CommentInputSerializer(serializers.ModelSerializer):
+        """Comment Create Input Serializer."""
+
+        class Meta:  # noqa
+            model = Comment
+            fields = (
+                "content",
+                "campaign",
+                "author",
+                "parent",
+                "created",
+            )
+
+        def create(self, validated_data):  # noqa
+            return comment_create(**validated_data)
+
+        def update(self, instance, validated_data):  # noqa
+            return comment_update(comment=instance, data=validated_data)
+
+    class CommentOutputSerializer(serializers.ModelSerializer):
+        """Comment List Output Serializer."""
+
+        class Meta:  # noqa
+            model = Comment
+            fields = (
+                "id",
+                "content",
+                "campaign",
+                "author",
+                "parent",
+                "created",
+            )
 
     def get_permissions(self):
         """Get permissions by action."""
-        if self.request.method == "GET":
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["POST"]:
+            return self.CommentInputSerializer
+        return self.CommentOutputSerializer
+
+    @extend_schema(responses={200: CommentOutputSerializer})
+    def list(self, request, *args, **kwargs):  # noqa
+        queryset = comment_list()
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.CommentOutputSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.CommentOutputSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-@extend_schema(responses={200: CommentSerializer(many=True)})
+@extend_schema_serializer(component_name="CommentRetrieveUpdateDestroy")
+class CommentRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
+    """Comment Detail API."""
+
+    queryset = comment_list()
+    lookup_url_kwarg = "comment_id"
+
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["PATCH", "PUT"]:
+            return CommentListCreateAPI.CommentInputSerializer
+        return CommentListCreateAPI.CommentOutputSerializer
+
+    @extend_schema(responses={200: CommentListCreateAPI.CommentOutputSerializer})
+    def get(self, request, comment_id):  # noqa
+        comment = comment_get(comment_id)
+
+        if not comment:
+            raise Http404
+
+        data = CommentListCreateAPI.CommentOutputSerializer(comment).data
+
+        return Response(data)
+
+
+@extend_schema(responses={200: CommentListCreateAPI.CommentOutputSerializer(many=True)})
 @api_view(["GET"])
 def campaign_comments(request, campaign_id) -> Response:
     """Retrieve comments of campaign by campaign-id."""
     campaign = get_object_or_404(Campaign, id=campaign_id)
-    serializer = CommentSerializer(campaign.comments.all(), many=True)
+    serializer = CommentListCreateAPI.CommentOutputSerializer(campaign_comments_get(campaign), many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

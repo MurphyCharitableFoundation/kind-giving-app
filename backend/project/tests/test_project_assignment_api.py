@@ -7,7 +7,8 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from ..models import Cause, Project, ProjectAssignment
+from project.models import Cause, Project, ProjectAssignment
+from project.services import assign_beneficiary
 
 User = get_user_model()
 UserGroup = apps.get_model("user", "UserGroup")
@@ -87,7 +88,7 @@ class ProjectAssignmentAPITestCase(TestCase):
 
     def test_list_project_assignments(self):
         """Test retrieving all assignments for a project."""
-        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_user)
+        assign_beneficiary(self.project, self.beneficiary_user)
 
         response = self.client.get(f"/api/projects/{self.project.id}/assignments/")
 
@@ -98,7 +99,7 @@ class ProjectAssignmentAPITestCase(TestCase):
 
     def test_unassign_user_from_project(self):
         """Test unassigning a User from a Project."""
-        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_user)
+        assign_beneficiary(self.project, self.beneficiary_user)
 
         payload = {
             "assignable_type": "User",
@@ -121,7 +122,7 @@ class ProjectAssignmentAPITestCase(TestCase):
 
     def test_unassign_usergroup_from_project(self):
         """Test unassigning a UserGroup from a Project."""
-        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_group)
+        assign_beneficiary(self.project, self.beneficiary_group)
 
         payload = {
             "assignable_type": "UserGroup",
@@ -144,7 +145,7 @@ class ProjectAssignmentAPITestCase(TestCase):
 
     def test_cannot_assign_same_user_twice(self):
         """Test that assigning the same User to a project twice does not create duplicates."""
-        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_user)
+        assign_beneficiary(self.project, self.beneficiary_user)
 
         payload = {
             "assignable_type": "User",
@@ -165,7 +166,7 @@ class ProjectAssignmentAPITestCase(TestCase):
     def test_cannot_assign_same_usergroup_twice(self):
         """Test that assigning the same UserGroup to a project twice does not create duplicates."""
         assignable_type = "UserGroup"
-        ProjectAssignment.assign_beneficiary(self.project, self.beneficiary_group)
+        assign_beneficiary(self.project, self.beneficiary_group)
 
         payload = {
             "assignable_type": assignable_type,
