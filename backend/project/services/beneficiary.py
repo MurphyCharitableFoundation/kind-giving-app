@@ -9,14 +9,14 @@ from project.models import Project, ProjectAssignment
 from user.models import User, UserGroup
 
 Beneficiary = Union[User, UserGroup]
+BENEFICIARY_MODEL_MAP = {
+    "User": User,
+    "UserGroup": apps.get_model("user", "UserGroup"),
+}
 
 
 def _parse_beneficiary(beneficiary: Beneficiary) -> Tuple[str, int]:
     """Deduce the assignable_type and assignable_id for a beneficiary."""
-    BENEFICIARY_MODEL_MAP = {
-        "User": User,
-        "UserGroup": apps.get_model("user", "UserGroup"),
-    }
     for key, model_class in BENEFICIARY_MODEL_MAP.items():
         if isinstance(beneficiary, model_class):
             return key, beneficiary.pk
@@ -25,7 +25,6 @@ def _parse_beneficiary(beneficiary: Beneficiary) -> Tuple[str, int]:
 
 @transaction.atomic
 def assign_beneficiary(
-    *,
     project: Project,
     beneficiary: Beneficiary,
 ) -> Tuple[ProjectAssignment, bool]:
@@ -40,7 +39,6 @@ def assign_beneficiary(
 
 @transaction.atomic
 def unassign_beneficiary(
-    *,
     project: Project,
     beneficiary: Beneficiary,
 ) -> bool:

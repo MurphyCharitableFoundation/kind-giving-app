@@ -6,7 +6,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from ..models import Cause, Project
+from project.models import Cause
 
 User = get_user_model()
 
@@ -77,17 +77,10 @@ class CauseAPITestCase(TestCase):
         """Test deleting a cause (should succeed if no projects are linked)."""
         response = self.client.delete(f"/api/causes/{self.cause.id}/")
 
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Cause.objects.filter(id=self.cause.id).exists())
-
-    def test_delete_cause_with_project(self):
-        """Test deleting a cause that is linked to a project (should fail)."""
-        project = Project.objects.create(name="Test Project", target=1000)
-        project.causes.add(self.cause)
-
-        response = self.client.delete(f"/api/causes/{self.cause.id}/")
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def test_non_admin_cannot_create_cause(self):
         """Test that a non-admin user cannot create a cause."""

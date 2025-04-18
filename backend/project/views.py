@@ -1,9 +1,7 @@
 """Project Views."""
 
-from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.http import Http404
-from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import (
     OpenApiResponse,
     extend_schema,
@@ -13,6 +11,7 @@ from rest_framework import permissions, serializers, status
 from rest_framework.generics import (
     ListAPIView,
     ListCreateAPIView,
+    RetrieveUpdateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.response import Response
@@ -20,10 +19,12 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser
 
-from .models import Cause, Project, ProjectAssignment
+from .mixins import BeneficiaryResolutionMixin
+from .models import Cause, Project
 from .selectors import (
     cause_get,
     cause_list,
+    project_beneficiary_list,
     project_donations_total_percentage,
     project_get,
     project_list,
@@ -32,6 +33,7 @@ from .serializers import (
     ProjectAssignmentSerializer,
 )
 from .services import (
+    assign_beneficiary,
     cause_create,
     cause_update,
     project_create,
@@ -42,7 +44,7 @@ from .services import (
 User = get_user_model()
 
 
-@extend_schema_serializer(component_name="CauseListCreateView")
+@extend_schema_serializer(component_name="CauseListCreateAPI")
 class CauseListCreateAPI(ListCreateAPIView):
     """List & Create View for Cause."""
 
@@ -93,8 +95,8 @@ class CauseListCreateAPI(ListCreateAPIView):
         return Response(serializer.data)
 
 
-@extend_schema_serializer(component_name="CauseRetrieveUpdateDestroyView")
-class CauseRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
+@extend_schema_serializer(component_name="CauseRetrieveUpdateAPI")
+class CauseRetrieveUpdateAPI(RetrieveUpdateAPIView):
     """Retrieve, Update, and Destroy View for Cause."""
 
     queryset = cause_list()
@@ -124,7 +126,7 @@ class CauseRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
         return Response(data)
 
 
-@extend_schema_serializer(component_name="ProjectListCreateView")
+@extend_schema_serializer(component_name="ProjectListCreateAPI")
 class ProjectListCreateAPI(ListCreateAPIView):
     """List & Create View for Project."""
 
@@ -210,7 +212,7 @@ class ProjectListCreateAPI(ListCreateAPIView):
         return Response(serializer.data)
 
 
-@extend_schema_serializer(component_name="ProjectRetrieveUpdateDestroyView")
+@extend_schema_serializer(component_name="ProjectRetrieveUpdateDestroyAPI")
 class ProjectRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
     """Retrieve, Update, and Destroy View for Project."""
 
@@ -241,8 +243,19 @@ class ProjectRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
         return Response(data)
 
 
-@extend_schema_serializer(component_name="AssignBeneficiaryView")
-class AssignBeneficiaryAPI(APIView):
+@extend_schema_serializer(component_name="ProjectBeneficiaryListAPI")
+class ProjectBeneficiaryListAPI(ListAPIView):
+    """List all beneficiaries for a given Project."""
+
+    serializer_class = ProjectAssignmentSerializer
+
+    def get_queryset(self):  # noqa
+        project_id = self.kwargs["project_id"]
+        return project_beneficiary_list(project_id)
+
+
+@extend_schema_serializer(component_name="AssignBeneficiaryAPI")
+class AssignBeneficiaryAPI(BeneficiaryResolutionMixin, APIView):
     """Assign a User or UserGroup to a Project."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
@@ -257,19 +270,16 @@ class AssignBeneficiaryAPI(APIView):
     )
     def post(self, request, project_id):
         """Create project assignment for beneficiary."""
-        project = get_object_or_404(Project, id=project_id)
+        project = self.get_project(project_id)
         serializer = ProjectAssignmentSerializer(data=request.data)
 
         if serializer.is_valid():
-            assignable_type = serializer.validated_data["assignable_type"]
-            assignable_id = serializer.validated_data["assignable_id"]
+            beneficiary = self.get_beneficiary(
+                assignable_type=serializer.validated_data["assignable_type"],
+                assignable_id=serializer.validated_data["assignable_id"],
+            )
+            assignment, created = assign_beneficiary(project=project, beneficiary=beneficiary)
 
-            # Get beneficiary model dynamically
-            beneficiary_model = User if assignable_type == "User" else apps.get_model("user", "UserGroup")
-            beneficiary = get_object_or_404(beneficiary_model, id=assignable_id)
-
-            # Assign the beneficiary
-            assignment, created = ProjectAssignment.assign_beneficiary(project, beneficiary)
             return Response(
                 {"message": ("Beneficiary assigned successfully." if created else "Beneficiary already assigned.")},
                 status=(status.HTTP_201_CREATED if created else status.HTTP_200_OK),
@@ -278,8 +288,8 @@ class AssignBeneficiaryAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema_serializer(component_name="UnassignBeneficiaryView")
-class UnassignBeneficiaryAPI(APIView):
+@extend_schema_serializer(component_name="UnassignBeneficiaryAPI")
+class UnassignBeneficiaryAPI(BeneficiaryResolutionMixin, APIView):
     """Unassign a User or UserGroup from a Project."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
@@ -293,20 +303,15 @@ class UnassignBeneficiaryAPI(APIView):
     )
     def delete(self, request, project_id):
         """Delete project assignment for beneficiary."""
-        project = get_object_or_404(Project, id=project_id)
+        project = self.get_project(project_id)
         serializer = ProjectAssignmentSerializer(data=request.data)
 
         if serializer.is_valid():
-            assignable_type = serializer.validated_data["assignable_type"]
-            assignable_id = serializer.validated_data["assignable_id"]
-
-            beneficiary_model = User if assignable_type == "User" else apps.get_model("user", "UserGroup")
-            beneficiary = get_object_or_404(beneficiary_model, id=assignable_id)
-
-            deleted = unassign_beneficiary(
-                project=project,
-                beneficiary=beneficiary,
+            beneficiary = self.get_beneficiary(
+                assignable_type=serializer.validated_data["assignable_type"],
+                assignable_id=serializer.validated_data["assignable_id"],
             )
+            deleted = unassign_beneficiary(project=project, beneficiary=beneficiary)
 
             if deleted:
                 return Response(
@@ -319,14 +324,3 @@ class UnassignBeneficiaryAPI(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@extend_schema_serializer(component_name="ListAssignmentsView")
-class ListAssignmentsAPI(ListAPIView):
-    """List all assignments for a given Project."""
-
-    serializer_class = ProjectAssignmentSerializer
-
-    def get_queryset(self):
-        project_id = self.kwargs["project_id"]
-        return ProjectAssignment.assignments_for(get_object_or_404(Project, id=project_id))

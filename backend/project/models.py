@@ -1,8 +1,6 @@
 """Project models."""
 
-from django.apps import apps
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
@@ -49,16 +47,6 @@ class Cause(models.Model):
         if self.name:
             self.name = self.name.lower()
         super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        """
-        Delete.
-
-        Prevent delete if there are project associations.
-        """
-        if self.projects.exists():
-            raise ValidationError("Cannot delete cause while it is associated with projects.")
-        super().delete(*args, **kwargs)
 
 
 class Project(TimeStampedModel):
@@ -158,84 +146,3 @@ class ProjectAssignment(models.Model):
     def __str__(self):
         """Represent ProjectAssignment as string."""
         return f"ProjectAssignment: '{self.project.name}'"
-
-    @classmethod
-    def _parse_beneficiary(cls, beneficiary):
-        """
-        Deduce the beneficiary's assignable_type and assignable_id.
-
-        Returns a tuple (assignable_type, assignable_id).
-        Valid beneficiary types are 'User' and 'UserGroup'.
-        """
-        BENEFICIARY_MODEL_MAP = {
-            "User": User,
-            "UserGroup": apps.get_model("user", "UserGroup"),
-        }
-        for key, model_class in BENEFICIARY_MODEL_MAP.items():
-            if isinstance(beneficiary, model_class):
-                return key, beneficiary.pk
-        raise ValueError("Beneficiary must be an instance of User or UserGroup.")
-
-    @classmethod
-    def assign_beneficiary(cls, project, beneficiary):
-        """
-        Assign a beneficiary to a project.
-
-        Uses _parse_beneficiary to deduce the assignable_type and
-        assignable_id.
-
-        Returns a tuple (assignment, created), where 'created' is True
-        if a new assignment was created.
-        """
-        assignable_type, assignable_id = cls._parse_beneficiary(beneficiary)
-        assignment, created = cls.objects.get_or_create(
-            project=project,
-            assignable_type=assignable_type,
-            assignable_id=assignable_id,
-        )
-        return assignment, created
-
-    @classmethod
-    def unassign_beneficiary(cls, project, beneficiary):
-        """
-        Remove an assignment for the given project and beneficiary.
-
-        Returns True if an assignment was found and deleted, otherwise False.
-        """
-        assignable_type, assignable_id = cls._parse_beneficiary(beneficiary)
-        qs = cls.objects.filter(
-            project=project,
-            assignable_type=assignable_type,
-            assignable_id=assignable_id,
-        )
-        if qs.exists():
-            qs.delete()
-            return True
-        return False
-
-    @classmethod
-    def assignments_for(cls, project):
-        """Retrieve all assignments for a given project."""
-        return cls.objects.filter(project=project)
-
-    @classmethod
-    def reassign(cls, project, old_beneficiary, new_beneficiary):
-        """
-        Update the assignment from one beneficiary to another.
-
-        Returns the updated assignment or None if not found.
-        """
-        old_type, old_id = cls._parse_beneficiary(old_beneficiary)
-        new_type, new_id = cls._parse_beneficiary(new_beneficiary)
-        try:
-            assignment = cls.objects.get(
-                project=project,
-                assignable_type=old_type,
-                assignable_id=old_id,
-            )
-            assignment.assignable_type = new_type
-            assignment.assignable_id = new_id
-            assignment.save()
-            return assignment
-        except cls.DoesNotExist:
-            return None
