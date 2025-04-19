@@ -2,10 +2,12 @@
 
 from typing import Optional
 
+from django.db.models import Sum
 from django.db.models.query import QuerySet
 
 from campaign.filters import CampaignFilter
 from campaign.models import Campaign, Comment
+from core.services import Amount, to_money
 from core.utils import get_object
 from donation.models import Donation
 
@@ -28,6 +30,13 @@ def campaign_list(*, filters=None) -> QuerySet[Campaign]:
 def campaign_donations(campaign: Campaign) -> QuerySet[Donation]:
     """Retrieve donations for a given Campaign."""
     return Donation.objects.filter(campaign=campaign)
+
+
+def campaign_donations_total(campaign: Campaign) -> Amount:
+    """Total donations for campaign."""
+    total = campaign_donations(campaign).aggregate(total=Sum("amount"))["total"] or 0
+
+    return to_money(total)
 
 
 def campaign_comments(

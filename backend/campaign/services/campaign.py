@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import UploadedFile
 from django.db import transaction
 
 from campaign.models import Campaign
@@ -22,6 +23,7 @@ def campaign_create(
     owner: User,
     target: Amount,
     end_date: Optional[datetime] = None,
+    img: Optional[UploadedFile] = None,
 ) -> Campaign:
     """Create Campaign."""
     target = to_money(target)
@@ -32,6 +34,7 @@ def campaign_create(
         owner=owner,
         target=target,
         end_date=end_date,
+        img=img,
     )
 
     campaign.full_clean()
@@ -50,6 +53,7 @@ def campaign_update(*, campaign: Campaign, data) -> Campaign:
         "project",
         "owner",
         "end_date",
+        "img",
     ]
 
     c, has_updated = model_update(instance=campaign, fields=non_side_effect_fields, data=data)
