@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser
 
-from .mixins import BeneficiaryResolutionMixin
+from .mixins import BeneficiaryResolutionMixin, PrefetchBeneficiaryMixin
 from .models import Cause, Project
 from .selectors import (
     cause_get,
@@ -245,7 +245,7 @@ class ProjectRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
 
 
 @extend_schema_serializer(component_name="ProjectBeneficiaryListAPI")
-class ProjectBeneficiaryListAPI(ListAPIView):
+class ProjectBeneficiaryListAPI(PrefetchBeneficiaryMixin, ListAPIView):
     """List all beneficiaries for a given Project."""
 
     serializer_class = BeneficiarySerializer

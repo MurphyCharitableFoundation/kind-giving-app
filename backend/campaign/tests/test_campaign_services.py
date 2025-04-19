@@ -6,11 +6,17 @@ from django.test import TestCase
 from django.utils import timezone
 from djmoney.money import Money
 
-from campaign.selectors import campaign_comments, comment_is_reply
+from campaign.selectors import (
+    campaign_comments,
+    campaign_donations,
+    campaign_donations_total,
+    comment_is_reply,
+)
 from campaign.services import (
     campaign_create,
     comment_create,
 )
+from donation.services import donation_create
 from project.services import project_create
 
 User = get_user_model()
@@ -181,6 +187,67 @@ class CampaignModelTestCase(TestCase):
             )
 
         self.assertEqual(self.project.campaigns.count(), 2)
+
+    def test_campaign_donations_returns_only_related_donations(self):
+        """Test that campaign_donations returns donations for the
+        given campaign only.
+        """
+        campaign = campaign_create(
+            title="Donation Campaign",
+            description="Test",
+            project=self.project,
+            owner=self.user_a,
+            target=Money(1000, "USD"),
+        )
+
+        donation_create(
+            donor=self.user_a,
+            campaign=campaign,
+            amount=Money(100, "USD"),
+        )
+        donation_create(
+            donor=self.user_a,
+            campaign=campaign,
+            amount=Money(200, "USD"),
+        )
+
+        # Create donation for another campaign
+        other_campaign = campaign_create(
+            title="Other Campaign",
+            description="Other",
+            project=self.project,
+            owner=self.user_b,
+            target=Money(1000, "USD"),
+        )
+        donation_create(donor=self.user_a, campaign=other_campaign, amount=Money(999, "USD"))
+
+        donations = campaign_donations(campaign)
+        self.assertEqual(donations.count(), 2)
+        self.assertTrue(all(d.campaign == campaign for d in donations))
+
+    def test_campaign_donations_total_aggregation(self):
+        """Test that campaign_donations_total aggregates donation amounts correctly."""
+        campaign = campaign_create(
+            title="Donation Total Test",
+            description="Testing totals",
+            project=self.project,
+            owner=self.user_a,
+            target=Money(1000, "USD"),
+        )
+
+        donation_create(
+            donor=self.user_a,
+            campaign=campaign,
+            amount=150,
+        )
+        donation_create(
+            donor=self.user_a,
+            campaign=campaign,
+            amount=250,
+        )
+
+        total = campaign_donations_total(campaign)
+        self.assertEqual(total, Money(400, "USD"))
 
 
 class CommentModelTestCase(TestCase):

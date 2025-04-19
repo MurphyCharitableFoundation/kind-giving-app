@@ -27,3 +27,22 @@ class BeneficiaryResolutionMixin:
             raise Http404
 
         return get_object_or_404(beneficiary_model, id=assignable_id)
+
+
+class PrefetchBeneficiaryMixin:
+    """Prefetch related User and UserGroup instances for serializer context."""
+
+    def get_serializer_context(self):
+        """Add plausible prefetched User and UserGroup instances."""
+        context = super().get_serializer_context()
+        qs = self.get_queryset()
+
+        assignable_ids = qs.values_list("assignable_id", flat=True)
+        assignable_types = qs.values_list("assignable_type", flat=True).distinct()
+
+        for beneficiary_type, beneficiary_model in BENEFICIARY_MODEL_MAP.items():
+            if beneficiary_type in assignable_types:
+                beneficiaries = beneficiary_model.objects.filter(id__in=assignable_ids)
+                context[f"{beneficiary_type}_map"] = {beneficiary.id: beneficiary for beneficiary in beneficiaries}
+
+        return context

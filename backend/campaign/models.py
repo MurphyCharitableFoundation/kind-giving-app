@@ -31,6 +31,12 @@ class Campaign(TimeStampedModel):
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     end_date = models.DateTimeField(null=True, blank=True)
+    img = models.ImageField(
+        upload_to="campaigns/",
+        blank=True,
+        null=True,
+        help_text="Optional main image representing the campaign.",
+    )
 
     def __str__(self):
         """Represent Campaign as string."""

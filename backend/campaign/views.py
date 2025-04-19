@@ -16,6 +16,8 @@ from campaign.selectors import (
     campaign_comments as campaign_comments_get,
 )
 from campaign.selectors import (
+    campaign_donations,
+    campaign_donations_total,
     campaign_get,
     campaign_list,
     comment_get,
@@ -55,6 +57,9 @@ class CampaignListCreateAPI(ListCreateAPIView):
     class CampaignOutputSerializer(serializers.ModelSerializer):
         """Campaign List Create Output Serializer."""
 
+        donations_count = serializers.SerializerMethodField()
+        donations_total = serializers.SerializerMethodField()
+
         class Meta:  # noqa
             model = Campaign
             fields = (
@@ -64,7 +69,16 @@ class CampaignListCreateAPI(ListCreateAPIView):
                 "target",
                 "project",
                 "end_date",
+                "donations_count",
+                "donations_total",
             )
+
+        def get_donations_count(self, campaign):  # noqa
+            return campaign_donations(campaign).count()
+
+        def get_donations_total(self, campaign):  # noqa
+            total = campaign_donations_total(campaign)
+            return {"amount": str(total.amount), "currency": str(total.currency)}
 
     def get_permissions(self):
         """Get permissions by action."""
