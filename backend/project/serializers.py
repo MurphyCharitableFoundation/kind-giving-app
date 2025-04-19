@@ -1,7 +1,6 @@
 """Project Serializers."""
 
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from user.models import UserGroup
@@ -15,7 +14,7 @@ User = get_user_model()
 class BeneficiarySerializer(serializers.Serializer):
     """Beneficiary Serializer."""
 
-    assignable_type = serializers.CharField()
+    assignable_type = serializers.ChoiceField(choices=ProjectAssignment.ASSIGNABLE_TYPE_CHOICES)
     assignable_id = serializers.IntegerField()
     beneficiary = serializers.SerializerMethodField()
 
@@ -43,7 +42,7 @@ class BeneficiarySerializer(serializers.Serializer):
         }
 
         if beneficiary_model:
-            beneficiary = get_object_or_404(beneficiary_model, id=obj.assignable_id)
+            beneficiary = self.context[f"{obj.assignable_type}_map"].get(obj.assignable_id)
 
             return BENEFICIARY_SERIALIZER_MAP.get(obj.assignable_type)(beneficiary).data
 
