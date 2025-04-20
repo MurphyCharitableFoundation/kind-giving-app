@@ -16,7 +16,9 @@ from campaign.selectors import (
     campaign_comments as campaign_comments_get,
 )
 from campaign.selectors import (
-    campaign_donations,
+    campaign_donations as campaign_donations_get,
+)
+from campaign.selectors import (
     campaign_donations_total,
     campaign_get,
     campaign_list,
@@ -29,6 +31,8 @@ from campaign.services import (
     comment_create,
     comment_update,
 )
+
+from .serializers import DonationSerializer
 
 
 @extend_schema_serializer(component_name="CampaignListCreate")
@@ -74,7 +78,7 @@ class CampaignListCreateAPI(ListCreateAPIView):
             )
 
         def get_donations_count(self, campaign):  # noqa
-            return campaign_donations(campaign).count()
+            return campaign_donations_get(campaign).count()
 
         def get_donations_total(self, campaign):  # noqa
             total = campaign_donations_total(campaign)
@@ -194,5 +198,20 @@ class CommentRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
 def campaign_comments(request, campaign_id) -> Response:
     """Retrieve comments of campaign by campaign-id."""
     campaign = get_object_or_404(Campaign, id=campaign_id)
-    serializer = CommentListCreateAPI.CommentOutputSerializer(campaign_comments_get(campaign), many=True)
+    serializer = CommentListCreateAPI.CommentOutputSerializer(
+        campaign_comments_get(campaign),
+        many=True,
+    )
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(responses={200: DonationSerializer(many=True)})
+@api_view(["GET"])
+def campaign_donations(request, campaign_id) -> Response:
+    """Retrieve donations of campaign by campaign-id."""
+    campaign = get_object_or_404(Campaign, id=campaign_id)
+    serializer = DonationSerializer(
+        campaign_donations_get(campaign),
+        many=True,
+    )
     return Response(serializer.data, status=status.HTTP_200_OK)

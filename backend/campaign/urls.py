@@ -8,6 +8,7 @@ from .views import (
     CommentListCreateAPI,
     CommentRetrieveUpdateDestroyAPI,
     campaign_comments,
+    campaign_donations,
 )
 
 campaign_patterns = [
@@ -21,6 +22,11 @@ campaign_patterns = [
         "<int:campaign_id>/comments/",
         campaign_comments,
         name="comments-list",
+    ),
+    path(
+        "<int:campaign_id>/donations/",
+        campaign_donations,
+        name="donations-list",
     ),
 ]
 
