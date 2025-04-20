@@ -6,10 +6,10 @@ from django.test import TestCase
 from djmoney.money import Money
 
 from campaign.services import campaign_create
+from donation.models import Donation
+from donation.selectors import donation_get, donation_list
+from donation.services import donation_create
 from project.services import project_create
-
-from ..selectors import campaign_donations, donation_get, donation_list
-from ..services import donation_create
 
 User = get_user_model()
 
@@ -208,7 +208,7 @@ class DonationSelectorTest(TestCase):
             campaign=self.campaign2,
         )
 
-        donations_for_campaign_1 = campaign_donations(campaign=self.campaign1)
+        donations_for_campaign_1 = Donation.objects.filter(campaign=self.campaign1)
 
         self.assertEqual(donations_for_campaign_1.count(), 2)
         self.assertNotIn(extra_donation, donations_for_campaign_1)
