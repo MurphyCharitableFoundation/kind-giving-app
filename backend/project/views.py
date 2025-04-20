@@ -83,18 +83,6 @@ class CauseListCreateAPI(ListCreateAPIView):
             return [permissions.AllowAny()]
         return [permissions.IsAuthenticated(), IsAdminUser()]
 
-    @extend_schema(responses={200: CauseOutputSerializer})
-    def list(self, request, *args, **kwargs):  # noqa
-        queryset = cause_list()
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.CauseOutputSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.CauseOutputSerializer(queryset, many=True)
-        return Response(serializer.data)
-
 
 @extend_schema_serializer(component_name="CauseRetrieveUpdateAPI")
 class CauseRetrieveUpdateAPI(RetrieveUpdateAPIView):
@@ -199,18 +187,6 @@ class ProjectListCreateAPI(ListCreateAPIView):
         if self.request.method == "GET":
             return [permissions.AllowAny()]
         return [permissions.IsAuthenticated(), IsAdminUser()]
-
-    @extend_schema(responses={200: ProjectOutputSerializer})
-    def list(self, request, *args, **kwargs):  # noqa
-        queryset = project_list()
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.ProjectOutputSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.ProjectOutputSerializer(queryset, many=True)
-        return Response(serializer.data)
 
 
 @extend_schema_serializer(component_name="ProjectRetrieveUpdateDestroyAPI")
