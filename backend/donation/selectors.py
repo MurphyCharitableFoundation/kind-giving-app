@@ -4,7 +4,6 @@ from typing import Optional
 
 from django.db.models.query import QuerySet
 
-from campaign.models import Campaign
 from core.utils import get_object
 
 from .filters import DonationFilter
@@ -24,8 +23,3 @@ def donation_list(*, filters=None) -> QuerySet[Donation]:
     filters = filters or {}
     qs = Donation.objects.all()
     return DonationFilter(filters, qs).qs
-
-
-def campaign_donations(campaign: Campaign) -> QuerySet[Donation]:
-    """Retrieve donations for a given Campaign."""
-    return Donation.objects.filter(campaign=campaign)

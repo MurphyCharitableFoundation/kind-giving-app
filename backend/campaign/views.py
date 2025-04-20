@@ -90,18 +90,6 @@ class CampaignListCreateAPI(ListCreateAPIView):
             return self.CampaignInputSerializer
         return self.CampaignOutputSerializer
 
-    @extend_schema(responses={200: CampaignOutputSerializer})
-    def list(self, request, *args, **kwargs):  # noqa
-        queryset = campaign_list()
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.CampaignOutputSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.CampaignOutputSerializer(queryset, many=True)
-        return Response(serializer.data)
-
 
 @extend_schema_serializer(component_name="CampaignRetrieveUpdateDestroy")
 class CampaignRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
@@ -174,18 +162,6 @@ class CommentListCreateAPI(ListCreateAPIView):
         if self.request.method in ["POST"]:
             return self.CommentInputSerializer
         return self.CommentOutputSerializer
-
-    @extend_schema(responses={200: CommentOutputSerializer})
-    def list(self, request, *args, **kwargs):  # noqa
-        queryset = comment_list()
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.CommentOutputSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.CommentOutputSerializer(queryset, many=True)
-        return Response(serializer.data)
 
 
 @extend_schema_serializer(component_name="CommentRetrieveUpdateDestroy")
