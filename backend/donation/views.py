@@ -1,80 +1,61 @@
 """Donation views."""
 
 from django.contrib.auth import get_user_model
-from django.http import Http404
-from drf_spectacular.utils import extend_schema
-from rest_framework import serializers
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import permissions, serializers
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 
 from .models import Donation
-from .selectors import donation_get, donation_list
+from .selectors import donation_list
 from .services import donation_create
 
 User = get_user_model()
 
 
-class DonationDetailAPI(APIView):
+class DonationDetailAPI(RetrieveAPIView):
     """Donation Detail API."""
 
-    class OutputSerializer(serializers.ModelSerializer):
+    class DonationOutputSerializer(serializers.ModelSerializer):
         """Donation Detail Output Serializer."""
 
-        class Meta:
+        class Meta:  # noqa
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
-    @extend_schema(responses={200: OutputSerializer})
-    def get(self, request, donation_id):
-        donation = donation_get(donation_id)
-
-        if not donation:
-            raise Http404
-
-        data = self.OutputSerializer(donation).data
-
-        return Response(data)
+    lookup_url_kwarg = "donation_id"
+    queryset = donation_list()
+    serializer_class = DonationOutputSerializer
 
 
-class DonationListAPI(APIView):
+class DonationListCreateAPI(ListCreateAPIView):
     """Donation List API."""
 
-    class OutputSerializer(serializers.ModelSerializer):
+    queryset = donation_list()
+
+    class DonationInputSerializer(serializers.ModelSerializer):
+        """Donation Create Input Serializer."""
+
+        class Meta:  # noqa
+            model = Donation
+            fields = ["donor", "amount", "campaign"]
+
+        def create(self, validated_data):  # noqa
+            return donation_create(**validated_data)
+
+    class DonationOutputSerializer(serializers.ModelSerializer):
         """Donation List Output Serializer."""
 
-        class Meta:
+        class Meta:  # noqa
             model = Donation
             fields = ("id", "donor", "amount", "campaign", "payment")
 
-    @extend_schema(responses={200: OutputSerializer})
-    def get(self, request):
-        donations = donation_list()
+    def get_permissions(self):
+        """Get permissions by action."""
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
 
-        data = self.OutputSerializer(donations, many=True).data
-
-        return Response(data)
-
-
-class DonationCreateAPI(APIView):
-    """Donation Create API."""
-
-    class InputSerializer(serializers.ModelSerializer):
-        """Donation Create Input Serializer."""
-
-        class Meta:
-            model = Donation
-            fields = ["id", "donor", "amount", "campaign"]
-
-    @extend_schema(
-        request=InputSerializer,
-        responses={200: DonationDetailAPI.OutputSerializer},
-    )
-    def post(self, request):
-        serializer = self.InputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        donation = donation_create(**serializer.validated_data)
-
-        data = DonationDetailAPI.OutputSerializer(donation).data
-
-        return Response(data)
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["POST"]:
+            return self.DonationInputSerializer
+        return self.DonationOutputSerializer
