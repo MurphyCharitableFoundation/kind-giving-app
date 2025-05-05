@@ -60,6 +60,10 @@ def project_update(*, project: Project, data) -> Project:
         "country",
     ]
 
-    project, has_updated = model_update(instance=project, fields=non_side_effect_fields, data=data)
+    project, has_updated = model_update(
+        instance=project,
+        fields=non_side_effect_fields,
+        data=data,
+    )
 
     return project

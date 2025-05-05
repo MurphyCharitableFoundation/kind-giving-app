@@ -7,6 +7,7 @@ from .views import (
     CauseListCreateAPI,
     CauseRetrieveUpdateAPI,
     ProjectBeneficiaryListAPI,
+    ProjectCampaignListAPI,
     ProjectListCreateAPI,
     ProjectRetrieveUpdateDestroyAPI,
     UnassignBeneficiaryAPI,
@@ -41,6 +42,11 @@ project_patterns = [
         "<int:project_id>/unassign/",
         UnassignBeneficiaryAPI.as_view(),
         name="unassign-beneficiary",
+    ),
+    path(
+        "<int:project_id>/campaigns/",
+        ProjectCampaignListAPI.as_view(),
+        name="list-campaign",
     ),
     path(
         "<int:project_id>/assignments/",
