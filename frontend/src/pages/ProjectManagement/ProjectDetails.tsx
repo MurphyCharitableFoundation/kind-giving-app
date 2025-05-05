@@ -3,15 +3,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useEffect, useState } from 'react'
-import theme from '../../../theme/theme';
-import projectImage from '../../../assets/images/project-image-sample.png';
+import theme from '../../theme/theme';
+import projectImage from '../../assets/images/project-image-sample.png';
 import SaveIcon from '@mui/icons-material/Save';
-import OutlinedFormContainer from '../../../components/OutlinedFormContainer';
-import ProjectImagesCarousel from '../../../components/ProjectImagesCarousel';
-import CausesInput from '../../../components/CausesInput';
-import { fetchProjectBeneficiaries, fetchProjectById, Project, ProjectBeneficiary, updateProject } from '../../../utils/projectsEndpoints';
+import OutlinedFormContainer from '../../components/OutlinedFormContainer';
+import ProjectImagesCarousel from '../../components/ProjectImagesCarousel';
+import CausesInput from '../../components/CausesInput';
+import { fetchProjectBeneficiaries, fetchProjectById, Project, ProjectBeneficiary, updateProject } from '../../utils/projectsEndpoints';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import Navbar from '../../../components/Navbar/Navbar';
+import Navbar from '../../components/Navbar/Navbar';
 
 interface ProjectFormData {
     causes: string[];

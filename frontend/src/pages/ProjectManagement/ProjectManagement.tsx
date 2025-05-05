@@ -1,14 +1,14 @@
 import { Box, Card, CardActionArea, CardContent, CardMedia, Container, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CircleIcon from '@mui/icons-material/Circle';
-import projectImage from '../../../assets/images/project-image-sample.png';
-import TargetProgressBar from '../../../components/TargetProgressBar';
-import theme from '../../../theme/theme';
-import { fetchAllProjects, Project } from '../../../utils/projectsEndpoints';
+import projectImage from '../../assets/images/project-image-sample.png';
+import TargetProgressBar from '../../components/TargetProgressBar';
+import theme from '../../theme/theme';
+import { fetchAllProjects, Project } from '../../utils/projectsEndpoints';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../../components/Navbar/Navbar';
-import NewItemButton from '../../../components/NewItemButton/NewItemButton';
-import SearchBar from '../../../components/SearchBar/SearchBar';
+import Navbar from '../../components/Navbar/Navbar';
+import NewItemButton from '../../components/NewItemButton/NewItemButton';
+import SearchBar from '../../components/SearchBar/SearchBar';
 
 const ProjectManagement: React.FC = () => {
     const navigate = useNavigate();

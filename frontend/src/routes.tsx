@@ -6,8 +6,8 @@ import NotFoundPage from "./pages/NotFound/NotFound";
 import ConfirmEmail from "./pages/ConfirmEmail/ConfirmEmail";
 import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequest";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
-import ProjectManagement from "./pages/admin/ProjectManagement/ProjectManagement";
-import ProjectDetails from "./pages/admin/ProjectManagement/ProjectDetails";
+import ProjectManagement from "./pages/ProjectManagement/ProjectManagement";
+import ProjectDetails from "./pages/ProjectManagement/ProjectDetails";
 import Causes from "./pages/Causes/Causes";
 
 const routes = [
