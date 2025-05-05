@@ -3,12 +3,21 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from campaign.models import Campaign
 from user.models import UserGroup
 
 from .models import ProjectAssignment
 from .services import BENEFICIARY_MODEL_MAP
 
 User = get_user_model()
+
+
+class CampaignSerializer(serializers.ModelSerializer):
+    """Campaign Serializer."""
+
+    class Meta:  # noqa
+        model = Campaign
+        fields = "__all__"
 
 
 class BeneficiarySerializer(serializers.Serializer):

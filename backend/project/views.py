@@ -25,12 +25,14 @@ from .selectors import (
     cause_get,
     cause_list,
     project_beneficiary_list,
+    project_campaigns,
     project_donations_total_percentage,
     project_get,
     project_list,
 )
 from .serializers import (
     BeneficiarySerializer,
+    CampaignSerializer,
     ProjectAssignmentSerializer,
 )
 from .services import (
@@ -236,6 +238,17 @@ class ProjectRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
         data = ProjectListCreateAPI.ProjectOutputSerializer(project).data
 
         return Response(data)
+
+
+@extend_schema_serializer(component_name="ProjectCampaignListAPI")
+class ProjectCampaignListAPI(ListAPIView):
+    """List all campaigns for a given Project."""
+
+    serializer_class = CampaignSerializer
+
+    def get_queryset(self):  # noqa
+        project_id = self.kwargs["project_id"]
+        return project_campaigns(project_get(project_id))
 
 
 @extend_schema_serializer(component_name="ProjectBeneficiaryListAPI")
