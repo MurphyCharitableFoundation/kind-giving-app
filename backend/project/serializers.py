@@ -14,23 +14,41 @@ User = get_user_model()
 class BeneficiarySerializer(serializers.Serializer):
     """Beneficiary Serializer."""
 
-    assignable_type = serializers.ChoiceField(choices=ProjectAssignment.ASSIGNABLE_TYPE_CHOICES)
+    assignable_type = serializers.ChoiceField(
+        choices=ProjectAssignment.ASSIGNABLE_TYPE_CHOICES,
+    )
     assignable_id = serializers.IntegerField()
     beneficiary = serializers.SerializerMethodField()
 
     class UserSerializer(serializers.ModelSerializer):
         """User Serializer."""
 
+        name = serializers.SerializerMethodField()
+
         class Meta:  # noqa
             model = User
-            exclude = ["bank_account"]
+            fields = [
+                "first_name",
+                "last_name",
+                "name",
+                "email",
+                "img",
+                "is_group_leader",
+            ]
+
+        def get_name(self, obj):  # noqa
+            return obj.first_name + obj.last_name
 
     class UserGroupSerializer(serializers.ModelSerializer):
         """User Group Serializer."""
 
         class Meta:  # noqa
             model = UserGroup
-            exclude = ["bank_account"]
+            fields = [
+                "name",
+                "img",
+                "interest",
+            ]
 
     def get_beneficiary(self, obj):  # noqa
         """WARNING: Extremely inefficient for large lists."""
