@@ -14,6 +14,31 @@ export interface Project {
     donation_percentage: number;
 }
 
+interface UserBeneficiary {
+    assignable_type: "User";
+    assignable_id: number;
+    beneficiary: {
+        first_name: string;
+        last_name: string;
+        name: string;
+        email: string;
+        img: string | null;
+        is_group_leader: boolean;
+    };
+}
+
+interface GroupBeneficiary {
+    assignable_type: "UserGroup";
+    assignable_id: number;
+    beneficiary: {
+        name: string;
+        img: string | null;
+        interest: string;
+    };
+}
+
+export type ProjectBeneficiary = UserBeneficiary | GroupBeneficiary;
+
 export const fetchAllProjects = async (): Promise<Project[]> => {
     try {
         const response = await api.get<Project[]>('/projects/');
@@ -23,8 +48,8 @@ export const fetchAllProjects = async (): Promise<Project[]> => {
         console.error(
             "Failed to fetch projects:",
             error.response?.data || error.message
-          );
-          throw error;
+        );
+        throw error;
     }
 }
 
@@ -37,14 +62,13 @@ export const fetchProjectById = async (projectId: number): Promise<Project> => {
         console.error(
             "Failed to fetch project:",
             error.response?.data || error.message
-          );
-          throw error;
+        );
+        throw error;
     }
 }
 
 export const updateProject = async (projectId: number, body: Partial<Project>): Promise<Project> => {
     try {
-        console.log('body da request: ', body)
         const response = await api.patch<Project>(`/projects/${projectId}/`, body);
         console.log('patch project: ', response.data)
         return response.data;
@@ -52,7 +76,21 @@ export const updateProject = async (projectId: number, body: Partial<Project>): 
         console.error(
             "Failed to patch project:",
             error.response?.data || error.message
-          );
-          throw error;
+        );
+        throw error;
+    }
+}
+
+export const fetchProjectBeneficiaries = async (projectId: number) => {
+    try {
+        const response = await api.get<ProjectBeneficiary[]>(`/projects/${projectId}/assignments/`)
+        console.log('fetch project beneficiaries: ', response.data)
+        return response.data
+    } catch (error: any) {
+        console.error(
+            "Failed to fetch project beneficiaries:",
+            error.response?.data || error.message
+        );
+        throw error;
     }
 }

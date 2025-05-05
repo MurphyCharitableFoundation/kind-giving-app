@@ -9,7 +9,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import OutlinedFormContainer from '../../../components/OutlinedFormContainer';
 import ProjectImagesCarousel from '../../../components/ProjectImagesCarousel';
 import CausesInput from '../../../components/CausesInput';
-import { fetchProjectById, Project, updateProject } from '../../../utils/projectsEndpoints';
+import { fetchProjectBeneficiaries, fetchProjectById, Project, ProjectBeneficiary, updateProject } from '../../../utils/projectsEndpoints';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../../components/Navbar/Navbar';
 
@@ -29,8 +29,13 @@ const ProjectDetails: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const handleEditClick = () => setIsEditing(true);
+    const [benefeciaries, setBenefeciaries] = useState<ProjectBeneficiary[]>([])
 
     useEffect(() => {
+        fetchProjectBeneficiaries(projectId).then((benefeciaries) => {
+            setBenefeciaries(benefeciaries);
+            console.log('setBeneficiaries: ', benefeciaries)
+        })
         fetchProjectById(projectId).then((project) => {
             setProject(project);
             const formattedData = {
