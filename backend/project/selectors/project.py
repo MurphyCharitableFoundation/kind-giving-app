@@ -5,6 +5,7 @@ from typing import Optional
 from django.db.models import Sum
 from django.db.models.query import QuerySet
 
+from campaign.models import Campaign
 from core.services import Amount, to_money
 from core.utils import get_object
 from donation.models import Donation
@@ -40,6 +41,11 @@ def project_beneficiary_list(project_id: int, filters=None) -> QuerySet[ProjectA
     filters = filters or {}
     qs = ProjectAssignment.objects.filter(project_id=project_id)
     return ProjectAssignmentFilter(filters, qs).qs
+
+
+def project_campaigns(project: Project) -> QuerySet[Campaign]:
+    """Campaigns for project."""
+    return project.campaigns.all()
 
 
 def project_donations(project: Project) -> QuerySet[Donation]:

@@ -25,18 +25,21 @@ from .selectors import (
     cause_get,
     cause_list,
     project_beneficiary_list,
+    project_campaigns,
     project_donations_total_percentage,
     project_get,
     project_list,
 )
 from .serializers import (
     BeneficiarySerializer,
+    CampaignSerializer,
     ProjectAssignmentSerializer,
 )
 from .services import (
     assign_beneficiary,
     cause_create,
     cause_update,
+    causes_resolve,
     project_create,
     project_update,
     unassign_beneficiary,
@@ -131,12 +134,19 @@ class ProjectListCreateAPI(ListCreateAPIView):
             required=False,
         )
 
+        causes_names = serializers.ListField(
+            child=serializers.CharField(),
+            required=False,
+            write_only=True,
+        )
+
         class Meta:  # noqa
             model = Project
             fields = [
                 "name",
                 "img",
                 "causes",
+                "causes_names",
                 "target",
                 "campaign_limit",
                 "city",
@@ -145,12 +155,22 @@ class ProjectListCreateAPI(ListCreateAPIView):
                 "status",
             ]
 
-        def create(self, validated_data):
-            """Ensure causes exist before creating a project."""
-            return project_create(**validated_data)
+            read_only_fields = ["causes"]
+
+        def create(self, validated_data):  # noqa
+            causes_names = validated_data.pop("causes_names", [])
+            return project_create(causes=causes_names, **validated_data)
 
         def update(self, instance, validated_data):  # noqa
-            return project_update(project=instance, data=validated_data)
+            causes_names = validated_data.pop("causes_names", None)
+
+            instance = project_update(project=instance, data=validated_data)
+
+            if causes_names:
+                causes_objects = causes_resolve(causes_names)
+                instance.causes.set(causes_objects)
+
+            return instance
 
     class ProjectOutputSerializer(serializers.ModelSerializer):
         """Project Output Serializer."""
@@ -218,6 +238,17 @@ class ProjectRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
         data = ProjectListCreateAPI.ProjectOutputSerializer(project).data
 
         return Response(data)
+
+
+@extend_schema_serializer(component_name="ProjectCampaignListAPI")
+class ProjectCampaignListAPI(ListAPIView):
+    """List all campaigns for a given Project."""
+
+    serializer_class = CampaignSerializer
+
+    def get_queryset(self):  # noqa
+        project_id = self.kwargs["project_id"]
+        return project_campaigns(project_get(project_id))
 
 
 @extend_schema_serializer(component_name="ProjectBeneficiaryListAPI")
