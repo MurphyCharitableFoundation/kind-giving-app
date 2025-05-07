@@ -9,9 +9,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import OutlinedFormContainer from '../../components/OutlinedFormContainer';
 import ProjectImagesCarousel from '../../components/ProjectImagesCarousel';
 import CausesInput from '../../components/CausesInput';
-import { fetchProjectBeneficiaries, fetchProjectById, Project, ProjectBeneficiary, updateProject } from '../../utils/projectsEndpoints';
+import { fetchProjectBeneficiaries, fetchProjectById, fetchProjectCampaigns, Project, ProjectBeneficiary, ProjectCampaign, updateProject } from '../../utils/projectsEndpoints';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
+import BeneficiaryCard from './components/BeneficiaryCard';
+import CampaignCard from './components/CampaignCard';
 
 interface ProjectFormData {
     causes: string[];
@@ -30,8 +32,13 @@ const ProjectDetails: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const handleEditClick = () => setIsEditing(true);
     const [benefeciaries, setBenefeciaries] = useState<ProjectBeneficiary[]>([])
+    const [campaigns, setCampaigns] = useState<ProjectCampaign[]>([])
 
     useEffect(() => {
+        fetchProjectCampaigns(projectId).then((campaigns) => {
+            setCampaigns(campaigns);
+            console.log('setCampaigns: ', campaigns)
+        })
         fetchProjectBeneficiaries(projectId).then((benefeciaries) => {
             setBenefeciaries(benefeciaries);
             console.log('setBeneficiaries: ', benefeciaries)
@@ -265,45 +272,22 @@ const ProjectDetails: React.FC = () => {
                                 spacing='7px'
                                 sx={{ marginTop: '17px' }}
                             >
-                                <Card
-                                    elevation={0}
-                                    sx={{ display: 'flex', padding: '8px', border: 1, borderColor: theme.custom.misc.outlineVariant, borderRadius: '16px' }}
-                                >
-                                    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                        <CardMedia
-                                            sx={{ width: '94px', height: '100px', borderRadius: '16px' }}
-                                            image={projectImage}
-                                        />
-                                        <CardContent sx={{ p: 0, '&:last-child': { pb: 0 }, paddingLeft: '10px' }}>
-                                            <Box
-                                                sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-                                            >
-                                                <Typography color={theme.custom.misc.shadow} variant='titleSmalltextMedium'>Group name</Typography>
-                                                {/* Beneficiaries interests */}
-                                                <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
-                                                    Interests: {" "}
-                                                    <Typography component="span" color={theme.custom.surface.onColorVariant} variant='bodySmall'>
-                                                        Women loan supports, babysit,
-                                                    </Typography>
-                                                </Typography>
-                                                {/* Amount disbursed to beneficiary */}
-                                                <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
-                                                    Disbursed: {" "}
-                                                    <Typography component="span" color={theme.status.success.main} fontWeight="bold" variant='bodyLarge'>
-                                                        $75.00
-                                                    </Typography>
-                                                </Typography>
-                                            </Box>
-                                        </CardContent>
-                                    </Box>
-                                </Card>
-                                <Button
-                                    variant='contained'
-                                    disableElevation
-                                    sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px', textTransform: 'none' }}
-                                >
-                                    <Typography color={theme.palette.primary.main}>View all</Typography>
-                                </Button>
+                                {benefeciaries.length === 0 ? (
+                                    <Typography color={theme.custom.surface.onColorVariant} variant='titleMediumtextMedium'>No beneficiaries for this project.</Typography>
+                                ) : (
+                                    <>
+                                        {benefeciaries.map((beneficiary) => (
+                                            <BeneficiaryCard key={`${beneficiary.assignable_type}-${beneficiary.assignable_id}`} assignment={beneficiary} />
+                                        ))}
+                                        <Button
+                                            variant='contained'
+                                            disableElevation
+                                            sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px', textTransform: 'none' }}
+                                        >
+                                            <Typography color={theme.palette.primary.main}>View all</Typography>
+                                        </Button>
+                                    </>
+                                )}
                             </Stack>
                         </Box>
                         <Divider />
@@ -320,48 +304,30 @@ const ProjectDetails: React.FC = () => {
                             spacing='7px'
                             sx={{ marginTop: '17px' }}
                         >
-                            <Card
-                                elevation={0}
-                                sx={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '8px', border: 1, borderColor: theme.custom.misc.outlineVariant, borderRadius: '16px' }}
-                            >
-                                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                    <CardMedia
-                                        sx={{ width: '94px', height: '100px', borderRadius: '16px', flexShrink: 0 }}
-                                        image={projectImage}
-                                    />
-                                    <CardContent sx={{ p: 0, '&:last-child': { pb: 0 }, paddingLeft: '10px' }}>
-                                        <Box
-                                            sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-                                        >
-                                            <Typography color={theme.custom.misc.shadow} variant='titleSmalltextMedium'>Group name</Typography>
-                                            <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>Description duis aute irure dolor in voluptate velit.</Typography>
-                                        </Box>
-                                    </CardContent>
-                                </Box>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    {/* Campaign collected amount */}
-                                    <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
-                                        Collected:{" "}
-                                        <Typography component="span" color={theme.status.success.main} fontWeight="bold" variant='bodyLarge'>
-                                            $75.00
-                                        </Typography>
-                                    </Typography>
-                                    {/* Campaign donations count */}
-                                    <Typography color={theme.custom.surface.onColorVariant} variant='bodySmall'>
-                                        <Typography component="span" color={theme.status.success.main} fontWeight="bold" variant='bodyLarge'>
-                                            9
-                                        </Typography>{" "}
-                                        Donations
-                                    </Typography>
-                                </Box>
-                            </Card>
-                            <Button
-                                variant='contained'
-                                disableElevation
-                                sx={{ bgcolor: theme.custom.surfaceContainer.lowest, border: 1, borderColor: theme.custom.misc.outline, borderRadius: '20px', textTransform: 'none' }}
-                            >
-                                <Typography color={theme.palette.primary.main}>View all</Typography>
-                            </Button>
+                            {campaigns.length === 0 ? (
+                                <Typography color={theme.custom.surface.onColorVariant} variant='titleMediumtextMedium'>
+                                    No campaigns for this project.
+                                </Typography>
+                            ) : (
+                                <>
+                                    {campaigns.map((campaign) => (
+                                        <CampaignCard key={campaign.id} campaign={campaign} />
+                                    ))}
+                                    <Button
+                                        variant='contained'
+                                        disableElevation
+                                        sx={{
+                                            bgcolor: theme.custom.surfaceContainer.lowest,
+                                            border: 1,
+                                            borderColor: theme.custom.misc.outline,
+                                            borderRadius: '20px',
+                                            textTransform: 'none'
+                                        }}
+                                    >
+                                        <Typography color={theme.palette.primary.main}>View all</Typography>
+                                    </Button>
+                                </>
+                            )}
                         </Stack>
                     </Box>
                 )}

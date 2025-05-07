@@ -14,7 +14,7 @@ export interface Project {
     donation_percentage: number;
 }
 
-interface UserBeneficiary {
+export interface UserBeneficiary {
     assignable_type: "User";
     assignable_id: number;
     beneficiary: {
@@ -27,7 +27,7 @@ interface UserBeneficiary {
     };
 }
 
-interface GroupBeneficiary {
+export interface GroupBeneficiary {
     assignable_type: "UserGroup";
     assignable_id: number;
     beneficiary: {
@@ -35,6 +35,20 @@ interface GroupBeneficiary {
         img: string | null;
         interest: string;
     };
+}
+
+export interface ProjectCampaign {
+    id: number;
+    created: string;
+    modified: string;
+    title: string;
+    description: string;
+    target_currency: string;
+    target: number;
+    end_date: string;
+    img: string | null;
+    project: number;
+    owner: number;
 }
 
 export type ProjectBeneficiary = UserBeneficiary | GroupBeneficiary;
@@ -89,6 +103,20 @@ export const fetchProjectBeneficiaries = async (projectId: number) => {
     } catch (error: any) {
         console.error(
             "Failed to fetch project beneficiaries:",
+            error.response?.data || error.message
+        );
+        throw error;
+    }
+}
+
+export const fetchProjectCampaigns = async (projectId: number) => {
+    try {
+        const response = await api.get<ProjectCampaign[]>(`/projects/${projectId}/campaigns/`)
+        console.log(`fetch project campaigns: `, response.data)
+        return response.data
+    } catch (error: any) {
+        console.error(
+            "Failed to fetch project campaigns:",
             error.response?.data || error.message
         );
         throw error;

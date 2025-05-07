@@ -52,6 +52,7 @@ const ProjectManagement: React.FC = () => {
                 >
                     {projects.map((project) => (
                         <CardActionArea
+                            key={project.id}
                             onClick={() => handleProjectPress(project.id)}
                         >
                             <Card
