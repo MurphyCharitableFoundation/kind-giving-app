@@ -83,7 +83,11 @@ const ProjectManagement: React.FC = () => {
                                                 {/* {project.title} */}
                                                 {project.name}
                                             </Typography>
-                                            <CircleIcon sx={{ fontSize: '24px', color: theme.status.success.main }} />
+                                            <CircleIcon
+                                                sx={{
+                                                    fontSize: '24px',
+                                                    color: project.status === 'active' ? theme.status.success.main : theme.status.warning.main}}
+                                            />
                                         </Box>
                                         <Typography variant='bodySmall'>
                                             {project.description}
