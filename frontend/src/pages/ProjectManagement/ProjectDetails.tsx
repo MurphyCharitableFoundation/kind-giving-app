@@ -1,10 +1,9 @@
-import { Avatar, Box, Button, Card, CardContent, CardMedia, Container, Divider, FormControlLabel, IconButton, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material'
+import { Avatar, Box, Button, Container, Divider, FormControlLabel, IconButton, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useEffect, useState } from 'react'
 import theme from '../../theme/theme';
-import projectImage from '../../assets/images/project-image-sample.png';
 import SaveIcon from '@mui/icons-material/Save';
 import OutlinedFormContainer from '../../components/OutlinedFormContainer';
 import ProjectImagesCarousel from '../../components/ProjectImagesCarousel';
