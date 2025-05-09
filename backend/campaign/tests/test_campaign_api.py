@@ -91,6 +91,15 @@ class CampaignAPITestCase(APITestCase):
             response.data["__all__"],
         )
 
+    def test_get_campaign_list(self):
+        """Test retrieving the list of campaigns."""
+        response = self.client.get(reverse("campaigns:list-create"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+        self.assertGreaterEqual(len(response.data), 1)
+        self.assertIn("title", response.data[0])
+
     def test_get_campaign_detail(self):
         """Test retrieving a campaign by ID."""
         response = self.client.get(
@@ -188,6 +197,15 @@ class CommentAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["content"], "This is a reply!")
         self.assertEqual(response.data["parent"], self.comment.id)
+
+    def test_get_comment_list(self):
+        """Test retrieving the list of comments."""
+        response = self.client.get(reverse("comments:list-create"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+        self.assertGreaterEqual(len(response.data), 1)
+        self.assertIn("content", response.data[0])
 
     def test_get_comment_detail(self):
         """Test retrieving a comment by ID."""

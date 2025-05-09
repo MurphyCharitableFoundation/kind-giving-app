@@ -39,6 +39,8 @@ from .serializers import DonationSerializer
 class CampaignListCreateAPI(ListCreateAPIView):
     """Campaign List Create API."""
 
+    queryset = campaign_list()
+
     class CampaignInputSerializer(serializers.ModelSerializer):
         """Campaign Create Input Serializer."""
 
@@ -124,6 +126,8 @@ class CampaignRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
 class CommentListCreateAPI(ListCreateAPIView):
     """Comment List Create API."""
 
+    queryset = comment_list()
+
     class CommentInputSerializer(serializers.ModelSerializer):
         """Comment Create Input Serializer."""
 
@@ -181,7 +185,11 @@ class CommentRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
             return CommentListCreateAPI.CommentInputSerializer
         return CommentListCreateAPI.CommentOutputSerializer
 
-    @extend_schema(responses={200: CommentListCreateAPI.CommentOutputSerializer})
+    @extend_schema(
+        responses={
+            200: CommentListCreateAPI.CommentOutputSerializer,
+        }
+    )
     def get(self, request, comment_id):  # noqa
         comment = comment_get(comment_id)
 
@@ -193,7 +201,11 @@ class CommentRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
         return Response(data)
 
 
-@extend_schema(responses={200: CommentListCreateAPI.CommentOutputSerializer(many=True)})
+@extend_schema(
+    responses={
+        200: CommentListCreateAPI.CommentOutputSerializer(many=True),
+    }
+)
 @api_view(["GET"])
 def campaign_comments(request, campaign_id) -> Response:
     """Retrieve comments of campaign by campaign-id."""
