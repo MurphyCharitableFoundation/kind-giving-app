@@ -176,6 +176,10 @@ class ProjectListCreateAPI(ListCreateAPIView):
         """Project Output Serializer."""
 
         donation_percentage = serializers.SerializerMethodField()
+        causes = CauseListCreateAPI.CauseOutputSerializer(
+            many=True,
+            read_only=True,
+        )
 
         class Meta:  # noqa
             model = Project
@@ -183,7 +187,7 @@ class ProjectListCreateAPI(ListCreateAPIView):
                 "id",
                 "name",
                 "img",
-                "causes",  # Read-only
+                "causes",
                 "target",
                 "campaign_limit",
                 "city",
