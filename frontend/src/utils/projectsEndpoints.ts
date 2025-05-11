@@ -1,10 +1,17 @@
 import { api, apiWithoutAuth } from "./axios";
 
+export interface Cause {
+    id: number;
+    name: string;
+    description: string;
+    icon: string | null;
+}
+
 export interface Project {
     id: number;
     name: string;
     img: string | null;
-    causes: string[];
+    causes: Cause[] | string[];
     target: string;
     campaign_limit: number;
     city: string;
@@ -121,4 +128,10 @@ export const fetchProjectCampaigns = async (projectId: number) => {
         );
         throw error;
     }
+}
+
+export function normalizeCauses(causes: Cause[] | string[] | undefined): string[] {
+    if (!Array.isArray(causes)) return [];
+    if (typeof causes[0] === 'string') return causes as string[];
+    return (causes as Cause[]).map((cause) => cause.name);
 }

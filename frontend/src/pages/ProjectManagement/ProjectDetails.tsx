@@ -8,7 +8,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import OutlinedFormContainer from '../../components/OutlinedFormContainer';
 import ProjectImagesCarousel from '../../components/ProjectImagesCarousel';
 import CausesInput from '../../components/CausesInput';
-import { fetchProjectBeneficiaries, fetchProjectById, fetchProjectCampaigns, Project, ProjectBeneficiary, ProjectCampaign, updateProject } from '../../utils/projectsEndpoints';
+import { fetchProjectBeneficiaries, fetchProjectById, fetchProjectCampaigns, normalizeCauses, Project, ProjectBeneficiary, ProjectCampaign, updateProject } from '../../utils/projectsEndpoints';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import BeneficiaryCard from './components/BeneficiaryCard';
@@ -45,7 +45,7 @@ const ProjectDetails: React.FC = () => {
         fetchProjectById(projectId).then((project) => {
             setProject(project);
             const formattedData = {
-                causes: project.causes || [],
+                causes: normalizeCauses(project.causes),
                 title: project.name,
                 description: project.description,
                 status: project.status,
@@ -73,7 +73,7 @@ const ProjectDetails: React.FC = () => {
             const updatedProject = await updateProject(projectId, patchData);
             setProject(updatedProject);
             setOriginalData({
-                causes: updatedProject.causes || [],
+                causes: normalizeCauses(updatedProject.causes),
                 title: updatedProject.name,
                 description: updatedProject.description,
                 status: updatedProject.status,
