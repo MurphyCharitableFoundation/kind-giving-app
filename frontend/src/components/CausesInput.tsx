@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 import { Box, Chip, TextField, Typography, Button } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import theme from '../theme/theme';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import { FreeMode } from 'swiper/modules';
 
 interface CausesInputProps {
     isEditing: boolean;
-    causes: string[]; 
+    causes: string[];
     onCausesChange: (newCauses: string[]) => void;
 }
 
-const CausesInput: React.FC<CausesInputProps> = ({ 
-    isEditing, 
-    causes, 
-    onCausesChange 
+const CausesInput: React.FC<CausesInputProps> = ({
+    isEditing,
+    causes,
+    onCausesChange
 }) => {
     const [inputValue, setInputValue] = useState('');
 
@@ -64,21 +68,35 @@ const CausesInput: React.FC<CausesInputProps> = ({
                     />
                 </Box>
             ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'row', gap: '13px' }}>
-                    {causes.map((cause, index) => (
-                        <Button
-                            key={index}
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                borderRadius: '40px',
-                                bgcolor: theme.palette.secondary.container,
-                                textTransform: 'none'
-                            }}
-                        >
-                            <Typography color={theme.palette.primary.main}>{cause}</Typography>
-                        </Button>
-                    ))}
+                <Box sx={{ overflowX: 'auto' }}>
+                    <Swiper
+                        spaceBetween={10}
+                        slidesPerView="auto"
+                        freeMode
+                        modules={[FreeMode]}
+                        style={{ padding: '4px 0' }}
+                    >
+                        {causes.map((cause, index) => (
+                            <SwiperSlide
+                                key={index}
+                                style={{ width: 'auto' }} // allow slide to fit button width
+                            >
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    sx={{
+                                        borderRadius: '40px',
+                                        bgcolor: theme.palette.secondary.container,
+                                        textTransform: 'none',
+                                        whiteSpace: 'nowrap',
+                                        paddingX: '16px',
+                                    }}
+                                >
+                                    <Typography color={theme.palette.primary.main}>{cause}</Typography>
+                                </Button>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
                 </Box>
             )}
         </Box>

@@ -30,7 +30,7 @@ const ProjectDetails: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const handleEditClick = () => setIsEditing(true);
-    const [benefeciaries, setBenefeciaries] = useState<ProjectBeneficiary[]>([])
+    const [beneficiaries, setBeneficiaries] = useState<ProjectBeneficiary[]>([])
     const [campaigns, setCampaigns] = useState<ProjectCampaign[]>([])
 
     useEffect(() => {
@@ -38,9 +38,9 @@ const ProjectDetails: React.FC = () => {
             setCampaigns(campaigns);
             console.log('setCampaigns: ', campaigns)
         })
-        fetchProjectBeneficiaries(projectId).then((benefeciaries) => {
-            setBenefeciaries(benefeciaries);
-            console.log('setBeneficiaries: ', benefeciaries)
+        fetchProjectBeneficiaries(projectId).then((beneficiaries) => {
+            setBeneficiaries(beneficiaries);
+            console.log('setBeneficiaries: ', beneficiaries)
         })
         fetchProjectById(projectId).then((project) => {
             setProject(project);
@@ -258,24 +258,24 @@ const ProjectDetails: React.FC = () => {
                         <Typography color={theme.custom.surface.onColor} variant='bodySmall'>$444</Typography>
                     </Box>
                 </Box>
-                {/* Beneficaries list */}
+                {/* Beneficiaries list */}
                 {!isEditing && (
                     <>
                         <Divider />
                         <Box
                             sx={{ display: 'flex', flexDirection: 'column' }}
                         >
-                            <Typography color={theme.custom.surface.onColor} variant='titleXLargetextMedium'>Beneficaries</Typography>
+                            <Typography color={theme.custom.surface.onColor} variant='titleXLargetextMedium'>Beneficiaries</Typography>
                             <Stack
                                 direction='column'
                                 spacing='7px'
                                 sx={{ marginTop: '17px' }}
                             >
-                                {benefeciaries.length === 0 ? (
+                                {beneficiaries.length === 0 ? (
                                     <Typography color={theme.custom.surface.onColorVariant} variant='titleMediumtextMedium'>No beneficiaries for this project.</Typography>
                                 ) : (
                                     <>
-                                        {benefeciaries.map((beneficiary) => (
+                                        {beneficiaries.map((beneficiary) => (
                                             <BeneficiaryCard key={`${beneficiary.assignable_type}-${beneficiary.assignable_id}`} assignment={beneficiary} />
                                         ))}
                                         <Button
