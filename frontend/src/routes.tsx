@@ -7,6 +7,7 @@ import ConfirmEmail from "./pages/ConfirmEmail/ConfirmEmail";
 import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequest";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
 import Causes from "./pages/Causes/Causes";
+import CauseDetails from "./pages/CauseDetails/CauseDetails";
 
 const routes = [
   {
@@ -37,6 +38,10 @@ const routes = [
   {
     path: "/causes",
     element: <Causes />,
+  },
+  {
+    path: "/causes/:causeId",
+    element: <CauseDetails />,
   },
 ];
 

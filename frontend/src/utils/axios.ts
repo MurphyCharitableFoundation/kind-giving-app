@@ -43,4 +43,18 @@ export const getCauses = async () => {
   }
 };
 
+export const getCauseById = async (id: string) => {
+  try {
+    const result = await axios.get(`${API_BASE_URL}/causes/${id}`, {
+      headers: { Authorization: `Token ${token}` },
+    });
+
+    if (!result) throw new Error("Error getting Cause");
+
+    return result;
+  } catch (err: any) {
+    throw new Error(err.response.data.message);
+  }
+};
+
 export { api, apiWithoutAuth };

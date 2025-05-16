@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Navbar from "../../components/Navbar/Navbar";
 import theme from "../../theme/theme";
 
@@ -9,20 +9,23 @@ import Cause from "../../interfaces/Cause";
 import { getCauses } from "../../utils/axios";
 import EditButton from "./components/EditButton";
 import DeleteButton from "./components/DeleteButton";
+import { useNavigate } from "react-router-dom";
 
 const Causes = () => {
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(true);
   const [causes, setCauses] = useState<Cause[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [causeClickedId, setCauseClickedId] = useState<number | null>(null);
 
-  const handleClickedCause = (CauseId: number) => {
-    if (causeClickedId && CauseId === causeClickedId) {
-      setCauseClickedId(null);
+  const handleClickedCause = (causeId: number) => {
+    if (causeClickedId && causeId === causeClickedId) {
+      navigate(`/causes/${causeId}`);
       return;
     }
 
-    setCauseClickedId(CauseId);
+    setCauseClickedId(causeId);
   };
 
   useEffect(() => {
