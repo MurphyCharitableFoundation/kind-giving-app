@@ -6,17 +6,15 @@ import NotFoundPage from "./pages/NotFound/NotFound";
 import ConfirmEmail from "./pages/ConfirmEmail/ConfirmEmail";
 import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequest";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
-import { NavBar } from "./components/Navbar/Navbar";
+import ProjectManagement from "./pages/ProjectManagement/ProjectManagement";
+import ProjectDetails from "./pages/ProjectManagement/ProjectDetails";
+import Causes from "./pages/Causes/Causes";
 
 const routes = [
   {
     path: "/",
     element: <App />,
     errorElement: <NotFoundPage />,
-  },
-  {
-    path: "/navbar",
-    element: <NavBar />,
   },
   {
     path: "/register",
@@ -38,6 +36,18 @@ const routes = [
     path: "/password-reset/confirm/:uid/:token",
     element: <PasswordResetConfirm />,
   },
+  {
+    path: "/projects",
+    element: <ProjectManagement/>
+  },
+  {
+    path: "/projects/:projectId",
+    element: <ProjectDetails/>
+  },
+  {
+    path: "/causes",
+    element: <Causes />
+  }
 ];
 
 export default routes;

@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import Header from "../../components/Header";
+import Header from "../../components/Header/Header";
 import LogoutButton from "../../components/LogoutButton";
 
 function App() {

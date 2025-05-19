@@ -1,6 +1,11 @@
+import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+interface HeaderProps {
+  children?: string;
+}
+
+const Header = ({ children }: HeaderProps) => {
   return (
     <div
       className="flex-row align-center"
@@ -9,6 +14,7 @@ const Header = () => {
       <Link to="/">
         <h1>Kind Giving App</h1>
       </Link>
+
       <nav>
         <ul className="flex-row gap20">
           <Link to="/login">
@@ -28,6 +34,8 @@ const Header = () => {
           </Link>
         </ul>
       </nav>
+
+      <Typography>{children}</Typography>
     </div>
   );
 };
