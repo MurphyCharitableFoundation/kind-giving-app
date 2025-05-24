@@ -2,7 +2,7 @@ import { Box, Button, Card, Container, Typography, Alert } from "@mui/material";
 import EmailInput from "../../components/EmailInput";
 import { ChangeEvent, FormEvent, useState } from "react";
 
-import { resetPasswordRequest } from "../../utils/endpoints";
+import { resetPasswordRequest } from "../../utils/endpoints/endpoints";
 
 interface FormData {
   email: string;

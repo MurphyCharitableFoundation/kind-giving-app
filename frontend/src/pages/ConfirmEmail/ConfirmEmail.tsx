@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Container, Typography } from "@mui/material";
-import { confirmEmail } from "../../utils/endpoints";
+import { confirmEmail } from "../../utils/endpoints/endpoints";
 
 const EmailConfirm: React.FC = () => {
   const { key } = useParams<{ key: string }>();

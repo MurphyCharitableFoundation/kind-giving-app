@@ -6,7 +6,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-import theme from "../../../../theme/theme";
+import theme from "../../../theme/theme";
 
 const iconButtonStyles = {
   bgcolor: "action.hover",
@@ -17,9 +17,10 @@ const iconButtonStyles = {
 
 interface TopBarProps {
   children?: string;
+  isCreating: boolean;
 }
 
-const TopBar = ({ children }: TopBarProps) => {
+const TopBar = ({ children, isCreating }: TopBarProps) => {
   return (
     <Box
       sx={{
@@ -53,24 +54,26 @@ const TopBar = ({ children }: TopBarProps) => {
         <Typography variant="titleXLargetextMedium">{children}</Typography>
       </Box>
 
-      {/* icons div */}
-      <Box>
-        <IconButton aria-label="Attach file" sx={iconButtonStyles}>
-          <AttachFileIcon />
-        </IconButton>
+      {/* icons div when not creating a new cause*/}
+      {!isCreating && (
+        <Box>
+          <IconButton aria-label="Attach file" sx={iconButtonStyles}>
+            <AttachFileIcon />
+          </IconButton>
 
-        <IconButton aria-label="Edit" sx={iconButtonStyles}>
-          <EditOutlinedIcon />
-        </IconButton>
+          <IconButton aria-label="Edit" sx={iconButtonStyles}>
+            <EditOutlinedIcon />
+          </IconButton>
 
-        <IconButton
-          aria-label="More options"
-          aria-haspopup="menu"
-          sx={iconButtonStyles}
-        >
-          <MoreVertIcon />
-        </IconButton>
-      </Box>
+          <IconButton
+            aria-label="More options"
+            aria-haspopup="menu"
+            sx={iconButtonStyles}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </Box>
+      )}
     </Box>
   );
 };

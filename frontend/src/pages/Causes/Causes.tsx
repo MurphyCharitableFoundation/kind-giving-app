@@ -6,17 +6,17 @@ import NewItemButton from "../../components/NewItemButton/NewItemButton";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import Cause from "../../interfaces/Cause";
-import { getCauses } from "../../utils/axios";
 import EditButton from "./components/EditButton";
 import DeleteButton from "./components/DeleteButton";
 import { useNavigate } from "react-router-dom";
+import { getCauses } from "../../utils/endpoints/causesEndpoints";
 
 const Causes = () => {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [causes, setCauses] = useState<Cause[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>();
   const [causeClickedId, setCauseClickedId] = useState<number | null>(null);
 
   const handleClickedCause = (causeId: number) => {
@@ -28,12 +28,16 @@ const Causes = () => {
     setCauseClickedId(causeId);
   };
 
+  const handleCreateCause = () => {
+    navigate("/causes/create");
+  };
+
   useEffect(() => {
     const fetchCausesAPI = async () => {
       try {
         setIsLoading(true);
         const response = await getCauses();
-        setCauses(response.data);
+        setCauses(response);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -75,13 +79,14 @@ const Causes = () => {
           padding: "15px",
           flexGrow: 1,
           gap: "16px",
+          minHeight: "calc(100vh - 70px)",
         }}
       >
         {/* Search bar */}
         <SearchBar />
 
         {/* New Cause button */}
-        <NewItemButton>New Cause</NewItemButton>
+        <NewItemButton onClick={handleCreateCause}>New Cause</NewItemButton>
 
         {/* Causes to be displayed */}
         {causes.map((cause) => (
@@ -98,7 +103,7 @@ const Causes = () => {
               minHeight: "100px",
               borderRadius: "12px",
               bgcolor: theme.custom.surfaceContainer.lowest,
-              boxShadow: causeClickedId === cause.id ? 3 : 0,
+              boxShadow: causeClickedId === cause.id ? 4 : 0,
             }}
             onClick={() => handleClickedCause(cause.id)}
           >
@@ -184,6 +189,21 @@ const Causes = () => {
             )}
           </Box>
         ))}
+        {error && (
+          <Box
+            sx={{
+              bgcolor: "red",
+              width: "100%",
+              maxWidth: "318px",
+              padding: "8px",
+              borderRadius: "12px",
+              color: "white",
+              textAlign: "center",
+            }}
+          >
+            {error}
+          </Box>
+        )}
       </Box>
     </Box>
   );

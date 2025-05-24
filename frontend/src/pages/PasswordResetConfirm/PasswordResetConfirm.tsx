@@ -4,7 +4,7 @@ import { Card, Container, Button, Typography, Alert } from "@mui/material";
 
 import PasswordInput from "../../components/PasswordInput";
 
-import { resetPasswordConfirm } from "../../utils/endpoints";
+import { resetPasswordConfirm } from "../../utils/endpoints/endpoints";
 
 interface FormData {
   new_password1: string;

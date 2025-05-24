@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 import { Card, Button, Typography, Container, Alert } from "@mui/material";
-import { registerUser } from "../../utils/endpoints";
+import { registerUser } from "../../utils/endpoints/endpoints";
 
 import EmailInput from "../../components/EmailInput";
 import PasswordInput from "../../components/PasswordInput";

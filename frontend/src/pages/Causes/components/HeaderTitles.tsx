@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import theme from "../../../../theme/theme";
+import theme from "../../../theme/theme";
 import { ReactNode } from "react";
 
 interface HeaderTitlesProps {
