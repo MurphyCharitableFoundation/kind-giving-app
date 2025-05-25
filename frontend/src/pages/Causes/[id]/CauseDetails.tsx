@@ -25,7 +25,7 @@ const CauseDetails = () => {
   const [currentCause, setCurrentCause] = useState<Cause | null>(null);
 
   useEffect(() => {
-    const getListItemsAPI = async () => {
+    const getCauseByIdAPI = async () => {
       try {
         setIsLoading(true);
 
@@ -39,7 +39,7 @@ const CauseDetails = () => {
       }
     };
 
-    getListItemsAPI();
+    getCauseByIdAPI();
   }, [causeId]);
 
   if (isLoading) {
