@@ -43,12 +43,11 @@ export const createNewCause = async (
   icon?: string
 ) => {
   try {
+    console.log(api);
     const response = await api.post<ICreateCause>("/causes/", {
-      data: {
-        name,
-        description,
-        icon,
-      },
+      name,
+      description,
+      icon,
     });
 
     if (!response) throw new Error("Error creating a new cause");

@@ -20,7 +20,7 @@ const CauseDetails = () => {
   const { causeId } = useParams<{ causeId: string }>();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
 
   const [currentCause, setCurrentCause] = useState<Cause | null>(null);
 

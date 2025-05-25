@@ -16,7 +16,7 @@ interface formData {
 const CreateOrEditCause = ({ isCreating }: CreateOrEditCauseProps) => {
   const navigate = useNavigate();
 
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<formData>({
     name: "",
@@ -97,6 +97,7 @@ const CreateOrEditCause = ({ isCreating }: CreateOrEditCauseProps) => {
           height: "calc(100vh - 127px)",
         }}
       >
+        {/* name input */}
         <TextField
           name="name"
           id="name"
@@ -109,6 +110,7 @@ const CreateOrEditCause = ({ isCreating }: CreateOrEditCauseProps) => {
           sx={{ width: "100%", maxWidth: "400px" }}
         />
 
+        {/* description input */}
         <TextField
           name="description"
           id="description"
@@ -124,6 +126,7 @@ const CreateOrEditCause = ({ isCreating }: CreateOrEditCauseProps) => {
           sx={{ width: "100%", maxWidth: "400px" }}
         />
 
+        {/* image outter div */}
         <Box
           component="fieldset"
           sx={{
@@ -171,6 +174,24 @@ const CreateOrEditCause = ({ isCreating }: CreateOrEditCauseProps) => {
             </Typography>
           </Button>
         </Box>
+
+        {/* error div */}
+        {error && (
+          <Box
+            sx={{
+              bgcolor: "red",
+              width: "100%",
+              maxWidth: "318px",
+              padding: "8px",
+              borderRadius: "12px",
+              color: "white",
+              textAlign: "center",
+              justifySelf: "center",
+            }}
+          >
+            {error}
+          </Box>
+        )}
       </Box>
 
       {/* Cancel and save buttons div */}

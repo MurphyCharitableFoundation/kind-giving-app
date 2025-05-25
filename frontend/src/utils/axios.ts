@@ -24,6 +24,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     config.headers.Authorization = `Token ${token}`;
   }
 
+  console.log(token);
   return config;
 });
 
