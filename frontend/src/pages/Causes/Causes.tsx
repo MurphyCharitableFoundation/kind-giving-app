@@ -101,6 +101,7 @@ const Causes = () => {
               width: "100%",
               maxWidth: "318px",
               minHeight: "100px",
+              height: "fit-content",
               borderRadius: "12px",
               bgcolor: theme.custom.surfaceContainer.lowest,
               boxShadow: causeClickedId === cause.id ? 4 : 0,
@@ -111,6 +112,8 @@ const Causes = () => {
             <Box
               sx={{
                 display: "flex",
+                gap: "10px",
+                alignItems: "center",
               }}
             >
               {/* icon div */}
@@ -135,7 +138,8 @@ const Causes = () => {
                   gap: "8px",
                   width: "100%",
                   maxWidth: "208px",
-                  height: "78px",
+                  minHeight: "78px",
+                  height: "fit-content",
                 }}
               >
                 <Typography
