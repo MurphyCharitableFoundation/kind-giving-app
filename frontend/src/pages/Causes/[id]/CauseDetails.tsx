@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box } from "@mui/material";
 
 import TextContent from "../components/TextContent";
 import TopBar from "../components/TopBar";
-import Cause from "../../../interfaces/Cause";
-import { getCauseById } from "../../../utils/endpoints/causesEndpoints";
 import HeaderTitles from "../components/HeaderTitles";
 import theme from "../../../theme/theme";
 import NotFoundPage from "../../NotFound/NotFound";
+import { useCauseById } from "../../../hooks/useCauseById";
 
 const UpperDivsStyles = {
   display: "flex",
@@ -19,28 +17,7 @@ const UpperDivsStyles = {
 const CauseDetails = () => {
   const { causeId } = useParams<{ causeId: string }>();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [currentCause, setCurrentCause] = useState<Cause | null>(null);
-
-  useEffect(() => {
-    const getCauseByIdAPI = async () => {
-      try {
-        setIsLoading(true);
-
-        const response = await getCauseById(causeId!);
-
-        setCurrentCause(response);
-      } catch (err: any) {
-        setError(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getCauseByIdAPI();
-  }, [causeId]);
+  const { isLoading, error, currentCause } = useCauseById(causeId!);
 
   if (isLoading) {
     return (
