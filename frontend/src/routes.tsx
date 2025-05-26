@@ -9,6 +9,7 @@ import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConf
 import Causes from "./pages/Causes/Causes";
 import CauseDetails from "./pages/Causes/[id]/CauseDetails";
 import CreateCause from "./pages/Causes/Create/CreateCause";
+import EditCause from "./pages/Causes/EditCause/EditCause";
 
 const routes = [
   {
@@ -47,6 +48,10 @@ const routes = [
   {
     path: "/causes/:causeId",
     element: <CauseDetails />,
+  },
+  {
+    path: "/causes/:causeId/edit",
+    element: <EditCause />,
   },
 ];
 
