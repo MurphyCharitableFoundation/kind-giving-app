@@ -2,10 +2,17 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { ChangeEvent, MouseEvent, useState } from "react";
 import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
-import { createNewCause } from "../../../utils/endpoints/causesEndpoints";
+import { useCreateCause } from "../../../hooks/useCreateCause";
 
 interface CreateOrEditCauseProps {
   isCreating?: boolean;
+  causeId?: string;
+  initialData?: {
+    id: number;
+    name: string;
+    description: string;
+    icon: string;
+  };
 }
 
 interface formData {
@@ -13,8 +20,14 @@ interface formData {
   description: string;
 }
 
-const CreateOrEditCause = ({ isCreating }: CreateOrEditCauseProps) => {
+const CreateOrEditCause = ({
+  isCreating,
+  causeId,
+  initialData,
+}: CreateOrEditCauseProps) => {
   const navigate = useNavigate();
+
+  const createCauseMutation = useCreateCause();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -76,7 +89,11 @@ const CreateOrEditCause = ({ isCreating }: CreateOrEditCauseProps) => {
 
     if (validate()) {
       try {
-        await createNewCause(formData.name, formData.description);
+        await createCauseMutation.mutateAsync({
+          name: formData.name,
+          description: formData.description,
+        });
+
         redirectToCauses();
       } catch (err: any) {
         setError(err.response?.data?.detail || "Save failed.");
