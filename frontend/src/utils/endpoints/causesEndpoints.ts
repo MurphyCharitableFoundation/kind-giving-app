@@ -43,7 +43,6 @@ export const createNewCause = async (
   icon?: string
 ) => {
   try {
-    console.log(api);
     const response = await api.post<ICreateCause>("/causes/", {
       name,
       description,
