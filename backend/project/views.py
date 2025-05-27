@@ -1,14 +1,17 @@
 """Project Views."""
 
-from django.apps import apps
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from django.http import Http404
+from drf_spectacular.utils import (
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_serializer,
+)
 from rest_framework import permissions, serializers, status
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import (
     ListAPIView,
     ListCreateAPIView,
+    RetrieveUpdateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.response import Response
@@ -16,35 +19,80 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser
 
-from .models import Cause, Project, ProjectAssignment
+from .mixins import BeneficiaryResolutionMixin, PrefetchBeneficiaryMixin
+from .models import Cause, Project
+from .selectors import (
+    cause_get,
+    cause_list,
+    project_beneficiary_list,
+    project_campaigns,
+    project_donations_total_percentage,
+    project_get,
+    project_list,
+)
 from .serializers import (
-    CauseSerializer,
+    BeneficiarySerializer,
+    CampaignSerializer,
     ProjectAssignmentSerializer,
-    ProjectSerializer,
+)
+from .services import (
+    assign_beneficiary,
+    cause_create,
+    cause_update,
+    causes_resolve,
+    project_create,
+    project_update,
+    unassign_beneficiary,
 )
 
 User = get_user_model()
 
 
-class CauseListCreateView(ListCreateAPIView):
+@extend_schema_serializer(component_name="CauseListCreateAPI")
+class CauseListCreateAPI(ListCreateAPIView):
     """List & Create View for Cause."""
 
-    queryset = Cause.objects.all()
-    serializer_class = CauseSerializer
+    queryset = cause_list()
 
-    def perform_create(self, serializer):
-        """Ensure only admins can create causes."""
-        if self.request.user.groups.filter(name="admin").exists():
-            return serializer.save()
-        else:
-            raise PermissionDenied("Only admins can create causes.")
+    class CauseInputSerializer(serializers.ModelSerializer):
+        """Cause Input Serializer."""
+
+        class Meta:  # noqa
+            model = Cause
+            fields = ["name", "description", "icon"]
+
+        def create(self, validated_data):  # noqa
+            return cause_create(**validated_data)
+
+        def update(self, instance, validated_data):  # noqa
+            return cause_update(cause=instance, data=validated_data)
+
+    class CauseOutputSerializer(serializers.ModelSerializer):
+        """Cause Output Serializer."""
+
+        class Meta:  # noqa
+            model = Cause
+            fields = ["id", "name", "description", "icon"]
+
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["POST"]:
+            return self.CauseInputSerializer
+        return self.CauseOutputSerializer
+
+    def get_permissions(self):
+        """Get permissions by action."""
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated(), IsAdminUser()]
 
 
-class CauseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+@extend_schema_serializer(component_name="CauseRetrieveUpdateAPI")
+class CauseRetrieveUpdateAPI(RetrieveUpdateAPIView):
     """Retrieve, Update, and Destroy View for Cause."""
 
-    queryset = Cause.objects.all()
-    serializer_class = CauseSerializer
+    queryset = cause_list()
+    lookup_url_kwarg = "cause_id"
 
     def get_permissions(self):
         """Get permissions by action."""
@@ -52,32 +100,111 @@ class CauseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
             return [permissions.AllowAny()]
         return [permissions.IsAuthenticated(), IsAdminUser()]
 
-    def perform_destroy(self, instance):
-        """Prevent delete if any project is using this cause."""
-        if instance.projects.exists():
-            raise serializers.ValidationError("This cause is used by one or more projects and cannot be deleted.")
-        super().perform_destroy(instance)
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["PATCH", "PUT"]:
+            return CauseListCreateAPI.CauseInputSerializer
+        return CauseListCreateAPI.CauseOutputSerializer
+
+    @extend_schema(responses={200: CauseListCreateAPI.CauseOutputSerializer})
+    def get(self, request, cause_id):  # noqa
+        cause = cause_get(cause_id)
+
+        if not cause:
+            raise Http404
+
+        data = CauseListCreateAPI.CauseOutputSerializer(cause).data
+
+        return Response(data)
 
 
-class ProjectListCreateView(ListCreateAPIView):
+@extend_schema_serializer(component_name="ProjectListCreateAPI")
+class ProjectListCreateAPI(ListCreateAPIView):
     """List & Create View for Project."""
 
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+    queryset = project_list()
 
-    def perform_create(self, serializer):
-        """Ensure only admins can create projects."""
-        if self.request.user.groups.filter(name="admin").exists():
-            return serializer.save()
-        else:
-            raise PermissionDenied("Only admins can create projects.")
+    class ProjectInputSerializer(serializers.ModelSerializer):
+        """Project Input Serializer."""
 
+        causes = serializers.SlugRelatedField(
+            queryset=Cause.objects.all(),
+            slug_field="name",  # Accepts cause names instead of pks
+            many=True,
+            required=False,
+        )
 
-class ProjectRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    """Retrieve, Update, and Destroy View for Project."""
+        causes_names = serializers.ListField(
+            child=serializers.CharField(),
+            required=False,
+            write_only=True,
+        )
 
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+        class Meta:  # noqa
+            model = Project
+            fields = [
+                "name",
+                "img",
+                "causes",
+                "causes_names",
+                "target",
+                "campaign_limit",
+                "city",
+                "country",
+                "description",
+                "status",
+            ]
+
+            read_only_fields = ["causes"]
+
+        def create(self, validated_data):  # noqa
+            causes_names = validated_data.pop("causes_names", [])
+            return project_create(causes=causes_names, **validated_data)
+
+        def update(self, instance, validated_data):  # noqa
+            causes_names = validated_data.pop("causes_names", None)
+
+            instance = project_update(project=instance, data=validated_data)
+
+            if causes_names:
+                causes_objects = causes_resolve(causes_names)
+                instance.causes.set(causes_objects)
+
+            return instance
+
+    class ProjectOutputSerializer(serializers.ModelSerializer):
+        """Project Output Serializer."""
+
+        donation_percentage = serializers.SerializerMethodField()
+        causes = CauseListCreateAPI.CauseOutputSerializer(
+            many=True,
+            read_only=True,
+        )
+
+        class Meta:  # noqa
+            model = Project
+            fields = [
+                "id",
+                "name",
+                "img",
+                "causes",
+                "target",
+                "campaign_limit",
+                "city",
+                "country",
+                "description",
+                "status",
+                "donation_percentage",
+            ]
+
+        def get_donation_percentage(self, project) -> int:  # noqa
+            return project_donations_total_percentage(project)
+
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["POST"]:
+            return self.ProjectInputSerializer
+        return self.ProjectOutputSerializer
 
     def get_permissions(self):
         """Get permissions by action."""
@@ -86,7 +213,61 @@ class ProjectRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         return [permissions.IsAuthenticated(), IsAdminUser()]
 
 
-class AssignBeneficiaryView(APIView):
+@extend_schema_serializer(component_name="ProjectRetrieveUpdateDestroyAPI")
+class ProjectRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
+    """Retrieve, Update, and Destroy View for Project."""
+
+    queryset = project_list()
+    lookup_url_kwarg = "project_id"
+
+    def get_permissions(self):
+        """Get permissions by action."""
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated(), IsAdminUser()]
+
+    def get_serializer_class(self):
+        """Dynamically choose which serializer class to use."""
+        if self.request.method in ["PATCH", "PUT"]:
+            return ProjectListCreateAPI.ProjectInputSerializer
+        return ProjectListCreateAPI.ProjectOutputSerializer
+
+    @extend_schema(responses={200: ProjectListCreateAPI.ProjectOutputSerializer})
+    def get(self, request, project_id):  # noqa
+        project = project_get(project_id)
+
+        if not project:
+            raise Http404
+
+        data = ProjectListCreateAPI.ProjectOutputSerializer(project).data
+
+        return Response(data)
+
+
+@extend_schema_serializer(component_name="ProjectCampaignListAPI")
+class ProjectCampaignListAPI(ListAPIView):
+    """List all campaigns for a given Project."""
+
+    serializer_class = CampaignSerializer
+
+    def get_queryset(self):  # noqa
+        project_id = self.kwargs["project_id"]
+        return project_campaigns(project_get(project_id))
+
+
+@extend_schema_serializer(component_name="ProjectBeneficiaryListAPI")
+class ProjectBeneficiaryListAPI(PrefetchBeneficiaryMixin, ListAPIView):
+    """List all beneficiaries for a given Project."""
+
+    serializer_class = BeneficiarySerializer
+
+    def get_queryset(self):  # noqa
+        project_id = self.kwargs["project_id"]
+        return project_beneficiary_list(project_id)
+
+
+@extend_schema_serializer(component_name="AssignBeneficiaryAPI")
+class AssignBeneficiaryAPI(BeneficiaryResolutionMixin, APIView):
     """Assign a User or UserGroup to a Project."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
@@ -101,19 +282,16 @@ class AssignBeneficiaryView(APIView):
     )
     def post(self, request, project_id):
         """Create project assignment for beneficiary."""
-        project = get_object_or_404(Project, id=project_id)
+        project = self.get_project(project_id)
         serializer = ProjectAssignmentSerializer(data=request.data)
 
         if serializer.is_valid():
-            assignable_type = serializer.validated_data["assignable_type"]
-            assignable_id = serializer.validated_data["assignable_id"]
+            beneficiary = self.get_beneficiary(
+                assignable_type=serializer.validated_data["assignable_type"],
+                assignable_id=serializer.validated_data["assignable_id"],
+            )
+            assignment, created = assign_beneficiary(project=project, beneficiary=beneficiary)
 
-            # Get beneficiary model dynamically
-            beneficiary_model = User if assignable_type == "User" else apps.get_model("user", "UserGroup")
-            beneficiary = get_object_or_404(beneficiary_model, id=assignable_id)
-
-            # Assign the beneficiary
-            assignment, created = ProjectAssignment.assign_beneficiary(project, beneficiary)
             return Response(
                 {"message": ("Beneficiary assigned successfully." if created else "Beneficiary already assigned.")},
                 status=(status.HTTP_201_CREATED if created else status.HTTP_200_OK),
@@ -122,7 +300,8 @@ class AssignBeneficiaryView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UnassignBeneficiaryView(APIView):
+@extend_schema_serializer(component_name="UnassignBeneficiaryAPI")
+class UnassignBeneficiaryAPI(BeneficiaryResolutionMixin, APIView):
     """Unassign a User or UserGroup from a Project."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
@@ -136,17 +315,15 @@ class UnassignBeneficiaryView(APIView):
     )
     def delete(self, request, project_id):
         """Delete project assignment for beneficiary."""
-        project = get_object_or_404(Project, id=project_id)
+        project = self.get_project(project_id)
         serializer = ProjectAssignmentSerializer(data=request.data)
 
         if serializer.is_valid():
-            assignable_type = serializer.validated_data["assignable_type"]
-            assignable_id = serializer.validated_data["assignable_id"]
-
-            beneficiary_model = User if assignable_type == "User" else apps.get_model("user", "UserGroup")
-            beneficiary = get_object_or_404(beneficiary_model, id=assignable_id)
-
-            deleted = ProjectAssignment.unassign_beneficiary(project, beneficiary)
+            beneficiary = self.get_beneficiary(
+                assignable_type=serializer.validated_data["assignable_type"],
+                assignable_id=serializer.validated_data["assignable_id"],
+            )
+            deleted = unassign_beneficiary(project=project, beneficiary=beneficiary)
 
             if deleted:
                 return Response(
@@ -159,13 +336,3 @@ class UnassignBeneficiaryView(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ListAssignmentsView(ListAPIView):
-    """List all assignments for a given Project."""
-
-    serializer_class = ProjectAssignmentSerializer
-
-    def get_queryset(self):
-        project_id = self.kwargs["project_id"]
-        return ProjectAssignment.assignments_for(get_object_or_404(Project, id=project_id))

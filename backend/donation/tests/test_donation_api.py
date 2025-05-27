@@ -6,10 +6,11 @@ from djmoney.money import Money
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from campaign.models import Campaign
+from campaign.services import campaign_create
 from core.services import to_money
 from donation.models import Donation
-from project.models import Project
+from donation.services import donation_create
+from project.services import project_create
 
 User = get_user_model()
 
@@ -22,25 +23,30 @@ class DonationAPITestCase(APITestCase):
         self.user = User.objects.create_user(email="donor@example.com", password="testpass")
 
         # Create a project and campaign
-        self.project, _ = Project.create_project(name="Project A", target=Money(10000, "USD"))
-        self.campaign, _ = Campaign.create_campaign(
+        self.project = project_create(
+            name="Project A",
+            target=Money(10000, "USD"),
+            city="City",
+            country="Country",
+        )
+        self.campaign = campaign_create(
             title="Education for All",
+            description="Education for All",
             project=self.project,
             owner=self.user,
             target=Money(5000, "USD"),
         )
 
         # Create a donation
-        self.donation = Donation.objects.create(
+        self.donation = donation_create(
             donor=self.user,
             amount=Money(100.00, "USD"),
             campaign=self.campaign,
-            payment="txn_123456",
         )
 
     def test_list_donations(self):
         """Test retrieving all donations."""
-        url = reverse("list")
+        url = reverse("list-create")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -49,7 +55,7 @@ class DonationAPITestCase(APITestCase):
 
     def test_retrieve_donation_detail(self):
         """Test retrieving a specific donation."""
-        url = reverse("detail", args=[self.donation.id])
+        url = reverse("detail", kwargs={"donation_id": self.donation.id})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -67,9 +73,9 @@ class DonationAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_create_donation(self):
+    def test_create_donation_unauthenticated(self):
         """Test creating a new donation via API."""
-        url = reverse("create")
+        url = reverse("list-create")
         payload = {
             "donor": self.user.id,
             "amount": "150.00",
@@ -77,12 +83,26 @@ class DonationAPITestCase(APITestCase):
         }
         response = self.client.post(url, payload, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_donation_authenticated(self):
+        """Test creating a new donation with an authenticated user."""
+        self.client.force_authenticate(user=self.user)
+        url = reverse("list-create")
+        payload = {
+            "donor": self.user.id,
+            "amount": "150.00",
+            "campaign": self.campaign.id,
+        }
+        response = self.client.post(url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Donation.objects.count(), 2)
 
     def test_create_donation_with_invalid_data(self):
         """Test that invalid donation creation fails."""
-        url = reverse("create")
+        self.client.force_authenticate(user=self.user)
+        url = reverse("list-create")
         payload = {
             "donor": self.user.id,
             "amount": "-100.00",  # Invalid negative amount

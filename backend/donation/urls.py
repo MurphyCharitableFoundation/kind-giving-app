@@ -2,10 +2,9 @@
 
 from django.urls import path
 
-from .views import DonationCreateAPI, DonationDetailAPI, DonationListAPI
+from .views import DonationDetailAPI, DonationListCreateAPI
 
 urlpatterns = [
-    path("", DonationListAPI.as_view(), name="list"),
+    path("", DonationListCreateAPI.as_view(), name="list-create"),
     path("<int:donation_id>/", DonationDetailAPI.as_view(), name="detail"),
-    path("create/", DonationCreateAPI.as_view(), name="create"),
 ]

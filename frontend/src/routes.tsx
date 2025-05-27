@@ -6,6 +6,8 @@ import NotFoundPage from "./pages/NotFound/NotFound";
 import ConfirmEmail from "./pages/ConfirmEmail/ConfirmEmail";
 import PasswordResetRequest from "./pages/PasswordResetRequest/PasswordResetRequest";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConfirm";
+import ProjectManagement from "./pages/ProjectManagement/ProjectManagement";
+import ProjectDetails from "./pages/ProjectManagement/ProjectDetails";
 import Causes from "./pages/Causes/Causes";
 import CauseDetails from "./pages/Causes/[id]/CauseDetails";
 import CreateCause from "./pages/Causes/Create/CreateCause";
@@ -38,8 +40,16 @@ const routes = [
     element: <PasswordResetConfirm />,
   },
   {
+    path: "/projects",
+    element: <ProjectManagement/>
+  },
+  {
+    path: "/projects/:projectId",
+    element: <ProjectDetails/>
+  },
+  {
     path: "/causes",
-    element: <Causes />,
+    element: <Causes />
   },
   {
     path: "/causes/create",

@@ -1,3 +1,5 @@
+"""User models."""
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -7,24 +9,40 @@ from .managers import UserManager
 
 
 class BankAccount(models.Model):
+    """Representation of Bank Account."""
+
     class AccountStatus(models.TextChoices):
         VERIFIED = "VERIFIED", _("Verified")
         PENDING = "PENDING", _("Pending")
         FAILED = "FAILED", _("Failed")
 
-    bank_account_token_id = models.CharField(max_length=255, blank=True, null=True)
-    account_status = models.CharField(max_length=10, choices=AccountStatus.choices, default=AccountStatus.PENDING.value)
+    bank_account_token_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    account_status = models.CharField(
+        max_length=10,
+        choices=AccountStatus.choices,
+        default=AccountStatus.PENDING.value,
+    )
     last_payout = models.DateTimeField()
 
-    def __str__(self):
+    def __str__(self):  # noqa
         return f"BankAccount: {self.bank_account_token_id}"
 
 
 class UserGroup(models.Model):
+    """Representation of User Group."""
+
     name = models.CharField(max_length=255)
     phone_number = PhoneNumberField(blank=True, null=True)
     interest = models.CharField(max_length=255, blank=True, null=True)
-    img = models.ImageField(upload_to="usergroup_images/", blank=True, null=True)
+    img = models.ImageField(
+        upload_to="usergroup_images/",
+        blank=True,
+        null=True,
+    )
 
     bank_account = models.OneToOneField(
         BankAccount,
@@ -34,11 +52,13 @@ class UserGroup(models.Model):
         unique=True,
     )
 
-    def __str__(self):
+    def __str__(self):  # noqa
         return f"UserGroup: {self.name}"
 
 
 class User(AbstractUser):
+    """Representation of User."""
+
     username = None
     email = models.EmailField(_("email address"), unique=True)
     phone_number = PhoneNumberField(blank=True, null=True)
@@ -66,5 +86,5 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def __str__(self):
+    def __str__(self):  # noqa
         return f"User: {self.email}"

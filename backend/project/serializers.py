@@ -1,74 +1,77 @@
 """Project Serializers."""
 
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Cause, Project, ProjectAssignment
+from campaign.models import Campaign
+from user.models import UserGroup
+
+from .models import ProjectAssignment
+from .services import BENEFICIARY_MODEL_MAP
+
+User = get_user_model()
 
 
-class CauseSerializer(serializers.ModelSerializer):
-    """Cause Serializer."""
+class CampaignSerializer(serializers.ModelSerializer):
+    """Campaign Serializer."""
 
-    class Meta:
-        model = Cause
-        fields = ["id", "name", "description", "icon"]
-
-    def validate_name(self, value):
-        """Ensure name is always lowercase."""
-        return value.lower()
+    class Meta:  # noqa
+        model = Campaign
+        fields = "__all__"
 
 
-class ProjectSerializer(serializers.ModelSerializer):
-    """Project Serializer."""
+class BeneficiarySerializer(serializers.Serializer):
+    """Beneficiary Serializer."""
 
-    # Read-only: Display causes as a list of names
-    causes = serializers.SlugRelatedField(
-        many=True,
-        queryset=Cause.objects.all(),
-        slug_field="name",
-        required=False,
+    assignable_type = serializers.ChoiceField(
+        choices=ProjectAssignment.ASSIGNABLE_TYPE_CHOICES,
     )
+    assignable_id = serializers.IntegerField()
+    beneficiary = serializers.SerializerMethodField()
 
-    # Write-only: Accept cause names for creation/update
-    causes_names = serializers.ListField(child=serializers.CharField(), required=False, write_only=True)
+    class UserSerializer(serializers.ModelSerializer):
+        """User Serializer."""
 
-    class Meta:
-        model = Project
-        fields = [
-            "id",
-            "name",
-            "img",
-            "causes",  # Read-only
-            "causes_names",  # Write-only
-            "target",
-            "campaign_limit",
-            "city",
-            "country",
-        ]
-        read_only_fields = ["causes"]
+        name = serializers.SerializerMethodField()
 
-    def create(self, validated_data):
-        """Ensure causes exist before creating a project."""
-        causes_names = validated_data.pop("causes_names", [])
+        class Meta:  # noqa
+            model = User
+            fields = [
+                "first_name",
+                "last_name",
+                "name",
+                "email",
+                "img",
+                "is_group_leader",
+            ]
 
-        # Use existing method to create project and ensure causes exist
-        project, _ = Project.create_project(causes=causes_names, **validated_data)
-        return project
+        def get_name(self, obj):  # noqa
+            return obj.first_name + obj.last_name
 
-    def update(self, instance, validated_data):
-        """Update project details and causes if provided."""
-        causes_names = validated_data.pop("causes_names", None)
+    class UserGroupSerializer(serializers.ModelSerializer):
+        """User Group Serializer."""
 
-        # Update the fields that were provided in the request
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        class Meta:  # noqa
+            model = UserGroup
+            fields = [
+                "name",
+                "img",
+                "interest",
+            ]
 
-        # If causes_names is provided, update the causes relationship
-        if causes_names is not None:
-            cause_objects = [Cause.create_cause(name)[0] for name in causes_names]
-            instance.causes.set(cause_objects)
+    def get_beneficiary(self, obj):  # noqa
+        """WARNING: Extremely inefficient for large lists."""
+        beneficiary_model = BENEFICIARY_MODEL_MAP.get(obj.assignable_type)
 
-        instance.save()
-        return instance
+        BENEFICIARY_SERIALIZER_MAP = {
+            "User": self.UserSerializer,
+            "UserGroup": self.UserGroupSerializer,
+        }
+
+        if beneficiary_model:
+            beneficiary = self.context[f"{obj.assignable_type}_map"].get(obj.assignable_id)
+
+            return BENEFICIARY_SERIALIZER_MAP.get(obj.assignable_type)(beneficiary).data
 
 
 class ProjectAssignmentSerializer(serializers.ModelSerializer):
@@ -77,7 +80,7 @@ class ProjectAssignmentSerializer(serializers.ModelSerializer):
     assignable_type = serializers.ChoiceField(choices=ProjectAssignment.ASSIGNABLE_TYPE_CHOICES)
     assignable_id = serializers.IntegerField()
 
-    class Meta:
+    class Meta:  # noqa
         model = ProjectAssignment
         fields = ["id", "project", "assignable_type", "assignable_id"]
         read_only_fields = ["id", "project"]

@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -53,11 +54,40 @@ class ProjectAPITestCase(TestCase):
             "city": "Lagos",
             "country": "Nigeria",
         }
-        response = self.client.post("/api/projects/", payload, format="json")
+        response = self.client.post(
+            reverse("projects:list-create"),
+            payload,
+            format="json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "New Project")
-        self.assertListEqual(response.data["causes"], ["education", "healthcare"])
+        self.assertListEqual(
+            response.data["causes"],
+            ["education", "healthcare"],
+        )
+
+    def test_create_project_new_causes(self):
+        """Test creating a new project with new causes via POST request."""
+        payload = {
+            "name": "New Project",
+            "target": "10000.00",
+            "causes_names": ["transportation"],  # Using cause names
+            "city": "Lagos",
+            "country": "Nigeria",
+        }
+        response = self.client.post(
+            reverse("projects:list-create"),
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["name"], "New Project")
+        self.assertListEqual(
+            response.data["causes"],
+            ["transportation"],
+        )
 
     def test_get_projects(self):
         """Test retrieving all projects via GET request."""
@@ -79,14 +109,17 @@ class ProjectAPITestCase(TestCase):
         payload = {
             "name": "Updated Water Project",
             "target": "7500.00",
-            "causes_names": ["healthcare"],
+            "causes_names": ["healthcare", "welfare"],
         }
         response = self.client.patch(f"/api/projects/{self.project.id}/", payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "Updated Water Project")
         self.assertEqual(response.data["target"], "7500.00")
-        self.assertListEqual(response.data["causes"], ["healthcare"])
+        self.assertListEqual(
+            response.data["causes"],
+            ["healthcare", "welfare"],
+        )
 
     def test_delete_project(self):
         """Test deleting a project."""
