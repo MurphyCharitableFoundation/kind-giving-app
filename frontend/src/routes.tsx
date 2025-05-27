@@ -9,7 +9,7 @@ import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConf
 import Causes from "./pages/Causes/Causes";
 import CauseDetails from "./pages/Causes/[id]/CauseDetails";
 import CreateCause from "./pages/Causes/Create/CreateCause";
-import EditCause from "./pages/Causes/EditCause/EditCause";
+import EditCause from "./pages/Causes/[id]/EditCause/EditCause";
 
 const routes = [
   {

@@ -1,9 +1,10 @@
 import { Button, Typography } from "@mui/material";
 import theme from "../../../theme/theme";
+import { MouseEvent } from "react";
 
 interface EditButtonProps {
   children?: string;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const EditButton = ({ children, onClick }: EditButtonProps) => {

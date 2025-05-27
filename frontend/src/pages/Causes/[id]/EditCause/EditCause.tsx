@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import CreateOrEditCause from "../components/CreateOrEditCause";
-import TopBar from "../components/TopBar";
-import { useGetCauseById } from "../../../hooks/useGetCauseById";
+import CreateOrEditCause from "../../components/CreateOrEditCause";
+import TopBar from "../../components/TopBar";
+import { useGetCauseById } from "../../../../hooks/useGetCauseById";
 import { Box } from "@mui/material";
 
 const EditCause = () => {

@@ -25,7 +25,7 @@ interface TopBarProps {
 const TopBar = ({ children, causeId, isCreating, isEditing }: TopBarProps) => {
   const navigate = useNavigate();
 
-  const redirectToEditedCause = () => {
+  const redirectToEditCause = () => {
     navigate(`/causes/${causeId}/edit`);
   };
 
@@ -72,7 +72,7 @@ const TopBar = ({ children, causeId, isCreating, isEditing }: TopBarProps) => {
           <IconButton
             aria-label="Edit"
             sx={iconButtonStyles}
-            onClick={redirectToEditedCause}
+            onClick={redirectToEditCause}
           >
             <EditOutlinedIcon />
           </IconButton>

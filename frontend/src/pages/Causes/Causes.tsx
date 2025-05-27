@@ -6,7 +6,7 @@ import NewItemButton from "../../components/NewItemButton/NewItemButton";
 import SearchBar from "../../components/SearchBar/SearchBar";
 
 import { Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetCauses } from "../../hooks/useGetCauses";
 
@@ -30,8 +30,10 @@ const Causes = () => {
     navigate("/causes/create");
   };
 
-  const handleEditCauseBtn = (id: number) => {
-    navigate(`/causes/${id}`);
+  const handleEditCauseBtn = (e: MouseEvent<HTMLButtonElement>, id: number) => {
+    e.stopPropagation();
+
+    navigate(`/causes/${id}/edit`);
   };
 
   if (isLoading) {
@@ -180,7 +182,7 @@ const Causes = () => {
                   }}
                 >
                   <EditButton
-                    onClick={() => handleEditCauseBtn(causeClickedId)}
+                    onClick={(e) => handleEditCauseBtn(e, causeClickedId)}
                   >
                     Edit
                   </EditButton>
