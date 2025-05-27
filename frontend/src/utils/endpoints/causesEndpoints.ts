@@ -56,3 +56,24 @@ export const createNewCause = async (
     throw new Error(err.response.data.message);
   }
 };
+
+export const updateCause = async (
+  id: string,
+  name: string,
+  description: string,
+  icon?: string
+): Promise<ICause> => {
+  try {
+    const response = await api.put<ICause>(`/causes/${id}/`, {
+      name,
+      description,
+      icon,
+    });
+
+    if (!response) throw new Error("Error updating cause");
+
+    return response.data;
+  } catch (err: any) {
+    throw new Error(err.response.data.message);
+  }
+};

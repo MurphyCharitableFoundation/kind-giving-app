@@ -26,8 +26,12 @@ const Causes = () => {
     setCauseClickedId(causeId);
   };
 
-  const handleCreateCause = () => {
+  const handleNewCauseBtn = () => {
     navigate("/causes/create");
+  };
+
+  const handleEditCauseBtn = (id: number) => {
+    navigate(`/causes/${id}`);
   };
 
   if (isLoading) {
@@ -68,7 +72,7 @@ const Causes = () => {
         <SearchBar />
 
         {/* New Cause button */}
-        <NewItemButton onClick={handleCreateCause}>New Cause</NewItemButton>
+        <NewItemButton onClick={handleNewCauseBtn}>New Cause</NewItemButton>
 
         {!causes && (
           <Typography variant="h3" sx={{ textAlign: "center" }}>
@@ -175,7 +179,11 @@ const Causes = () => {
                     paddingTop: "10px",
                   }}
                 >
-                  <EditButton>Edit</EditButton>
+                  <EditButton
+                    onClick={() => handleEditCauseBtn(causeClickedId)}
+                  >
+                    Edit
+                  </EditButton>
 
                   <DeleteButton>Delete</DeleteButton>
                 </Box>

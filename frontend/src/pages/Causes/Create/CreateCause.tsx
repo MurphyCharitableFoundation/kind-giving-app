@@ -6,7 +6,7 @@ const CreateCause = () => {
     <>
       <TopBar isCreating={true}>Create a cause</TopBar>
 
-      <CreateOrEditCause />
+      <CreateOrEditCause isCreating={true} />
     </>
   );
 };

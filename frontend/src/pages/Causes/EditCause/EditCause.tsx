@@ -1,18 +1,34 @@
 import { useParams } from "react-router-dom";
 import CreateOrEditCause from "../components/CreateOrEditCause";
 import TopBar from "../components/TopBar";
-import { useCauseById } from "../../../hooks/useCauseById";
+import { useGetCauseById } from "../../../hooks/useGetCauseById";
+import { Box } from "@mui/material";
 
 const EditCause = () => {
   const { causeId } = useParams<{ causeId: string }>();
 
-  const { isLoading, error, currentCause } = useCauseById(causeId!);
+  const { isLoading, currentCause } = useGetCauseById(causeId!);
+
+  if (isLoading) {
+    return (
+      <Box>
+        {/* Placeholder for our spinner if we decide to use one */}
+        Loading...
+      </Box>
+    );
+  }
 
   return (
     <>
-      <TopBar isCreating={false}>Edit</TopBar>
+      <TopBar isCreating={false} isEditing={true} causeId={causeId}>
+        Edit Cause
+      </TopBar>
 
-      <CreateOrEditCause />
+      <CreateOrEditCause
+        isCreating={false}
+        initialData={currentCause}
+        causeId={causeId}
+      />
     </>
   );
 };

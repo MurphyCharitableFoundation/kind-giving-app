@@ -1,11 +1,12 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { ChangeEvent, MouseEvent, useState } from "react";
+import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import theme from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import { useCreateCause } from "../../../hooks/useCreateCause";
+import { useUpdateCause } from "../../../hooks/useUpdateCause";
 
 interface CreateOrEditCauseProps {
-  isCreating?: boolean;
+  isCreating: boolean;
   causeId?: string;
   initialData?: {
     id: number;
@@ -28,6 +29,7 @@ const CreateOrEditCause = ({
   const navigate = useNavigate();
 
   const createCauseMutation = useCreateCause();
+  const updateCauseMutation = useUpdateCause();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +37,17 @@ const CreateOrEditCause = ({
     name: "",
     description: "",
   });
+
+  // Initialize form data with existing cause data when editing
+  useEffect(() => {
+    if (!isCreating && initialData) {
+      setFormData({
+        name:
+          initialData.name.charAt(0).toUpperCase() + initialData.name.slice(1), // capitalize first letter
+        description: initialData.description,
+      });
+    }
+  }, [isCreating, initialData]);
 
   const [formErrors, setFormErrors] = useState<formData>({
     name: "",
@@ -50,7 +63,7 @@ const CreateOrEditCause = ({
       [name]: value,
     });
 
-    // Optionally, clear error when user starts typing
+    // Clear error when user starts typing
     setFormErrors({
       ...formErrors,
       [name]: "",
@@ -84,17 +97,37 @@ const CreateOrEditCause = ({
     navigate("/causes");
   };
 
+  const redirectToEditedCause = () => {
+    navigate(`/causes/${causeId}`);
+  };
+
   const handleSave = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     if (validate()) {
       try {
-        await createCauseMutation.mutateAsync({
-          name: formData.name,
-          description: formData.description,
-        });
+        if (isCreating) {
+          await createCauseMutation.mutateAsync({
+            name: formData.name,
+            description: formData.description,
+          });
 
-        redirectToCauses();
+          redirectToCauses();
+        } else {
+          // Edit existing cause
+          if (!causeId) {
+            setError("Cause ID is required for updating.");
+            return;
+          }
+
+          await updateCauseMutation.mutateAsync({
+            id: causeId,
+            name: formData.name,
+            description: formData.description,
+          });
+
+          redirectToEditedCause();
+        }
       } catch (err: any) {
         setError(err.response?.data?.detail || "Save failed.");
       }
@@ -225,7 +258,7 @@ const CreateOrEditCause = ({
         <Button
           variant="contained"
           disableElevation
-          onClick={redirectToCauses}
+          onClick={isCreating ? redirectToCauses : redirectToEditedCause}
           sx={{
             borderRadius: "40px",
             border: "1px solid rgba(0, 0, 0, 0.6)",

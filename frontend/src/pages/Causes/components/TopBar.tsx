@@ -1,4 +1,4 @@
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Box, IconButton, Typography } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -17,10 +17,18 @@ const iconButtonStyles = {
 
 interface TopBarProps {
   children?: string;
+  causeId?: string;
   isCreating: boolean;
+  isEditing?: boolean;
 }
 
-const TopBar = ({ children, isCreating }: TopBarProps) => {
+const TopBar = ({ children, causeId, isCreating, isEditing }: TopBarProps) => {
+  const navigate = useNavigate();
+
+  const redirectToEditedCause = () => {
+    navigate(`/causes/${causeId}/edit`);
+  };
+
   return (
     <Box
       sx={{
@@ -39,7 +47,7 @@ const TopBar = ({ children, isCreating }: TopBarProps) => {
       >
         <IconButton
           component={RouterLink}
-          to="/causes"
+          to={isEditing ? `/causes/${causeId}` : "/causes"}
           aria-label="Go back"
           sx={{
             bgcolor: "action.hover",
@@ -61,7 +69,11 @@ const TopBar = ({ children, isCreating }: TopBarProps) => {
             <AttachFileIcon />
           </IconButton>
 
-          <IconButton aria-label="Edit" sx={iconButtonStyles}>
+          <IconButton
+            aria-label="Edit"
+            sx={iconButtonStyles}
+            onClick={redirectToEditedCause}
+          >
             <EditOutlinedIcon />
           </IconButton>
 

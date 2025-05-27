@@ -6,7 +6,7 @@ import TopBar from "../components/TopBar";
 import HeaderTitles from "../components/HeaderTitles";
 import theme from "../../../theme/theme";
 import NotFoundPage from "../../NotFound/NotFound";
-import { useCauseById } from "../../../hooks/useCauseById";
+import { useGetCauseById } from "../../../hooks/useGetCauseById";
 
 const UpperDivsStyles = {
   display: "flex",
@@ -17,7 +17,7 @@ const UpperDivsStyles = {
 const CauseDetails = () => {
   const { causeId } = useParams<{ causeId: string }>();
 
-  const { isLoading, error, currentCause } = useCauseById(causeId!);
+  const { isLoading, error, currentCause } = useGetCauseById(causeId!);
 
   if (isLoading) {
     return (
@@ -34,7 +34,7 @@ const CauseDetails = () => {
 
   return (
     <>
-      <TopBar isCreating={false}>
+      <TopBar isCreating={false} causeId={causeId}>
         {currentCause.name.charAt(0).toUpperCase() + currentCause.name.slice(1)}
       </TopBar>
 
@@ -109,7 +109,7 @@ const CauseDetails = () => {
             justifySelf: "center",
           }}
         >
-          {error}
+          {error.message}
         </Box>
       )}
     </>
