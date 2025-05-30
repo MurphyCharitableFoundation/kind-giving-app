@@ -1,4 +1,4 @@
-import { api, apiWithoutAuth } from "./axios";
+import { api, apiWithoutAuth } from "../axios";
 import Cookies from "js-cookie";
 
 // Types of Responses

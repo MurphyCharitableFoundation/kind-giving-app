@@ -9,6 +9,9 @@ import PasswordResetConfirm from "./pages/PasswordResetConfirm/PasswordResetConf
 import ProjectManagement from "./pages/ProjectManagement/ProjectManagement";
 import ProjectDetails from "./pages/ProjectManagement/ProjectDetails";
 import Causes from "./pages/Causes/Causes";
+import CauseDetails from "./pages/Causes/[id]/CauseDetails";
+import CreateCause from "./pages/Causes/Create/CreateCause";
+import EditCause from "./pages/Causes/[id]/EditCause/EditCause";
 
 const routes = [
   {
@@ -47,7 +50,19 @@ const routes = [
   {
     path: "/causes",
     element: <Causes />
-  }
+  },
+  {
+    path: "/causes/create",
+    element: <CreateCause />,
+  },
+  {
+    path: "/causes/:causeId",
+    element: <CauseDetails />,
+  },
+  {
+    path: "/causes/:causeId/edit",
+    element: <EditCause />,
+  },
 ];
 
 export default routes;

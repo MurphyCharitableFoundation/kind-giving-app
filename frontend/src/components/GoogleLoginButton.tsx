@@ -1,5 +1,5 @@
 import React from "react";
-import { AuthenticateWithGoogle } from "../utils/endpoints";
+import { AuthenticateWithGoogle } from "../utils/endpoints/endpoints";
 import { useGoogleLogin } from "@react-oauth/google";
 import { Button } from "@mui/material";
 

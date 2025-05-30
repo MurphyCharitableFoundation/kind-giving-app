@@ -1,4 +1,4 @@
-import { logout } from "../utils/endpoints";
+import { logout } from "../utils/endpoints/endpoints";
 import { googleLogout } from "@react-oauth/google";
 import { Button } from "@mui/material";
 import theme from "../theme/theme";

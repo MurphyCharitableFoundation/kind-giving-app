@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { Box, Button, Card, Container, Typography, Alert } from "@mui/material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
-import { login } from "../../utils/endpoints";
+import { login } from "../../utils/endpoints/endpoints";
 
 import EmailInput from "../../components/EmailInput";
 import PasswordInput from "../../components/PasswordInput";
