@@ -56,6 +56,9 @@ class Campaign(TimeStampedModel):
                 if self.project.campaigns.count() >= self.project.campaign_limit:
                     raise ValidationError("Project already has enough campaigns.")
 
+    class Meta:  # noqa
+        ordering = ["-created"]
+
 
 class Comment(TimeStampedModel):
     """Representation of a comment."""
@@ -82,3 +85,6 @@ class Comment(TimeStampedModel):
     def __str__(self):
         """Represent Comment as string."""
         return f"Comment: {self.content[:30]}"
+
+    class Meta:  # noqa
+        ordering = ["-created"]
