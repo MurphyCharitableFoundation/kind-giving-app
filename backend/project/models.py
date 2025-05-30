@@ -61,7 +61,10 @@ class Project(TimeStampedModel):
         EXPIRED = "expired", _("Expired")
         CANCELLED = "cancelled", _("Cancelled")
 
-    name = models.CharField(max_length=255, help_text="Short name or title of the project.")
+    name = models.CharField(
+        max_length=255,
+        help_text="Short name or title of the project.",
+    )
     img = models.ImageField(
         upload_to="projects/",
         blank=True,

@@ -20,6 +20,11 @@ class CauseFilter(django_filters.FilterSet):
 class ProjectFilter(django_filters.FilterSet):
     """Project Filter."""
 
+    name = django_filters.CharFilter(lookup_expr="icontains")
+    city = django_filters.CharFilter(lookup_expr="icontains")
+    country = django_filters.CharFilter(lookup_expr="icontains")
+    description = django_filters.CharFilter(lookup_expr="icontains")
+
     class Meta:  # noqa
         model = Project
         fields = (
