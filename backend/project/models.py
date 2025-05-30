@@ -10,7 +10,7 @@ from model_utils.models import TimeStampedModel
 User = get_user_model()
 
 
-class Cause(models.Model):
+class Cause(TimeStampedModel):
     """
     Represents a cause or category to which a project can belong.
 
@@ -47,6 +47,9 @@ class Cause(models.Model):
         if self.name:
             self.name = self.name.lower()
         super().save(*args, **kwargs)
+
+    class Meta:  # noqa
+        ordering = ["-created"]
 
 
 class Project(TimeStampedModel):
@@ -116,6 +119,9 @@ class Project(TimeStampedModel):
     def __str__(self):
         """Represent Project as string."""
         return f"Project: {self.name}"
+
+    class Meta:  # noqa
+        ordering = ["-created"]
 
 
 class ProjectAssignment(models.Model):

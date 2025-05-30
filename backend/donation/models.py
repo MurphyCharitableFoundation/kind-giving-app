@@ -62,3 +62,6 @@ class Donation(TimeStampedModel):
 
         if self.amount <= to_money(0):
             raise ValidationError({"amount": "Amount cannot be negative or zero."})
+
+    class Meta:  # noqa
+        ordering = ["-created"]

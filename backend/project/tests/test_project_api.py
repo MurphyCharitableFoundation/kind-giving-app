@@ -62,7 +62,7 @@ class ProjectAPITestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "New Project")
-        self.assertListEqual(
+        self.assertCountEqual(
             response.data["causes"],
             ["education", "healthcare"],
         )
@@ -176,9 +176,9 @@ class ProjectAPITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "Updated Water Project")
         self.assertEqual(response.data["target"], "7500.00")
-        self.assertListEqual(
+        self.assertCountEqual(
             response.data["causes"],
-            ["healthcare", "welfare"],
+            ["welfare", "healthcare"],
         )
 
     def test_delete_project(self):
