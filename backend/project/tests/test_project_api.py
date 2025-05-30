@@ -94,8 +94,68 @@ class ProjectAPITestCase(TestCase):
         response = self.client.get("/api/projects/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Clean Water Project")
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["name"], "Clean Water Project")
+
+    def test_get_projects_pagination(self):
+        """Test retrieving all projects via GET request in paginated format."""
+        offset_val = 999
+        response = self.client.get(
+            reverse("projects:list-create"),
+            {"query": "", "offset": offset_val},
+        )
+
+        self.assertEquals(response.data["offset"], offset_val)
+
+    def test_get_projects_filtered_by_name(self):
+        Project.objects.create(
+            name="Church Renovation",
+            status=Project.StatusChoices.ACTIVE,
+            target=5000,
+            city="Nairobi",
+            country="Kenya",
+        )
+        Project.objects.create(
+            name="School Renovation",
+            status=Project.StatusChoices.ACTIVE,
+            target=5000,
+            city="Nairobi",
+            country="Kenya",
+        )
+        response = self.client.get(
+            reverse("projects:list-create"),
+            {"name": "Church"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data["results"]), 1)
+        self.assertEqual(
+            response.data["results"][0]["name"],
+            "Church Renovation",
+        )
+
+    def test_get_projects_filtered_by_status(self):
+        Project.objects.create(
+            name="Health Clinic",
+            status=Project.StatusChoices.ACTIVE,
+            target=5000,
+            city="Nairobi",
+            country="Kenya",
+        )
+        Project.objects.create(
+            name="School Renovation",
+            status=Project.StatusChoices.FUNDED,
+            target=5000,
+            city="Nairobi",
+            country="Kenya",
+        )
+        response = self.client.get(reverse("projects:list-create"), {"status": Project.StatusChoices.ACTIVE})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data["results"]), 1)
+
+        for project in response.data["results"]:
+            self.assertEqual(project["status"], Project.StatusChoices.ACTIVE)
 
     def test_get_project_detail(self):
         """Test retrieving a single project by ID."""

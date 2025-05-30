@@ -17,6 +17,7 @@ from rest_framework.generics import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.pagination import LimitOffsetPagination, get_paginated_response
 from core.permissions import IsAdminUser
 
 from .mixins import BeneficiaryResolutionMixin, PrefetchBeneficiaryMixin
@@ -122,8 +123,6 @@ class CauseRetrieveUpdateAPI(RetrieveUpdateAPIView):
 class ProjectListCreateAPI(ListCreateAPIView):
     """List & Create View for Project."""
 
-    queryset = project_list()
-
     class ProjectInputSerializer(serializers.ModelSerializer):
         """Project Input Serializer."""
 
@@ -164,7 +163,10 @@ class ProjectListCreateAPI(ListCreateAPIView):
         def update(self, instance, validated_data):  # noqa
             causes_names = validated_data.pop("causes_names", None)
 
-            instance = project_update(project=instance, data=validated_data)
+            instance = project_update(
+                project=instance,
+                data=validated_data,
+            )
 
             if causes_names:
                 causes_objects = causes_resolve(causes_names)
@@ -200,6 +202,21 @@ class ProjectListCreateAPI(ListCreateAPIView):
         def get_donation_percentage(self, project) -> int:  # noqa
             return project_donations_total_percentage(project)
 
+    class ProjectFilterSerializer(serializers.Serializer):  # noqa
+        name = serializers.CharField(max_length=200, required=False)
+        status = serializers.ChoiceField(
+            choices=Project.StatusChoices,
+            required=False,
+        )
+        city = serializers.CharField(max_length=200, required=False)
+        country = serializers.CharField(max_length=200, required=False)
+
+    class Pagination(LimitOffsetPagination):  # noqa
+        pass
+
+    queryset = project_list()
+    pagination_class = Pagination
+
     def get_serializer_class(self):
         """Dynamically choose which serializer class to use."""
         if self.request.method in ["POST"]:
@@ -211,6 +228,22 @@ class ProjectListCreateAPI(ListCreateAPIView):
         if self.request.method == "GET":
             return [permissions.AllowAny()]
         return [permissions.IsAuthenticated(), IsAdminUser()]
+
+    def get(self, request, *args, **kwargs):  # noqa
+        filters_serializer = self.ProjectFilterSerializer(
+            data=request.query_params,
+        )
+        filters_serializer.is_valid(raise_exception=True)
+
+        projects = project_list(filters=filters_serializer.validated_data)
+
+        return get_paginated_response(
+            pagination_class=self.pagination_class,
+            serializer_class=self.ProjectOutputSerializer,
+            queryset=projects,
+            request=request,
+            view=self,
+        )
 
 
 @extend_schema_serializer(component_name="ProjectRetrieveUpdateDestroyAPI")
