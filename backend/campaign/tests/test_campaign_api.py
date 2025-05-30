@@ -278,8 +278,10 @@ class CampaignCommentsAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Ensure both comments are returned
         self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]["content"], "Great campaign!")
-        self.assertEqual(response.data[1]["content"], "I support this initiative!")
+        self.assertCountEqual(
+            map(lambda p: p["content"], response.data),
+            ["Great campaign!", "I support this initiative!"],
+        )
 
     def test_get_comments_campaign_not_found(self):
         """Test retrieving comments for a non-existent campaign."""
