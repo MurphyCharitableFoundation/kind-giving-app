@@ -1,47 +1,58 @@
-import { Box, LinearProgress } from '@mui/material'
-import React from 'react'
-import theme from '../theme/theme';
+import { Box, LinearProgress } from "@mui/material";
+import React from "react";
+import theme from "../theme/theme";
 
 interface TargetProgressBarProps {
-    progress: number;
+  progress: number;
 }
 
-const TargetProgressBar: React.FC<TargetProgressBarProps> = ({progress}) => {
-
+const TargetProgressBar: React.FC<TargetProgressBarProps> = ({ progress }) => {
   return (
     <Box sx={{ width: "100%", position: "relative", height: 10 }}>
-    {/* Foreground Progress Bar */}
-    <Box sx={{ position: "absolute", left: 0, width: `calc(${progress}% - ${5}px)` }}>
+      {/* Foreground Progress Bar */}
+      <Box
+        sx={{
+          position: "absolute",
+          left: 0,
+          width: `calc(${progress}% - ${5}px)`,
+        }}
+      >
         <LinearProgress
-            variant="determinate"
-            value={100}
-            sx={{
-                height: 8,
-                borderRadius: 5,
-                backgroundColor: "transparent",
-                "& .MuiLinearProgress-bar": {
-                    backgroundColor: theme.palette.primary.main,
-                },
-            }}
+          variant="determinate"
+          value={100}
+          sx={{
+            height: 8,
+            borderRadius: 5,
+            backgroundColor: "transparent",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: theme.palette.primary.main,
+            },
+          }}
         />
-    </Box>
-    {/* Background Track (starts slightly after the progress bar ends) */}
-    <Box sx={{ position: "absolute", left: `calc(${progress}%)`, width: `calc(100% - ${progress}%)` }}>
+      </Box>
+      {/* Background Track (starts slightly after the progress bar ends) */}
+      <Box
+        sx={{
+          position: "absolute",
+          left: `calc(${progress}%)`,
+          width: `calc(100% - ${progress}%)`,
+        }}
+      >
         <LinearProgress
-            variant="determinate"
-            value={100}
-            sx={{
-                height: 8,
-                borderRadius: 5,
-                backgroundColor: "transparent",
-                "& .MuiLinearProgress-bar": {
-                    backgroundColor: theme.palette.secondary.container,
-                },
-            }}
+          variant="determinate"
+          value={100}
+          sx={{
+            height: 8,
+            borderRadius: 5,
+            backgroundColor: "transparent",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: theme.palette.secondary.container,
+            },
+          }}
         />
+      </Box>
     </Box>
-</Box>
-  )
-}
+  );
+};
 
-export default TargetProgressBar
+export default TargetProgressBar;
