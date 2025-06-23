@@ -11,7 +11,6 @@ from rest_framework import permissions, serializers, status
 from rest_framework.generics import (
     ListAPIView,
     ListCreateAPIView,
-    RetrieveUpdateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.response import Response
@@ -88,8 +87,8 @@ class CauseListCreateAPI(ListCreateAPIView):
         return [permissions.IsAuthenticated(), IsAdminUser()]
 
 
-@extend_schema_serializer(component_name="CauseRetrieveUpdateAPI")
-class CauseRetrieveUpdateAPI(RetrieveUpdateAPIView):
+@extend_schema_serializer(component_name="CauseRetrieveUpdateDestroyAPI")
+class CauseRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
     """Retrieve, Update, and Destroy View for Cause."""
 
     queryset = cause_list()
