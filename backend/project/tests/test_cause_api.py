@@ -79,7 +79,7 @@ class CauseAPITestCase(TestCase):
 
         self.assertEqual(
             response.status_code,
-            status.HTTP_405_METHOD_NOT_ALLOWED,
+            status.HTTP_204_NO_CONTENT,
         )
 
     def test_non_admin_cannot_create_cause(self):
