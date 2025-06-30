@@ -47,6 +47,15 @@ class CauseAPITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], "healthcare")
 
+    def test_create_project_dup(self):
+        """Test creating a duplicate cause via POST will cause conflict."""
+        payload = {
+            "name": self.cause.name,
+        }
+        response = self.client.post("/api/causes/", payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_get_causes(self):
         """Test retrieving all causes via GET request."""
         response = self.client.get("/api/causes/")
