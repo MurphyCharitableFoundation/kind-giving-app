@@ -77,3 +77,15 @@ export const updateCause = async (
     throw new Error(err.response.data.message);
   }
 };
+
+export const deleteCause = async (id: number): Promise<void> => {
+  try {
+    const response = await api.delete(`/causes/${id}/`);
+
+    if (!response) throw new Error("Error deleting cause");
+
+    return;
+  } catch (err: any) {
+    throw new Error(err.response.data.message);
+  }
+};

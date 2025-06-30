@@ -41,15 +41,15 @@ const routes = [
   },
   {
     path: "/projects",
-    element: <ProjectManagement/>
+    element: <ProjectManagement />,
   },
   {
     path: "/projects/:projectId",
-    element: <ProjectDetails/>
+    element: <ProjectDetails />,
   },
   {
     path: "/causes",
-    element: <Causes />
+    element: <Causes />,
   },
   {
     path: "/causes/create",

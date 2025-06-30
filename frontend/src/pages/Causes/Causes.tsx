@@ -9,13 +9,23 @@ import { Box, Typography } from "@mui/material";
 import { MouseEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetCauses } from "../../hooks/useGetCauses";
+import { useDeleteCause } from "../../hooks/useDeleteCause";
+import Modal from "../../components/DeleteModal/Modal";
+import Cause from "../../interfaces/Cause";
 
 const Causes = () => {
   const navigate = useNavigate();
 
   const [causeClickedId, setCauseClickedId] = useState<number | null>(null);
+  const [selectedCause, setSelectedCause] = useState<Cause | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalHeaderText] = useState<string>("Delete Cause");
+  const [modalBodyMessage, setModalBodyMessage] = useState<string>(
+    "Are you sure you want to delete this cause?"
+  );
 
   const { data: causes, isLoading, error } = useGetCauses();
+  const deleteCauseMutation = useDeleteCause();
 
   const handleClickedCause = (causeId: number) => {
     if (causeClickedId && causeId === causeClickedId) {
@@ -36,6 +46,37 @@ const Causes = () => {
     navigate(`/causes/${id}/edit`);
   };
 
+  // pass a custom text for the body message if you want
+  const handleDeleteCauseBtn = (
+    e: MouseEvent<HTMLButtonElement>,
+    cause: Cause
+  ) => {
+    e.stopPropagation();
+
+    setSelectedCause(cause);
+
+    setModalBodyMessage(
+      `Are you sure you want to delete the cause ${cause.name.charAt(0).toUpperCase() + cause.name.slice(1)}?`
+    );
+
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteCauseDefinitely = async () => {
+    if (!selectedCause) return;
+
+    try {
+      await deleteCauseMutation.mutateAsync({
+        id: selectedCause.id,
+      });
+      setIsModalOpen(false);
+      setSelectedCause(null);
+      setCauseClickedId(null);
+    } catch (error) {
+      console.error("Failed to delete cause:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <Box>
@@ -53,6 +94,14 @@ const Causes = () => {
         gap: "10px",
       }}
     >
+      <Modal
+        headerText={modalHeaderText}
+        bodyText={modalBodyMessage}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        handleDelete={handleDeleteCauseDefinitely}
+      />
+
       <Navbar>Causes</Navbar>
 
       {/* main section container */}
@@ -65,9 +114,9 @@ const Causes = () => {
           flexDirection: "column",
           alignItems: "center",
           padding: "15px",
-          flexGrow: 1,
           gap: "16px",
-          minHeight: "calc(100vh - 70px)",
+          height: "calc(100vh - 70px)",
+          overflow: "auto",
         }}
       >
         {/* Search bar */}
@@ -96,10 +145,10 @@ const Causes = () => {
                 width: "100%",
                 maxWidth: "318px",
                 minHeight: "100px",
-                height: "fit-content",
                 borderRadius: "12px",
                 bgcolor: theme.custom.surfaceContainer.lowest,
                 boxShadow: causeClickedId === cause.id ? 4 : 0,
+                flexShrink: 0,
               }}
               onClick={() => handleClickedCause(cause.id)}
             >
@@ -187,7 +236,9 @@ const Causes = () => {
                     Edit
                   </EditButton>
 
-                  <DeleteButton>Delete</DeleteButton>
+                  <DeleteButton onClick={(e) => handleDeleteCauseBtn(e, cause)}>
+                    Delete
+                  </DeleteButton>
                 </Box>
               )}
             </Box>

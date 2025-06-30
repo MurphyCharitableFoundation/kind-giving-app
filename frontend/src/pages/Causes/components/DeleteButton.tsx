@@ -3,7 +3,7 @@ import theme from "../../../theme/theme";
 
 interface DeleteButtonProps {
   children?: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const DeleteButton = ({ children, onClick }: DeleteButtonProps) => {

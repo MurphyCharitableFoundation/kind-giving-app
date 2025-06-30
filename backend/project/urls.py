@@ -5,7 +5,7 @@ from django.urls import include, path
 from .views import (
     AssignBeneficiaryAPI,
     CauseListCreateAPI,
-    CauseRetrieveUpdateAPI,
+    CauseRetrieveUpdateDestroyAPI,
     ProjectBeneficiaryListAPI,
     ProjectCampaignListAPI,
     ProjectListCreateAPI,
@@ -17,7 +17,7 @@ cause_patterns = [
     path("", CauseListCreateAPI.as_view(), name="list-create"),
     path(
         "<int:cause_id>/",
-        CauseRetrieveUpdateAPI.as_view(),
+        CauseRetrieveUpdateDestroyAPI.as_view(),
         name="detail",
     ),
 ]

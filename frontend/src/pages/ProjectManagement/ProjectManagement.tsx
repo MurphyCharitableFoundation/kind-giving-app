@@ -32,10 +32,10 @@ const ProjectManagement: React.FC = () => {
             .catch((err) => console.error("Failed to fetch projects: ", err))
     }, [params])
 
-    const handleProjectPress = (projectId: number) => {
-        console.log(projectId)
-        navigate(`/projects/${projectId}`)
-    }
+  const handleProjectPress = (projectId: number) => {
+    console.log(projectId);
+    navigate(`/projects/${projectId}`);
+  };
 
     return (
         <Container sx={{ padding: 0 }}>
@@ -135,4 +135,4 @@ const ProjectManagement: React.FC = () => {
     )
 }
 
-export default ProjectManagement
+export default ProjectManagement;
