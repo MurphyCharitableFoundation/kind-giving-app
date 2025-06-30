@@ -1,5 +1,5 @@
 import { IPaginatedResponse } from "../interfaces/Pagination";
-import { api, apiWithoutAuth } from "./axios";
+import { api } from "./axios";
 
 export interface Cause {
   id: number;
