@@ -1,3 +1,4 @@
+import { IPaginatedResponse } from "../interfaces/Pagination";
 import { api, apiWithoutAuth } from "./axios";
 
 export interface Cause {
@@ -60,10 +61,10 @@ export interface ProjectCampaign {
 
 export type ProjectBeneficiary = UserBeneficiary | GroupBeneficiary;
 
-export const fetchAllProjects = async (): Promise<Project[]> => {
+export const fetchAllProjects = async (params: { limit?: number; offset?: number }): Promise<IPaginatedResponse<Project>> => {
     try {
-        const response = await api.get<Project[]>('/projects/');
-        console.log("fetch projects: ", response.data);
+        const response = await api.get<IPaginatedResponse<Project>>('/projects/', {params});
+        console.log("fetch pagineted projects: ", response.data);
         return response.data;
     } catch (error: any) {
         console.error(
