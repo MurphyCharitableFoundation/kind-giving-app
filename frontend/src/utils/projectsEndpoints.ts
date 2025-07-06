@@ -138,6 +138,19 @@ export const fetchProjectCampaigns = async (projectId: number) => {
   }
 };
 
+export const deleteProject = async (projectId: number) => {
+  try {
+    const response = await api.delete(`/projects/${projectId}/`);
+    console.log("delete status code: ", response.status);
+  } catch (error: any) {
+    console.error(
+      "Failed to delete project: ",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
 export function normalizeCauses(
   causes: Cause[] | string[] | undefined
 ): string[] {
