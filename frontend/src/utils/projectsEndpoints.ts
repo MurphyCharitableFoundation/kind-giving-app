@@ -1,3 +1,4 @@
+import { IPaginatedResponse } from "../interfaces/Pagination";
 import { api } from "./axios";
 
 export interface Cause {
@@ -60,19 +61,19 @@ export interface ProjectCampaign {
 
 export type ProjectBeneficiary = UserBeneficiary | GroupBeneficiary;
 
-export const fetchAllProjects = async (): Promise<Project[]> => {
-  try {
-    const response = await api.get<Project[]>("/projects/");
-    console.log("fetch projects: ", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error(
-      "Failed to fetch projects:",
-      error.response?.data || error.message
-    );
-    throw error;
-  }
-};
+export const fetchAllProjects = async (params: { limit?: number; offset?: number }): Promise<IPaginatedResponse<Project>> => {
+    try {
+        const response = await api.get<IPaginatedResponse<Project>>('/projects/', {params});
+        console.log("fetch pagineted projects: ", response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error(
+            "Failed to fetch projects:",
+            error.response?.data || error.message
+        );
+        throw error;
+    }
+}
 
 export const fetchProjectById = async (projectId: number): Promise<Project> => {
   try {
@@ -136,6 +137,19 @@ export const fetchProjectCampaigns = async (projectId: number) => {
     throw error;
   }
 };
+
+export const deleteProject = async (projectId: number) => {
+  try {
+    const response = await api.delete(`/projects/${projectId}/`);
+    console.log("delete status code: ", response.status);
+  } catch (error: any) {
+    console.error(
+      "Failed to delete project: ",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
 
 export function normalizeCauses(
   causes: Cause[] | string[] | undefined

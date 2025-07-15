@@ -22,6 +22,7 @@ import OutlinedFormContainer from "../../components/OutlinedFormContainer";
 import ProjectImagesCarousel from "../../components/ProjectImagesCarousel";
 import CausesInput from "../../components/CausesInput";
 import {
+  deleteProject,
   fetchProjectBeneficiaries,
   fetchProjectById,
   fetchProjectCampaigns,
@@ -35,6 +36,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import BeneficiaryCard from "./components/BeneficiaryCard";
 import CampaignCard from "./components/CampaignCard";
+import Modal from "../../components/DeleteModal/Modal";
 
 interface ProjectFormData {
   causes: string[];
@@ -58,6 +60,10 @@ const ProjectDetails: React.FC = () => {
   const handleEditClick = () => setIsEditing(true);
   const [beneficiaries, setBeneficiaries] = useState<ProjectBeneficiary[]>([]);
   const [campaigns, setCampaigns] = useState<ProjectCampaign[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalBodyMessage, setModalBodyMessage] = useState<string>(
+    "Are you sure you want to delete this project?"
+  );
 
   useEffect(() => {
     fetchProjectCampaigns(projectId).then((campaigns) => {
@@ -125,6 +131,27 @@ const ProjectDetails: React.FC = () => {
     });
   };
 
+  const handleDeleteButton = (e: React.MouseEvent<HTMLElement>, project: Project | null) => {
+    e.stopPropagation();
+    if (!project) return;
+
+    setModalBodyMessage(
+      `Are you sure you want to delete the project ${project.name}?`
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteProjectDefinitely = async () => {
+    if (!project) { return; }
+    try {
+      await deleteProject(project.id)
+      setIsModalOpen(false);
+      navigate('/projects')
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+    }
+  };
+
   if (!project && !isLoading) {
     {
       /* Redirecting to 404 page if project, for some reason, is not founded. */
@@ -135,6 +162,15 @@ const ProjectDetails: React.FC = () => {
   return (
     <Container sx={{ padding: 0 }}>
       {/* Header */}
+
+      <Modal
+        headerText={"Delete project"}
+        bodyText={modalBodyMessage}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        handleDelete={handleDeleteProjectDefinitely}
+      />
+
       <Navbar>Projects</Navbar>
       <Box
         sx={{
@@ -182,7 +218,7 @@ const ProjectDetails: React.FC = () => {
                 <EditIcon sx={{ color: theme.custom.surface.onColorVariant }} />
               )}
             </Avatar>
-            <Avatar sx={{ bgcolor: theme.palette.secondary.container }}>
+            <Avatar sx={{ bgcolor: theme.palette.secondary.container }} onClick={(e) => handleDeleteButton(e, project)} role='button'>
               <DeleteIcon sx={{ color: theme.custom.surface.onColorVariant }} />
             </Avatar>
           </Box>
