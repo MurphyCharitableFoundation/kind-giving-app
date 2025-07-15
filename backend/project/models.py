@@ -1,6 +1,7 @@
 """Project models."""
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
@@ -47,6 +48,10 @@ class Cause(TimeStampedModel):
         if self.name:
             self.name = self.name.lower()
         super().save(*args, **kwargs)
+
+    def clean(self):  # noqa
+        if not self.pk and Cause.objects.filter(name=self.name.lower()).exists():
+            raise ValidationError("Matching cause exists with the same name.")
 
     class Meta:  # noqa
         ordering = ["-created"]
@@ -119,6 +124,11 @@ class Project(TimeStampedModel):
     def __str__(self):
         """Represent Project as string."""
         return f"Project: {self.name}"
+
+    def clean(self):
+        """Validate project."""
+        if not self.pk and Project.objects.filter(name=self.name, city=self.city, country=self.country).exists():
+            raise ValidationError("Matching project exists with the same name and location.")
 
     class Meta:  # noqa
         ordering = ["-created"]
