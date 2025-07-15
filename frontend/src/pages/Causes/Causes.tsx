@@ -12,6 +12,7 @@ import { useGetCauses } from "../../hooks/useGetCauses";
 import { useDeleteCause } from "../../hooks/useDeleteCause";
 import Modal from "../../components/DeleteModal/Modal";
 import Cause from "../../interfaces/Cause";
+import DefaultCauseIcon from "./components/DefaultCauseIcon";
 
 const Causes = () => {
   const navigate = useNavigate();
@@ -115,8 +116,6 @@ const Causes = () => {
           alignItems: "center",
           padding: "15px",
           gap: "16px",
-          height: "calc(100vh - 70px)",
-          overflow: "auto",
         }}
       >
         {/* Search bar */}
@@ -171,15 +170,14 @@ const Causes = () => {
                     justifyContent: "center",
                   }}
                 >
-                  {cause.icon || "🌍"}
+                  {cause.icon || <DefaultCauseIcon />}
                 </Box>
 
                 {/* text div */}
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
+                    alignItems: "center",
                     width: "100%",
                     maxWidth: "208px",
                     minHeight: "78px",
@@ -191,20 +189,26 @@ const Causes = () => {
                     sx={{
                       color: theme.custom.surface.onColor,
                       fontWeight: "bold",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      lineHeight: 1.4,
                     }}
                   >
                     {/* capitalized name */}
                     {cause.name.charAt(0).toUpperCase() + cause.name.slice(1)}
                   </Typography>
 
-                  <Typography
+                  {/* <Typography
                     variant="bodySmall"
                     sx={{
                       color: theme.custom.surface.onColor,
                     }}
                   >
                     {cause.description}
-                  </Typography>
+                  </Typography> */}
                 </Box>
               </Box>
 

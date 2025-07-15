@@ -75,7 +75,7 @@ const Navbar = ({ children }: NavbarProps) => {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       sx={{
         boxShadow: {
           xs: "none",
