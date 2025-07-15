@@ -37,12 +37,15 @@ const TopBar = ({ children, causeId, isCreating, isEditing }: TopBarProps) => {
         alignItems: "center",
         padding: "5px",
         backgroundColor: theme.custom.surface.main,
+        gap: 1,
       }}
     >
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
+          flex: 1,
+          minWidth: 0,
         }}
       >
         <IconButton
@@ -54,17 +57,34 @@ const TopBar = ({ children, causeId, isCreating, isEditing }: TopBarProps) => {
             borderRadius: "50%",
             backgroundColor: theme.custom.surface.main,
             color: theme.custom.surface.onColor,
+            flexShrink: 0,
           }}
         >
           <ArrowBackIcon />
         </IconButton>
 
-        <Typography variant="titleXLargetextMedium">{children}</Typography>
+        <Typography
+          variant="titleXLargetextMedium"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            flex: 1, // Ocupa todo espaço disponível
+            minWidth: 0,
+          }}
+        >
+          {children}
+        </Typography>
       </Box>
 
       {/* icons div when not creating a new cause*/}
       {!isCreating && (
-        <Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexShrink: 0,
+          }}
+        >
           <IconButton aria-label="Attach file" sx={iconButtonStyles}>
             <AttachFileIcon />
           </IconButton>
