@@ -68,11 +68,9 @@ const ProjectDetails: React.FC = () => {
   useEffect(() => {
     fetchProjectCampaigns(projectId).then((campaigns) => {
       setCampaigns(campaigns);
-      console.log("setCampaigns: ", campaigns);
     });
     fetchProjectBeneficiaries(projectId).then((beneficiaries) => {
       setBeneficiaries(beneficiaries);
-      console.log("setBeneficiaries: ", beneficiaries);
     });
     fetchProjectById(projectId)
       .then((project) => {
@@ -103,7 +101,6 @@ const ProjectDetails: React.FC = () => {
         description: editableData.description,
         status: editableData.status,
       };
-      console.log("Request payload:", JSON.stringify(patchData));
       const updatedProject = await updateProject(projectId, patchData);
       setProject(updatedProject);
       setOriginalData({
@@ -315,7 +312,7 @@ const ProjectDetails: React.FC = () => {
         {/* Status */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {isEditing ? (
-            <OutlinedFormContainer label="Status">
+            <OutlinedFormContainer label="Status" sx={{ pl: "24px", paddingY: "6px",}}>
               <RadioGroup
                 value={editableData?.status || ""}
                 row={true}

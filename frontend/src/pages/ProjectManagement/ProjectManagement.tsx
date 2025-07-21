@@ -25,7 +25,6 @@ const ProjectManagement: React.FC = () => {
     useEffect(() => {
         fetchAllProjects(params)
             .then((paginatedData) => {
-                console.log("paginated data: ", paginatedData)
                 setProjects(paginatedData.results)
                 setTotalCount(paginatedData.count)
             })
@@ -33,7 +32,6 @@ const ProjectManagement: React.FC = () => {
     }, [params])
 
   const handleProjectPress = (projectId: number) => {
-    console.log(projectId);
     navigate(`/projects/${projectId}`);
   };
 

@@ -64,7 +64,6 @@ export type ProjectBeneficiary = UserBeneficiary | GroupBeneficiary;
 export const fetchAllProjects = async (params: { limit?: number; offset?: number }): Promise<IPaginatedResponse<Project>> => {
     try {
         const response = await api.get<IPaginatedResponse<Project>>('/projects/', {params});
-        console.log("fetch pagineted projects: ", response.data);
         return response.data;
     } catch (error: any) {
         console.error(
@@ -78,7 +77,6 @@ export const fetchAllProjects = async (params: { limit?: number; offset?: number
 export const fetchProjectById = async (projectId: number): Promise<Project> => {
   try {
     const response = await api.get<Project>(`/projects/${projectId}`);
-    console.log("fetch project by Id: ", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -95,7 +93,6 @@ export const updateProject = async (
 ): Promise<Project> => {
   try {
     const response = await api.patch<Project>(`/projects/${projectId}/`, body);
-    console.log("patch project: ", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -111,7 +108,6 @@ export const fetchProjectBeneficiaries = async (projectId: number) => {
     const response = await api.get<ProjectBeneficiary[]>(
       `/projects/${projectId}/assignments/`
     );
-    console.log("fetch project beneficiaries: ", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -127,7 +123,6 @@ export const fetchProjectCampaigns = async (projectId: number) => {
     const response = await api.get<ProjectCampaign[]>(
       `/projects/${projectId}/campaigns/`
     );
-    console.log(`fetch project campaigns: `, response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -140,8 +135,7 @@ export const fetchProjectCampaigns = async (projectId: number) => {
 
 export const deleteProject = async (projectId: number) => {
   try {
-    const response = await api.delete(`/projects/${projectId}/`);
-    console.log("delete status code: ", response.status);
+    await api.delete(`/projects/${projectId}/`);
   } catch (error: any) {
     console.error(
       "Failed to delete project: ",
