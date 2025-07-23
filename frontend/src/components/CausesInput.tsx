@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import { FreeMode } from "swiper/modules";
+import OutlinedFormContainer from "./OutlinedFormContainer";
 
 interface CausesInputProps {
   isEditing: boolean;
@@ -47,41 +48,41 @@ const CausesInput: React.FC<CausesInputProps> = ({
         </Typography>
       )}
       {isEditing ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: 1,
-            p: 1,
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-          }}
-        >
-          {causes.map((cause, index) => (
-            <Chip
-              key={index}
-              label={cause}
-              onDelete={() => handleDelete(cause)}
-              sx={{
-                backgroundColor: theme.palette.secondary.container,
-                color: theme.palette.primary.main,
-                "& .MuiChip-deleteIcon": {
-                  color: theme.custom.surface.onColor,
-                },
-              }}
-              deleteIcon={<CloseRoundedIcon />}
+        <OutlinedFormContainer label="Causes">
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 1,
+              p: "10px",
+            }}
+          >
+            {causes.map((cause, index) => (
+              <Chip
+                key={index}
+                label={cause}
+                onDelete={() => handleDelete(cause)}
+                sx={{
+                  backgroundColor: theme.palette.secondary.container,
+                  color: theme.palette.primary.main,
+                  "& .MuiChip-deleteIcon": {
+                    color: theme.custom.surface.onColor,
+                  },
+                }}
+                deleteIcon={<CloseRoundedIcon />}
+              />
+            ))}
+            <TextField
+              variant="standard"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              InputProps={{ disableUnderline: true }}
+              sx={{ minWidth: 120 }}
             />
-          ))}
-          <TextField
-            variant="standard"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            InputProps={{ disableUnderline: true }}
-            sx={{ minWidth: 120 }}
-          />
-        </Box>
+          </Box>
+        </OutlinedFormContainer>
       ) : (
         <Box sx={{ overflowX: "auto" }}>
           <Swiper
