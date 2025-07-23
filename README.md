@@ -63,7 +63,7 @@ describing the JSON API exposed by the Kind Giving Application.
 
 ```
 
-docker compose run --rm backend sh -c "python manage.py spectacular --color --file schema.yml"
+docker compose exec backend sh -c "python manage.py spectacular --color --file schema.yml"
 
 ```
 
@@ -77,33 +77,20 @@ docker compose run --rm backend sh -c "python manage.py spectacular --color --fi
 4. (Optional) some packages will not take effect even after that until
    their migrations are applied to the project database.
    Run migrations, see [Database Management](#database-management).
-   
-### Loading Database Fixtures (i.e. sample data)
-
-1. Load bank accounts: 
-
-    ```
-    docker compose run --rm backend sh -c "python manage.py loaddata sample_data/project.json"
-    ```
-
-1. Load groups, users and user groups: 
-
-    ```
-    docker compose run --rm backend sh -c "python manage.py loaddata sample_data/groups_users_and_usergroups.json"
-    ```
-
-1. Load projects: 
-
-    ```
-    docker compose run --rm backend sh -c "python manage.py loaddata sample_data/project.json"
-    ```
-
 
 ### Database Management
 
-- makemigrations: `docker compose run --rm backend sh -c "python
+- makemigrations: `docker compose exec backend sh -c "python
 manage.py makemigrations"`
-- migrate: `docker compose run --rm backend sh -c "python manage.py migrate"`
+- migrate: `docker compose exec backend sh -c "python manage.py migrate"`
+
+### Loading Database Fixtures (i.e. sample data)
+
+
+ ```
+ docker compose exec backend sh -c "python manage.py loaddata sample_data/*.json"
+ ```
+
 
 ### Linting, Formatting and Fixing Lint/Format Errors
 
@@ -120,9 +107,9 @@ manage.py makemigrations"`
 
 ### Testing
 
-- To run all tests: `docker compose run --rm backend sh -c "python
+- To run all tests: `docker compose exec backend sh -c "python
 manage.py test"`
-- To run all tests for `<some-app>`: `docker compose run --rm backend
+- To run all tests for `<some-app>`: `docker compose exec backend
 sh -c "python manage.py test <some-app>"`
 
 ## Frontend
