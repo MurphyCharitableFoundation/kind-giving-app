@@ -77,8 +77,8 @@ const ProjectDetails: React.FC = () => {
         setProject(project);
         const formattedData = {
           causes: normalizeCauses(project.causes),
-          title: project.name,
-          description: project.description,
+          title: project.name ?? "",
+          description: project.description ?? "",
           status: project.status,
         };
         setOriginalData(formattedData);
