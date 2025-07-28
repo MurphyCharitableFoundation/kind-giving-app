@@ -15,7 +15,6 @@ class PaymentFilter(django_filters.FilterSet):
             "user",
             "platform",
             "gateway_payment_id",
-            "transaction",
             "amount",
             "status",
             "created",

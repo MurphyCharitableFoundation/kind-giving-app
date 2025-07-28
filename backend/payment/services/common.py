@@ -6,8 +6,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 
 from core.services import Amount, to_money
-
-from ..models import Payment
+from payment.models import Payment
 
 User = get_user_model()
 
@@ -21,7 +20,7 @@ def external_payment_create(
     status: Optional[Payment.Status] = Payment.Status.PENDING,
 ) -> Payment:
     """Create payment."""
-    amount = to_money(amount)
+    amount = to_money(float(amount))
     payment = Payment(
         user=payer,
         gateway_payment_id=gateway_payment_id,
