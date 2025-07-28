@@ -29,6 +29,7 @@ urlpatterns = [
     path("api/donations/", include("donation.urls")),
     path("api/", include("project.urls")),
     path("api/", include("campaign.urls")),
+    path("api/", include("payment.urls")),
     # DJANGO ADMIN:
     path("admin/", admin.site.urls),
     # DRF-SPECTACULAR:

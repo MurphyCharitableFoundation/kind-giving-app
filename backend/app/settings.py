@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "project",
     "campaign",
     "donation",
+    "payment",
 ]
 
 MIDDLEWARE = [
@@ -223,3 +224,12 @@ CORS_ALLOWED_ORIGINS = [
     BASE_FRONTEND_URL,
 ]
 # CORS_ALLOW_ALL_ORIGINS = True # for dev only
+
+
+# Paypal
+PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID")
+PAYPAL_SECRET_KEY = os.environ.get("PAYPAL_SECRET_KEY")
+PAYPAL_BASE_URL = os.environ.get("PAYPAL_BASE_URL")
+PAYPAL_MODE = os.environ.get("PAYPAL_MODE")
+PAYPAL_RECEIVER_EMAIL = ""
+PAYPAL_BASE_URL = "https://api-m.sandbox.paypal.com"
