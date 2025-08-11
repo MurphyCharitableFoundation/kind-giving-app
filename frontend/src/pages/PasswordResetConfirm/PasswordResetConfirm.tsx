@@ -1,10 +1,11 @@
 import React, { useState, ChangeEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Container, Button, Typography, Alert } from "@mui/material";
+import { Card, Container, Button, Typography, Alert, Box, TextField } from "@mui/material";
 
 import PasswordInput from "../../components/PasswordInput";
 
 import { resetPasswordConfirm } from "../../utils/endpoints/endpoints";
+import theme from "../../theme/theme";
 
 interface FormData {
   new_password1: string;
@@ -29,6 +30,7 @@ const PasswordResetConfirm: React.FC = () => {
     new_password2: "",
   });
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const isDisabled = formData.new_password1.trim() === "" || formData.new_password2.trim() === "";
 
   const handleLoginRedirect = () => {
     navigate("/login");
@@ -71,52 +73,71 @@ const PasswordResetConfirm: React.FC = () => {
   };
 
   return (
-    <Container
-      sx={{
-        paddingY: 3,
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <Card
-        component={"form"}
-        onSubmit={handleSubmit}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-          minWidth: "200px",
-          maxWidth: "400px",
-          bgcolor: "#f3f3f3",
-          padding: 4,
-          borderRadius: "10px",
-        }}
-      >
-        <Typography variant="h3" sx={{ textAlign: "center" }}>
-          Reset Your Password
+    <Container sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '40px',
+      px: '24px',
+      py: '8px',
+      bgcolor: theme.custom.surface.main,
+      minHeight: '100vh'
+    }}>
+      <Typography color={theme.palette.primary.main} variant="headlineXsmallTextMedium">Kind Giving</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        <Typography variant="titleXLargetextMedium" color={theme.custom.surface.onColor}>Password reset</Typography>
+        <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>
+          Make sure your new password includes: <br/>
+          At least 8 characters <br/>
+          At least 1 uppercase letter (A-Z) <br/>
+          At least 1 lowercase letter (a-z) <br/>
+          At least 1 number (0-9) <br/>
+          At least 1 special character (e.g., !@#$%^&*)
         </Typography>
-
-        <PasswordInput
+      </Box>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px'
+      }}>
+        <TextField
+          fullWidth
+          label="New password"
+          variant="outlined"
+          type="password"
           name="new_password1"
-          label="Password"
           value={formData.new_password1}
           onChange={handleInputChange}
-          error={errors.new_password1 ? true : false}
-          helperText={errors.new_password1}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
         />
-        <PasswordInput
+        <TextField
+          fullWidth
+          label="Confirm new password"
+          variant="outlined"
+          type="password"
           name="new_password2"
-          label="Confirm Password"
           value={formData.new_password2}
           onChange={handleInputChange}
-          error={errors.new_password2 ? true : false}
-          helperText={errors.new_password2}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          reset password
+        <Button
+          variant="contained"
+          disableElevation={true}
+          disabled={isDisabled}
+          sx={{
+            paddingY: '10px', height: "40px", borderRadius: '40px', textTransform: "none",
+          }}
+        >
+          Update password
         </Button>
-        {successMessage && <Alert severity="success">{successMessage}</Alert>}
-      </Card>
+      </Box>
     </Container>
   );
 };

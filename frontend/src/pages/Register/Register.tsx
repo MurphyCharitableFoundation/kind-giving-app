@@ -1,37 +1,51 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-import { Card, Button, Typography, Container, Alert } from "@mui/material";
+import { Card, Button, Typography, Container, Alert, Box, TextField, Divider, Checkbox } from "@mui/material";
 import { registerUser } from "../../utils/endpoints/endpoints";
 
 import EmailInput from "../../components/EmailInput";
 import PasswordInput from "../../components/PasswordInput";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
 import LogoutButton from "../../components/LogoutButton";
+import theme from "../../theme/theme";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
+  firstName: string;
+  lastName: string;
   email: string;
   password1: string;
   password2: string;
 }
 
 interface FormErrors {
+  firstName: string;
+  lastName: string;
   email: string;
   password1: string;
   password2: string;
 }
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
     email: "",
     password1: "",
     password2: "",
   });
   const [errors, setFormErrors] = useState<FormErrors>({
+    firstName: "",
+    lastName: "",
     email: "",
     password1: "",
-    password2: "",
+    password2: ""
   });
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const isDisabled = formData.email.trim() === "" || formData.password1.trim() === "";
 
   // Handle input changes
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +68,8 @@ const Register: React.FC = () => {
       email: "",
       password1: "",
       password2: "",
+      firstName: "",
+      lastName: ""
     };
 
     let isValid = true;
@@ -92,14 +108,14 @@ const Register: React.FC = () => {
     if (validate()) {
       console.log({
         email: formData.email,
-        password1: formData.password1,
-        password2: formData.password2,
+        password: formData.password1,
       });
       try {
+        //todo -> modify this function to accept the new props
         const response = await registerUser(
           formData.email,
           formData.password1,
-          formData.password2
+          formData.password2,
         );
         setSuccessMessage(response.detail);
         setErrorMessage(null);
@@ -114,61 +130,108 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Container
-      sx={{
-        paddingY: 3,
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <Card
-        component={"form"}
-        onSubmit={handleRegister}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-          minWidth: "200px",
-          maxWidth: "400px",
-          bgcolor: "#f3f3f3",
-          padding: 4,
-          borderRadius: "10px",
-        }}
-      >
-        <Typography variant="h3" sx={{ textAlign: "center" }}>
-          Register
+    <Container sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '40px',
+      px: '24px',
+      py: '8px',
+      bgcolor: theme.custom.surface.main,
+      minHeight: '100vh'
+    }}>
+      <Typography color={theme.palette.primary.main} variant="headlineXsmallTextMedium">Kind Giving</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        <Typography variant="titleXLargetextMedium" color={theme.custom.surface.onColor}>Create an account</Typography>
+
+        <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>Already a member?
+          <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/login")} sx={{ cursor: 'pointer' }}> Log in</Typography>
         </Typography>
-        <EmailInput
+      </Box>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px'
+      }}>
+        <TextField
+          fullWidth
+          label="First Name"
+          variant="outlined"
+          name="firstName"
+          value={formData.email}
+          onChange={handleInputChange}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
+        />
+        <TextField
+          fullWidth
+          label="Last Name"
+          variant="outlined"
+          name="lastName"
+          value={formData.email}
+          onChange={handleInputChange}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
+        />
+        <TextField
+          fullWidth
+          label="Email"
+          variant="outlined"
           name="email"
           value={formData.email}
           onChange={handleInputChange}
-          error={errors.email ? true : false}
-          helperText={errors.email}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
         />
-        <PasswordInput
-          name="password1"
+        <TextField
+          fullWidth
           label="Password"
+          variant="outlined"
+          type="password"
+          name="password1"
           value={formData.password1}
           onChange={handleInputChange}
-          error={errors.password1 ? true : false}
-          helperText={errors.password1}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
         />
-        <PasswordInput
+        <TextField
+          fullWidth
+          label="Confirm password"
+          variant="outlined"
+          type="password"
           name="password2"
-          label="Confirm Password"
           value={formData.password2}
           onChange={handleInputChange}
-          error={errors.password2 ? true : false}
-          helperText={errors.password2}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          sign up
+        <Box sx={{display: 'flex', flexDirection: 'row', padding: '15px', gap: '25px', alignItems: 'center'}}>
+          <Checkbox />
+          <Typography variant="bodySmall" color={theme.custom.surface.onColorVariant}>I agree to Kind Loans’ Terms and Conditions.</Typography>
+        </Box>
+        <Button
+          variant="contained"
+          disableElevation={true}
+          disabled={isDisabled}
+          sx={{
+            paddingY: '10px', height: "40px", borderRadius: '40px', textTransform: "none",
+          }}
+        >
+          Create account
         </Button>
+        <Divider>
+          <Typography variant="bodyMedium" color={theme.custom.surface.onColor}>Or</Typography>
+        </Divider>
         <GoogleLoginButton />
-        <LogoutButton />
-        {successMessage && <Alert severity="success">{successMessage}</Alert>}
-        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-      </Card>
+      </Box>
     </Container>
   );
 };

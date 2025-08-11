@@ -1,14 +1,17 @@
-import { Box, Button, Card, Container, Typography, Alert } from "@mui/material";
+import { Box, Button, Card, Container, Typography, Alert, TextField } from "@mui/material";
 import EmailInput from "../../components/EmailInput";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 import { resetPasswordRequest } from "../../utils/endpoints/endpoints";
+import theme from "../../theme/theme";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   email: string;
 }
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     email: "",
   });
@@ -16,6 +19,7 @@ const ForgotPassword = () => {
   const [errors, setErrors] = useState<FormData>({
     email: "",
   });
+  const isDisabled = formData.email.trim() === ""
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -61,6 +65,7 @@ const ForgotPassword = () => {
         const { detail } = await resetPasswordRequest(formData.email);
         setFormData({ email: "" });
         setSuccessMessage(detail);
+        console.log(detail);
       } catch (err: any) {
         console.log("error", err);
         setSuccessMessage("");
@@ -71,54 +76,59 @@ const ForgotPassword = () => {
   return (
     <Container
       sx={{
-        paddingY: 3,
-        display: "flex",
-        justifyContent: "center",
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '40px',
+        px: '24px',
+        py: '8px',
+        bgcolor: theme.custom.surface.main,
+        minHeight: '100vh'
       }}
     >
-      <Card
-        component={"form"}
+      <Typography color={theme.palette.primary.main} variant="headlineXsmallTextMedium">Kind Giving</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        <Typography variant="titleXLargetextMedium" color={theme.custom.surface.onColor}>Password request</Typography>
+
+        <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>Enter your email address, and we’ll send you a verification code to reset your password.</Typography>
+      </Box>
+      <Box
+        component='form'
         onSubmit={handleSubmit}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-          minWidth: "200px",
-          maxWidth: "400px",
-          bgcolor: "#f3f3f3",
-          padding: 4,
-          borderRadius: "10px",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            textAlign: "center",
-            gap: 3,
-          }}
-        >
-          <Typography variant="h4">Forgot Password?</Typography>
-
-          <Typography variant="body1" component={"p"}>
-            Enter your email address and we will send you instructions to reset
-            your password.
-          </Typography>
-        </Box>
-
-        <EmailInput
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          error={errors.email ? true : false}
-          helperText={errors.email}
-        />
-
-        <Button type="submit" variant="contained">
-          Reset Password
-        </Button>
-        {successMessage && <Alert severity="success">{successMessage}</Alert>}
-      </Card>
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px'
+        }}>
+          <TextField
+            fullWidth
+            label="Email"
+            variant="outlined"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            slotProps={{
+              inputLabel: { shrink: true },
+            }}
+          />
+          <Button
+            variant="contained"
+            disableElevation
+            disabled={isDisabled}
+            type="submit"
+            sx={{
+              paddingY: '10px',
+              height: '40px',
+              borderRadius: '40px',
+              textTransform: 'none',
+            }}
+          >
+            Send verification code
+          </Button>
+      </Box>
     </Container>
   );
 };
