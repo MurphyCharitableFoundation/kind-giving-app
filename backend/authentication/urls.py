@@ -3,11 +3,11 @@ from dj_rest_auth.registration.views import RegisterView, ResendEmailVerificatio
 from dj_rest_auth.views import LoginView, LogoutView, PasswordResetConfirmView, PasswordResetView, UserDetailsView
 from django.urls import path
 
-from authentication.views import GoogleLogin, email_confirm_redirect, password_reset_confirm_redirect
+from authentication.views import GoogleLogin, email_confirm_redirect, password_reset_confirm_redirect, CustomRegisterView, CustomLoginView
 
 urlpatterns = [
-    path("register/", RegisterView.as_view(), name="rest_register"),
-    path("login/", LoginView.as_view(), name="rest_login"),
+    path("register/", CustomRegisterView.as_view(), name="rest_register"),
+    path("login/", CustomLoginView.as_view(), name="rest_login"),
     path("logout/", LogoutView.as_view(), name="rest_logout"),
     path("user/", UserDetailsView.as_view(), name="rest_user_details"),
     # email:

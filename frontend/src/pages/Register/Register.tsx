@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-import { Card, Button, Typography, Container, Alert, Box, TextField, Divider, Checkbox } from "@mui/material";
+import { Card, Button, Typography, Container, Alert, Box, TextField, Divider, Checkbox, Modal } from "@mui/material";
 import { registerUser } from "../../utils/endpoints/endpoints";
 
 import EmailInput from "../../components/EmailInput";
@@ -8,6 +8,7 @@ import GoogleLoginButton from "../../components/GoogleLoginButton";
 import LogoutButton from "../../components/LogoutButton";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface FormData {
   firstName: string;
@@ -28,6 +29,15 @@ interface FormErrors {
 const Register: React.FC = () => {
   const navigate = useNavigate();
 
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    navigate('/login')
+  };
+
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -45,7 +55,13 @@ const Register: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const isDisabled = formData.email.trim() === "" || formData.password1.trim() === "";
+  const [agreed, setAgreed] = useState(false);
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAgreed(event.target.checked);
+  };
+
+  const isDisabled = formData.firstName === "" || formData.lastName === "" || formData.email.trim() === "" || formData.password1.trim() === "" || agreed === false;
 
   // Handle input changes
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -102,8 +118,8 @@ const Register: React.FC = () => {
     return isValid;
   };
 
-  const handleRegister = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     if (validate()) {
       console.log({
@@ -113,12 +129,15 @@ const Register: React.FC = () => {
       try {
         //todo -> modify this function to accept the new props
         const response = await registerUser(
+          formData.firstName,
+          formData.lastName,
           formData.email,
           formData.password1,
           formData.password2,
         );
         setSuccessMessage(response.detail);
         setErrorMessage(null);
+        handleOpen();
       } catch (error: any) {
         setFormErrors({
           ...errors,
@@ -151,17 +170,20 @@ const Register: React.FC = () => {
           <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/login")} sx={{ cursor: 'pointer' }}> Log in</Typography>
         </Typography>
       </Box>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px'
-      }}>
+      <Box
+        component="form"
+        onSubmit={handleRegister}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px'
+        }}>
         <TextField
           fullWidth
           label="First Name"
           variant="outlined"
           name="firstName"
-          value={formData.email}
+          value={formData.firstName}
           onChange={handleInputChange}
           slotProps={{
             inputLabel: { shrink: true },
@@ -172,7 +194,7 @@ const Register: React.FC = () => {
           label="Last Name"
           variant="outlined"
           name="lastName"
-          value={formData.email}
+          value={formData.lastName}
           onChange={handleInputChange}
           slotProps={{
             inputLabel: { shrink: true },
@@ -213,11 +235,22 @@ const Register: React.FC = () => {
             inputLabel: { shrink: true },
           }}
         />
-        <Box sx={{display: 'flex', flexDirection: 'row', padding: '15px', gap: '25px', alignItems: 'center'}}>
-          <Checkbox />
-          <Typography variant="bodySmall" color={theme.custom.surface.onColorVariant}>I agree to Kind Loans’ Terms and Conditions.</Typography>
+        <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>
+          Make sure your password includes: <br />
+          At least 8 characters <br />
+          At least 1 uppercase letter (A-Z) <br />
+          At least 1 lowercase letter (a-z) <br />
+          At least 1 number (0-9) <br />
+          At least 1 special character (e.g., !@#$%^&*)
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'row', padding: '15px', gap: '25px', alignItems: 'center' }}>
+          <Checkbox checked={agreed} onChange={handleCheckboxChange} />
+          <Typography variant="bodySmall" color={theme.custom.surface.onColorVariant}>
+            I agree to Kind Loans’ Terms and Conditions.
+          </Typography>
         </Box>
         <Button
+          type="submit"
           variant="contained"
           disableElevation={true}
           disabled={isDisabled}
@@ -232,6 +265,38 @@ const Register: React.FC = () => {
         </Divider>
         <GoogleLoginButton />
       </Box>
+      <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+              alignItems: 'center',
+              bgcolor: theme.custom.surface.main,
+              p: '24px',
+              borderRadius: '28px',
+              boxShadow: theme.shadows[10],
+            }}
+          >
+            <CheckCircleIcon sx={{ color: theme.status.success.main, width: '40px', height: '40px' }} />
+            <Typography align="center" sx={{ color: theme.palette.primary.main }} variant="titleXLargetextSemibold">
+              Thank you for registering!
+            </Typography>
+            <Typography align="center" variant="bodyMedium" sx={{ color: theme.custom.surface.onColor }}>
+              Please check your email inbox and follow the verification link we just sent to activate your account.
+            </Typography>
+          </Box>
+        </Box>
+      </Modal>
     </Container>
   );
 };

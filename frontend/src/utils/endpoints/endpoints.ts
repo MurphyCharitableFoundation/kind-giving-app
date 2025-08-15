@@ -42,6 +42,8 @@ interface AuthenticateWithGoogleResponse {
 
 // user auth.
 export const registerUser = async (
+  first_name: string,
+  last_name: string,
   email: string,
   password1: string,
   password2: string
@@ -49,7 +51,7 @@ export const registerUser = async (
   try {
     const response = await apiWithoutAuth.post<RegisterResponse>(
       "/auth/register/",
-      { email, password1, password2 }
+      { first_name, last_name, email, password1, password2 }
     );
     return response.data;
   } catch (error: any) {

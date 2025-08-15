@@ -122,7 +122,10 @@ const Login = () => {
           <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/register")} sx={{ cursor: 'pointer' }}> Create an account</Typography>
         </Typography>
       </Box>
-      <Box sx={{
+      <Box 
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
         display: 'flex',
         flexDirection: 'column',
         gap: '24px'
@@ -154,6 +157,7 @@ const Login = () => {
           <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/forgot-password")} sx={{ cursor: 'pointer' }}> Reset it</Typography>
         </Typography>
         <Button
+          type="submit"
           variant="contained"
           disableElevation={true}
           disabled={isDisabled}
