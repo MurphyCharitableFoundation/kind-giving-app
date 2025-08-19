@@ -16,8 +16,11 @@ from rest_framework import status
 import random
 import secrets
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+from datetime import timedelta
 
 from authentication.serializers import CustomRegisterSerializer, CustomLoginSerializer, PasswordResetCodeSerializer, PasswordResetVerifySerializer, PasswordResetSerializer
+from authentication.models import PasswordResetToken, PasswordResetCode
 
 User = get_user_model()
 
@@ -41,36 +44,33 @@ class CustomLoginView(LoginView):
     serializer_class = CustomLoginSerializer
 
 class SendResetCodeView(APIView):
-    """
-    Generate a 6-digit code, save it in cache, and email it to the user.
-    """
     serializer_class = PasswordResetCodeSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
-        
-        if not email:
-            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            # For security
             return Response({"detail": "If this email exists, a code has been sent."})
 
-        # Generate a random 5-digit code
+        # Generate random 5-digit code
         code = str(random.randint(10000, 99999))
 
-        # Save in cache with 10 min expiration
-        cache.set(f"reset_code_{user.pk}", code, timeout=600)
+        # Store in DB with 10 min expiry
+        PasswordResetCode.objects.create(
+            user=user,
+            code=code,
+            expires_at=timezone.now() + timedelta(minutes=10),
+        )
 
-        # Send the code via email
+        # Send code to user through email
         send_mail(
             subject="Your password reset code",
             message=f"Your password reset code is: {code}",
-            from_email=None,  # uses DEFAULT_FROM_EMAIL
+            from_email=None,
             recipient_list=[email],
         )
 
@@ -91,16 +91,23 @@ class VerifyResetCodeView(APIView):
         except User.DoesNotExist:
             return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
 
-        cached_code = cache.get(f"reset_code_{user.pk}")
-        if cached_code != code:
+        # Get latest code
+        reset_code = (
+            PasswordResetCode.objects.filter(user=user, code=code)
+            .order_by("-created_at")
+            .first()
+        )
+
+        if not reset_code or reset_code.is_expired():
             return Response({"error": "Invalid or expired code"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Generate a temporary reset token
-        reset_token = secrets.token_urlsafe(32)
-        cache.set(f"reset_token_{reset_token}", user.pk, timeout=900)  # 15 min expiry
-        cache.delete(f"reset_code_{user.pk}")  # code is single-use
+        # Generate reset password token
+        reset_token = PasswordResetToken.generate(user=user, ttl_seconds=900)
 
-        return Response({"resetToken": reset_token})
+        # Invalidate code
+        reset_code.delete()
+
+        return Response({"resetToken": reset_token.token})
 
 class ResetPasswordView(APIView):
     serializer_class = PasswordResetSerializer
@@ -112,22 +119,21 @@ class ResetPasswordView(APIView):
         reset_token = serializer.validated_data["token"]
         new_password = serializer.validated_data["new_password1"]
 
-        # Get user ID from cache
-        user_id = cache.get(f"reset_token_{reset_token}")
-        if not user_id:
+        try:
+            token_obj = PasswordResetToken.objects.get(token=reset_token)
+        except PasswordResetToken.DoesNotExist:
             return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return Response({"error": "User not found."}, status=status.HTTP_400_BAD_REQUEST)
+        if token_obj.is_expired():
+            token_obj.delete()
+            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Update password
+        user = token_obj.user
         user.set_password(new_password)
         user.save()
 
-        # Delete token to make it single-use
-        cache.delete(f"reset_token_{reset_token}")
+        # Delete token (single use)
+        token_obj.delete()
 
         return Response({"detail": "Password has been reset successfully."}, status=status.HTTP_200_OK)
 
