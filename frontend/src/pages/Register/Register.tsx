@@ -33,11 +33,6 @@ const Register: React.FC = () => {
   const handleOpen = () => {
     setOpen(true);
   };
-  const handleClose = () => {
-    setOpen(false);
-    navigate('/login')
-  };
-
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -127,7 +122,6 @@ const Register: React.FC = () => {
         password: formData.password1,
       });
       try {
-        //todo -> modify this function to accept the new props
         const response = await registerUser(
           formData.firstName,
           formData.lastName,
@@ -277,7 +271,8 @@ const Register: React.FC = () => {
       </Box>
       <Modal
         open={open}
-        onClose={handleClose}
+        disableEscapeKeyDown
+        onClose={() => { }}
       >
         <Box sx={{
           position: 'absolute',
