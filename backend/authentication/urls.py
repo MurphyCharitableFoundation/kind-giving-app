@@ -31,35 +31,21 @@ urlpatterns = [
         VerifyEmailView.as_view(),
         name="account_email_verification_sent",
     ),
-    # path(
-    #     "password/reset/",
-    #     PasswordResetView.as_view(),
-    #     name="rest_password_reset",
-    # ),
+    # reset password:
     path(
-    "password/reset/",
-    SendResetCodeView.as_view(),
-    name="rest_password_reset",
+        "password/reset/",
+        SendResetCodeView.as_view(),
+        name="rest_password_reset",
     ),
-    # path(
-    #     "password/reset/confirm/<str:uidb64>/<str:token>/",
-    #     password_reset_confirm_redirect,
-    #     name="password_reset_confirm",
-    # ),
     path(
-    "password/reset/verify/",
-    VerifyResetCodeView.as_view(),
-    name="password_reset_verify",
+        "password/reset/verify/",
+        VerifyResetCodeView.as_view(),
+        name="password_reset_verify",
     ),
-    # path(
-    #     "password/reset/confirm/",
-    #     PasswordResetConfirmView.as_view(),
-    #     name="password_reset_confirm",
-    # ),
     path(
-    "password/reset/confirm/",
-    ResetPasswordView.as_view(),
-    name="password_reset_confirm_custom",
+        "password/reset/confirm/",
+        ResetPasswordView.as_view(),
+        name="password_reset_confirm_custom",
     ),
     # social_auth:
     path("signup/", signup, name="socialaccount_signup"),
