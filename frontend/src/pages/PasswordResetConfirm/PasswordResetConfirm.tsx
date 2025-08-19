@@ -1,7 +1,7 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Container, Button, Typography, Alert, Box, TextField } from "@mui/material";
-
+import { Card, Container, Button, Typography, Alert, Box, TextField, Modal } from "@mui/material";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PasswordInput from "../../components/PasswordInput";
 
 import { resetPasswordConfirm } from "../../utils/endpoints/endpoints";
@@ -31,6 +31,7 @@ const PasswordResetConfirm: React.FC = () => {
   });
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const isDisabled = formData.new_password1.trim() === "" || formData.new_password2.trim() === "";
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleLoginRedirect = () => {
     navigate("/login");
@@ -82,8 +83,8 @@ const PasswordResetConfirm: React.FC = () => {
         formData.new_password1,
         formData.new_password2
       );
-      setSuccessMessage("Your password has been reset successfully!");
-      handleLoginRedirect();
+      setSuccessMessage("Your password has been updated. You can now log in using your new password.");
+      setModalOpen(true);
     } catch (error: any) {
       setFormErrors({
         ...errors,
@@ -166,6 +167,29 @@ const PasswordResetConfirm: React.FC = () => {
         >
           Update password
         </Button>
+        <Modal open={modalOpen} disableEscapeKeyDown onClose={() => { }}>
+          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', bgcolor: theme.custom.surface.main, p: '24px', borderRadius: '28px', boxShadow: theme.shadows[10] }}>
+              <CheckCircleIcon sx={{ color: theme.status.success.main, width: '40px', height: '40px' }} />
+              <Typography align="center">{successMessage}</Typography>
+              <Button
+                variant="contained"
+                disableElevation
+                onClick={handleLoginRedirect}
+                sx={{
+                  paddingY: '10px',
+                  height: '40px',
+                  borderRadius: '40px',
+                  textTransform: 'none',
+                  alignSelf: 'center',
+                  width: '100%'
+                }}
+              >
+                <Typography color={theme.palette.primary.onColor} variant='labelLarge'>Go to Log in</Typography>
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
       </Box>
     </Container>
   );
