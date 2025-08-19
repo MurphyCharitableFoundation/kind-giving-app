@@ -122,14 +122,14 @@ const Login = () => {
           <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/register")} sx={{ cursor: 'pointer' }}> Create an account</Typography>
         </Typography>
       </Box>
-      <Box 
+      <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px'
-      }}>
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px'
+        }}>
         <TextField
           fullWidth
           label="Email"
@@ -140,6 +140,8 @@ const Login = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.email)}
+          helperText={errors.email || " "}
         />
         <TextField
           fullWidth
@@ -152,6 +154,8 @@ const Login = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.password)}
+          helperText={errors.password || " "}
         />
         <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>Forgot your password?
           <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/forgot-password")} sx={{ cursor: 'pointer' }}> Reset it</Typography>

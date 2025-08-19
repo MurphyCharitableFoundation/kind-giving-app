@@ -48,3 +48,20 @@ class CustomLoginSerializer(LoginSerializer):
     def validate(self, attrs):
         attrs['username'] = attrs.get('email')
         return super().validate(attrs)
+
+class PasswordResetCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=5)
+
+class PasswordResetSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    new_password1 = serializers.CharField(min_length=8, write_only=True)
+    new_password2 = serializers.CharField(min_length=8, write_only=True)
+
+    def validate(self, attrs):
+        if attrs['new_password1'] != attrs['new_password2']:
+            raise serializers.ValidationError("Passwords do not match.")
+        return attrs

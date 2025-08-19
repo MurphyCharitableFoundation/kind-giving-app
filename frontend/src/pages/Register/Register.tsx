@@ -188,6 +188,8 @@ const Register: React.FC = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.firstName)}
+          helperText={errors.firstName || " "}
         />
         <TextField
           fullWidth
@@ -199,6 +201,8 @@ const Register: React.FC = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.lastName)}
+          helperText={errors.lastName || " "}
         />
         <TextField
           fullWidth
@@ -210,6 +214,8 @@ const Register: React.FC = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.email)}
+          helperText={errors.email || " "}
         />
         <TextField
           fullWidth
@@ -222,6 +228,8 @@ const Register: React.FC = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.password1)}
+          helperText={errors.password1 || " "}
         />
         <TextField
           fullWidth
@@ -234,6 +242,8 @@ const Register: React.FC = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.password2)}
+          helperText={errors.password2 || " "}
         />
         <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>
           Make sure your password includes: <br />

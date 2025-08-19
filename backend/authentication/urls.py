@@ -3,7 +3,7 @@ from dj_rest_auth.registration.views import RegisterView, ResendEmailVerificatio
 from dj_rest_auth.views import LoginView, LogoutView, PasswordResetConfirmView, PasswordResetView, UserDetailsView
 from django.urls import path
 
-from authentication.views import GoogleLogin, email_confirm_redirect, password_reset_confirm_redirect, CustomRegisterView, CustomLoginView
+from authentication.views import GoogleLogin, email_confirm_redirect, password_reset_confirm_redirect, CustomRegisterView, CustomLoginView, SendResetCodeView, VerifyResetCodeView, ResetPasswordView
 
 urlpatterns = [
     path("register/", CustomRegisterView.as_view(), name="rest_register"),
@@ -31,20 +31,35 @@ urlpatterns = [
         VerifyEmailView.as_view(),
         name="account_email_verification_sent",
     ),
+    # path(
+    #     "password/reset/",
+    #     PasswordResetView.as_view(),
+    #     name="rest_password_reset",
+    # ),
     path(
-        "password/reset/",
-        PasswordResetView.as_view(),
-        name="rest_password_reset",
+    "password/reset/",
+    SendResetCodeView.as_view(),
+    name="rest_password_reset",
     ),
+    # path(
+    #     "password/reset/confirm/<str:uidb64>/<str:token>/",
+    #     password_reset_confirm_redirect,
+    #     name="password_reset_confirm",
+    # ),
     path(
-        "password/reset/confirm/<str:uidb64>/<str:token>/",
-        password_reset_confirm_redirect,
-        name="password_reset_confirm",
+    "password/reset/verify/",
+    VerifyResetCodeView.as_view(),
+    name="password_reset_verify",
     ),
+    # path(
+    #     "password/reset/confirm/",
+    #     PasswordResetConfirmView.as_view(),
+    #     name="password_reset_confirm",
+    # ),
     path(
-        "password/reset/confirm/",
-        PasswordResetConfirmView.as_view(),
-        name="password_reset_confirm",
+    "password/reset/confirm/",
+    ResetPasswordView.as_view(),
+    name="password_reset_confirm_custom",
     ),
     # social_auth:
     path("signup/", signup, name="socialaccount_signup"),

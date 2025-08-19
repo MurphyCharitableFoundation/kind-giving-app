@@ -3,19 +3,23 @@ import React, { useRef, useState } from 'react'
 import theme from '../../theme/theme'
 import { Height } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { resetPasswordVerifyCode } from '../../utils/endpoints/endpoints';
 
 const PasswordVerificationCode = () => {
+    const location = useLocation();
     const navigate = useNavigate();
     const [codes, setCodes] = useState(['', '', '', '', '']);
     const inputRefs = useRef<HTMLInputElement[]>([]);
     const [open, setOpen] = React.useState(false);
+    const [token, setToken] = React.useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const handleOpen = () => {
         setOpen(true);
     };
-    const handleClose = () => {
-        setOpen(false);
-    };
+
+    const email = location.state?.email;
 
     const handleChange = (value: string, index: number) => {
         if (!/^\d*$/.test(value)) return; // Only allow digits
@@ -41,9 +45,19 @@ const PasswordVerificationCode = () => {
         }
     };
 
-    const verify = () => {
-        //if verification result its sucess:
-        //open modal
+    const verify = async () => {
+        const code = codes.join("");
+        try {
+            const res = await resetPasswordVerifyCode(email, code);
+            setToken(res.resetToken);
+            handleOpen();
+        } catch (error) {
+            setErrorMessage("Verification failed");
+        }
+    };
+
+    const handleResetPasswordButton = () => {
+        navigate(`/password-reset/confirm/${token}`)
     }
 
     return (
@@ -101,11 +115,23 @@ const PasswordVerificationCode = () => {
                         />
                     ))}
                 </Box>
+
+                {/* Error message */}
+                {errorMessage && (
+                    <Typography
+                        variant="bodySmall"
+                        color={theme.status.error.main}
+                        align="center"
+                    >
+                        {errorMessage}
+                    </Typography>
+                )}
+
                 <Button
                     variant="contained"
                     disableElevation
                     type="submit"
-                    onClick={handleOpen}
+                    onClick={verify}
                     disabled={codes.some(code => code === '')}
                     sx={{
                         paddingY: '10px',
@@ -121,7 +147,8 @@ const PasswordVerificationCode = () => {
             </Box>
             <Modal
                 open={open}
-                onClose={handleClose}
+                disableEscapeKeyDown
+                onClose={() => { }}
             >
                 <Box sx={{
                     position: 'absolute',
@@ -148,7 +175,7 @@ const PasswordVerificationCode = () => {
                         <Button
                             variant="contained"
                             disableElevation
-                            onClick={() => navigate('/password-reset/confirm/testing/testing')}
+                            onClick={handleResetPasswordButton}
                             sx={{
                                 paddingY: '10px',
                                 height: '40px',

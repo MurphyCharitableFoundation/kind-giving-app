@@ -47,7 +47,7 @@ const ForgotPassword = () => {
       newErrors.email = "Email is required.";
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email address.";
+      newErrors.email = "Invalid email address format.";
       isValid = false;
     }
 
@@ -63,9 +63,10 @@ const ForgotPassword = () => {
       console.log({ email: formData.email });
       try {
         const { detail } = await resetPasswordRequest(formData.email);
-        setFormData({ email: "" });
+        //setFormData({ email: "" });
         setSuccessMessage(detail);
         console.log(detail);
+        navigate('/forgot-password/verification-code', {state: {email: formData.email}})
       } catch (err: any) {
         console.log("error", err);
         setSuccessMessage("");
@@ -103,31 +104,33 @@ const ForgotPassword = () => {
           flexDirection: 'column',
           gap: '24px'
         }}>
-          <TextField
-            fullWidth
-            label="Email"
-            variant="outlined"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            slotProps={{
-              inputLabel: { shrink: true },
-            }}
-          />
-          <Button
-            variant="contained"
-            disableElevation
-            disabled={isDisabled}
-            type="submit"
-            sx={{
-              paddingY: '10px',
-              height: '40px',
-              borderRadius: '40px',
-              textTransform: 'none',
-            }}
-          >
-            Send verification code
-          </Button>
+        <TextField
+          fullWidth
+          label="Email"
+          variant="outlined"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
+          error={Boolean(errors.email)}
+          helperText={errors.email || " "}
+        />
+        <Button
+          variant="contained"
+          disableElevation
+          disabled={isDisabled}
+          type="submit"
+          sx={{
+            paddingY: '10px',
+            height: '40px',
+            borderRadius: '40px',
+            textTransform: 'none',
+          }}
+        >
+          Send verification code
+        </Button>
       </Box>
     </Container>
   );

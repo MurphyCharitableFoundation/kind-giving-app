@@ -18,7 +18,7 @@ interface FormErrors {
 }
 
 const PasswordResetConfirm: React.FC = () => {
-  const { uid, token } = useParams<{ uid: string; token: string }>();
+  const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormData>({
@@ -51,12 +51,33 @@ const PasswordResetConfirm: React.FC = () => {
     });
   };
 
+  const validate = () => {
+    const newErrors: FormErrors = { new_password1: "", new_password2: "" };
+    let isValid = true;
+
+    if (!formData.new_password1) {
+      newErrors.new_password1 = "Password is required.";
+      isValid = false;
+    } else if (formData.new_password1.length < 8) {
+      newErrors.new_password1 = "Password must be at least 8 characters.";
+      isValid = false;
+    }
+
+    if (formData.new_password1 !== formData.new_password2) {
+      newErrors.new_password2 = "Passwords do not match.";
+      isValid = false;
+    }
+
+    setFormErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    if (!validate()) { return; }
+    if (!token) { return; }
     try {
       await resetPasswordConfirm(
-        uid,
         token,
         formData.new_password1,
         formData.new_password2
@@ -90,19 +111,22 @@ const PasswordResetConfirm: React.FC = () => {
       }}>
         <Typography variant="titleXLargetextMedium" color={theme.custom.surface.onColor}>Password reset</Typography>
         <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>
-          Make sure your new password includes: <br/>
-          At least 8 characters <br/>
-          At least 1 uppercase letter (A-Z) <br/>
-          At least 1 lowercase letter (a-z) <br/>
-          At least 1 number (0-9) <br/>
+          Make sure your new password includes: <br />
+          At least 8 characters <br />
+          At least 1 uppercase letter (A-Z) <br />
+          At least 1 lowercase letter (a-z) <br />
+          At least 1 number (0-9) <br />
           At least 1 special character (e.g., !@#$%^&*)
         </Typography>
       </Box>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px'
-      }}>
+      <Box
+        component='form'
+        onSubmit={handleSubmit}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px'
+        }}>
         <TextField
           fullWidth
           label="New password"
@@ -114,6 +138,8 @@ const PasswordResetConfirm: React.FC = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.new_password1)}
+          helperText={errors.new_password1 || " "}
         />
         <TextField
           fullWidth
@@ -126,8 +152,11 @@ const PasswordResetConfirm: React.FC = () => {
           slotProps={{
             inputLabel: { shrink: true },
           }}
+          error={Boolean(errors.new_password2)}
+          helperText={errors.new_password2 || " "}
         />
         <Button
+          type="submit"
           variant="contained"
           disableElevation={true}
           disabled={isDisabled}

@@ -32,6 +32,10 @@ interface PasswordResetRequestResponse {
   detail: string;
 }
 
+interface PasswordVerificationCodeResponse {
+  resetToken: string;
+}
+
 interface PasswordResetConfirmResponse {
   detail: string;
 }
@@ -132,8 +136,26 @@ export const resetPasswordRequest = async (
   }
 };
 
+export const resetPasswordVerifyCode = async (
+  email: string,
+  code: string
+): Promise<PasswordVerificationCodeResponse> => {
+  try {
+    const response = await apiWithoutAuth.post<PasswordVerificationCodeResponse>(
+      "/auth/password/reset/verify/",
+      { email, code }
+    );
+    return response.data
+  } catch (error: any) {
+    console.error(
+      "Failed - code verification.",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
 export const resetPasswordConfirm = async (
-  uid: string,
   token: string,
   new_password1: string,
   new_password2: string
@@ -141,7 +163,7 @@ export const resetPasswordConfirm = async (
   try {
     const response = await apiWithoutAuth.post<RegisterResponse>(
       "/auth/password/reset/confirm/",
-      { uid, token, new_password1, new_password2 }
+      { token, new_password1, new_password2 }
     );
     return response.data;
   } catch (error: any) {

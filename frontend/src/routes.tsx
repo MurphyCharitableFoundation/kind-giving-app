@@ -41,7 +41,7 @@ const routes = [
     element: <PasswordVerificationCode />,
   },
   {
-    path: "/password-reset/confirm/:uid/:token",
+    path: "/password-reset/confirm/:token",
     element: <PasswordResetConfirm />,
   },
   {
