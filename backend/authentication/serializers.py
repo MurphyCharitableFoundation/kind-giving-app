@@ -31,6 +31,12 @@ class CustomRegisterSerializer(RegisterSerializer):
             "password2",
         ]
 
+    def validate_email(self, value):
+        """Ensure email is unique before attempting to save."""
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already registered.")
+        return value
+
     def save(self, request):
         """Save user with provided first and last names."""
         user = super().save(request)

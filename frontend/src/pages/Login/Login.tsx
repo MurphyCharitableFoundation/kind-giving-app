@@ -1,11 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Box, Button, Card, Container, Typography, Alert, TextField, Divider } from "@mui/material";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-
+import { Box, Button, Container, Typography, TextField, Divider } from "@mui/material";
+import { useNavigate} from "react-router-dom";
 import { login } from "../../utils/endpoints/endpoints";
-
 import theme from "../../theme/theme";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
+import { parseBackendErrors } from "../../utils/errorUtils";
 
 interface FormData {
   email: string;
@@ -83,19 +82,23 @@ const Login = () => {
     navigate("/");
   };
 
-  // Handle form submission
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (validate()) {
-      // Proceed with form submission (e.g., API call)
-      console.log({ email: formData.email, password: formData.password });
-
       try {
         await login(formData.email, formData.password);
         handleHomeRedirect();
       } catch (error: any) {
-        setErrorMessage(error.response?.data?.detail || "Login failed.");
+        const { fieldErrors, nonFieldError } = parseBackendErrors<FormErrors>(
+          error.response?.data || {},
+          ["email", "password"]
+        );
+        setErrors({
+          ...errors,
+          ...fieldErrors,
+        });
+        setErrorMessage((nonFieldError));
       }
     }
   };
@@ -160,6 +163,9 @@ const Login = () => {
         <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>Forgot your password?
           <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/forgot-password")} sx={{ cursor: 'pointer' }}> Reset it</Typography>
         </Typography>
+        {errorMessage && (
+          <Typography color={theme.status.error.main} variant="bodyMedium">{errorMessage}</Typography>
+        )}
         <Button
           type="submit"
           variant="contained"

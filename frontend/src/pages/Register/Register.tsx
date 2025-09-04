@@ -1,14 +1,11 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-import { Card, Button, Typography, Container, Alert, Box, TextField, Divider, Checkbox, Modal } from "@mui/material";
+import { Button, Typography, Container, Box, TextField, Divider, Checkbox, Modal } from "@mui/material";
 import { registerUser } from "../../utils/endpoints/endpoints";
-
-import EmailInput from "../../components/EmailInput";
-import PasswordInput from "../../components/PasswordInput";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
-import LogoutButton from "../../components/LogoutButton";
 import theme from "../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { parseBackendErrors } from "../../utils/errorUtils";
 
 interface FormData {
   firstName: string;
@@ -47,7 +44,6 @@ const Register: React.FC = () => {
     password1: "",
     password2: ""
   });
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [agreed, setAgreed] = useState(false);
@@ -122,22 +118,25 @@ const Register: React.FC = () => {
         password: formData.password1,
       });
       try {
-        const response = await registerUser(
+        await registerUser(
           formData.firstName,
           formData.lastName,
           formData.email,
           formData.password1,
           formData.password2,
         );
-        setSuccessMessage(response.detail);
         setErrorMessage(null);
         handleOpen();
       } catch (error: any) {
+        const { fieldErrors, nonFieldError } = parseBackendErrors<FormErrors>(
+          error.response?.data,
+          ["firstName", "lastName", "email", "password1", "password2"]
+        );
         setFormErrors({
           ...errors,
-          ...error.response?.data,
+          ...fieldErrors,
         });
-        setSuccessMessage(null);
+        setErrorMessage(nonFieldError);
       }
     }
   };
@@ -253,6 +252,9 @@ const Register: React.FC = () => {
             I agree to Kind Loans’ Terms and Conditions.
           </Typography>
         </Box>
+        {errorMessage && (
+          <Typography color={theme.status.error.main} variant="bodyMedium">{errorMessage}</Typography>
+        )}
         <Button
           type="submit"
           variant="contained"
