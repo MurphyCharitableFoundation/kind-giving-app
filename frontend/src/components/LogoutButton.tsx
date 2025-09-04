@@ -10,7 +10,6 @@ const LogoutButton = () => {
     try {
       googleLogout();
       await logout();
-      console.log("User logged out successfully");
     } catch (error) {
       console.error("Logout failed", error);
     }

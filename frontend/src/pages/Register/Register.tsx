@@ -113,10 +113,6 @@ const Register: React.FC = () => {
     event.preventDefault();
 
     if (validate()) {
-      console.log({
-        email: formData.email,
-        password: formData.password1,
-      });
       try {
         await registerUser(
           formData.firstName,

@@ -60,15 +60,12 @@ const ForgotPassword = () => {
     event.preventDefault();
 
     if (validate()) {
-      console.log({ email: formData.email });
       try {
         const { detail } = await resetPasswordRequest(formData.email);
         //setFormData({ email: "" });
         setSuccessMessage(detail);
-        console.log(detail);
         navigate('/forgot-password/verification-code', {state: {email: formData.email}})
       } catch (err: any) {
-        console.log("error", err);
         setSuccessMessage("");
       }
     }

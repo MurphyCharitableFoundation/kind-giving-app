@@ -71,13 +71,10 @@ export const confirmEmail = async (
   key: string
 ): Promise<ConfirmEmailResponse> => {
   try {
-    console.log("key: ", key);
     const response = await apiWithoutAuth.post<ConfirmEmailResponse>(
       "/auth/register/verify-email/",
       { key }
     );
-
-    console.log("confirmEmail successful, setting authToken.");
     Cookies.set("authToken", key, { expires: 7 }); // Expires in 7 days
     return response.data;
   } catch (error: any) {
@@ -99,8 +96,6 @@ export const login = async (email: string, password: string): Promise<void> => {
     // Extract the token from the response
     const { key } = response.data;
     Cookies.set("authToken", key, { expires: 7 });
-
-    console.log("Login successful!");
   } catch (error: any) {
     console.error("Login failed:", error.response?.data || error.message);
     throw error;
@@ -111,7 +106,6 @@ export const logout = async (): Promise<void> => {
   try {
     Cookies.remove("authToken");
     const response = await apiWithoutAuth.post<LogoutResponse>("/auth/logout/");
-    console.log("Logout successful! - data", response.data);
   } catch (error: any) {
     console.error("Logout failed:", error.response?.data || error.message);
     throw error;
@@ -187,8 +181,6 @@ export const AuthenticateWithGoogle = async (
     );
     const { key } = response.data;
     Cookies.set("authToken", key, { expires: 7 });
-
-    console.log("authenticate with google - data: ", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -203,7 +195,6 @@ export const AuthenticateWithGoogle = async (
 export const fetchUserProfile = async (): Promise<UserProfile> => {
   try {
     const response = await api.get<UserProfile>("/auth/user/");
-    console.log("fetch user profile - data", response.data);
     return response.data; // Return the user data
   } catch (error: any) {
     console.error(
