@@ -3,11 +3,11 @@ from dj_rest_auth.registration.views import RegisterView, ResendEmailVerificatio
 from dj_rest_auth.views import LoginView, LogoutView, PasswordResetConfirmView, PasswordResetView, UserDetailsView
 from django.urls import path
 
-from authentication.views import GoogleLogin, email_confirm_redirect, password_reset_confirm_redirect
+from authentication.views import GoogleLogin, email_confirm_redirect, password_reset_confirm_redirect, CustomRegisterView, CustomLoginView, SendResetCodeView, VerifyResetCodeView, ResetPasswordView
 
 urlpatterns = [
-    path("register/", RegisterView.as_view(), name="rest_register"),
-    path("login/", LoginView.as_view(), name="rest_login"),
+    path("register/", CustomRegisterView.as_view(), name="rest_register"),
+    path("login/", CustomLoginView.as_view(), name="rest_login"),
     path("logout/", LogoutView.as_view(), name="rest_logout"),
     path("user/", UserDetailsView.as_view(), name="rest_user_details"),
     # email:
@@ -31,20 +31,21 @@ urlpatterns = [
         VerifyEmailView.as_view(),
         name="account_email_verification_sent",
     ),
+    # reset password:
     path(
         "password/reset/",
-        PasswordResetView.as_view(),
+        SendResetCodeView.as_view(),
         name="rest_password_reset",
     ),
     path(
-        "password/reset/confirm/<str:uidb64>/<str:token>/",
-        password_reset_confirm_redirect,
-        name="password_reset_confirm",
+        "password/reset/verify/",
+        VerifyResetCodeView.as_view(),
+        name="password_reset_verify",
     ),
     path(
         "password/reset/confirm/",
-        PasswordResetConfirmView.as_view(),
-        name="password_reset_confirm",
+        ResetPasswordView.as_view(),
+        name="password_reset_confirm_custom",
     ),
     # social_auth:
     path("signup/", signup, name="socialaccount_signup"),

@@ -1,11 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Box, Button, Card, Container, Typography, Alert } from "@mui/material";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-
+import { Box, Button, Container, Typography, TextField, Divider } from "@mui/material";
+import { useNavigate} from "react-router-dom";
 import { login } from "../../utils/endpoints/endpoints";
-
-import EmailInput from "../../components/EmailInput";
-import PasswordInput from "../../components/PasswordInput";
+import theme from "../../theme/theme";
+import GoogleLoginButton from "../../components/GoogleLoginButton";
+import { parseBackendErrors } from "../../utils/errorUtils";
 
 interface FormData {
   email: string;
@@ -29,6 +28,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const isDisabled = formData.email.trim() === "" || formData.password.trim() === "";
 
   // Handle input changes
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -81,87 +82,106 @@ const Login = () => {
     navigate("/");
   };
 
-  // Handle form submission
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (validate()) {
-      // Proceed with form submission (e.g., API call)
-      console.log({ email: formData.email, password: formData.password });
-
       try {
         await login(formData.email, formData.password);
         handleHomeRedirect();
       } catch (error: any) {
-        setErrorMessage(error.response?.data?.detail || "Login failed.");
+        const { fieldErrors, nonFieldError } = parseBackendErrors<FormErrors>(
+          error.response?.data || {},
+          ["email", "password"]
+        );
+        setErrors({
+          ...errors,
+          ...fieldErrors,
+        });
+        setErrorMessage((nonFieldError));
       }
     }
   };
 
   return (
-    <Container
-      sx={{
-        paddingY: 3,
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <Card
-        component={"form"}
+    <Container sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '40px',
+      px: '24px',
+      py: '8px',
+      bgcolor: theme.custom.surface.main,
+      minHeight: '100vh'
+    }}>
+      <Typography color={theme.palette.primary.main} variant="headlineXsmallTextMedium">Kind Giving</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        <Typography variant="titleXLargetextMedium" color={theme.custom.surface.onColor}>Welcome back!</Typography>
+
+        <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>New to Kind Giving?
+          <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/register")} sx={{ cursor: 'pointer' }}> Create an account</Typography>
+        </Typography>
+      </Box>
+      <Box
+        component="form"
         onSubmit={handleSubmit}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-          minWidth: "200px",
-          maxWidth: "400px",
-          bgcolor: "#f3f3f3",
-          padding: 4,
-          borderRadius: "10px",
-        }}
-      >
-        <Typography variant="h3" sx={{ textAlign: "center" }}>
-          Login
-        </Typography>
-
-        <EmailInput
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px'
+        }}>
+        <TextField
+          fullWidth
+          label="Email"
+          variant="outlined"
           name="email"
           value={formData.email}
           onChange={handleInputChange}
-          error={errors.email ? true : false}
-          helperText={errors.email}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
+          error={Boolean(errors.email)}
+          helperText={errors.email || " "}
         />
-
-        <PasswordInput
-          label="password"
+        <TextField
+          fullWidth
+          label="Password"
+          variant="outlined"
+          type="password"
           name="password"
           value={formData.password}
           onChange={handleInputChange}
-          error={errors.password ? true : false}
-          helperText={errors.password}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
+          error={Boolean(errors.password)}
+          helperText={errors.password || " "}
         />
-
-        <Typography
+        <Typography variant="bodyMedium" color={theme.custom.surface.onColorVariant}>Forgot your password?
+          <Typography component='span' variant="bodyMedium" color={theme.palette.primary.main} onClick={() => navigate("/forgot-password")} sx={{ cursor: 'pointer' }}> Reset it</Typography>
+        </Typography>
+        {errorMessage && (
+          <Typography color={theme.status.error.main} variant="bodyMedium">{errorMessage}</Typography>
+        )}
+        <Button
+          type="submit"
+          variant="contained"
+          disableElevation={true}
+          disabled={isDisabled}
           sx={{
-            textDecoration: "underline",
-            textAlign: "end",
+            paddingY: '10px', height: "40px", borderRadius: '40px', textTransform: "none",
           }}
         >
-          <RouterLink to="/forgot-password">Forgot Password?</RouterLink>
-        </Typography>
-
-        <Button type="submit" variant="contained">
-          Login
+          Log in
         </Button>
-
-        <Typography variant="body1" sx={{ textAlign: "end" }}>
-          Don't have an account?{" "}
-          <Box component={"span"} sx={{ textDecoration: "underline" }}>
-            <RouterLink to="/register">Sign Up Here</RouterLink>
-          </Box>
-        </Typography>
-        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-      </Card>
+        <Divider>
+          <Typography variant="bodyMedium" color={theme.custom.surface.onColor}>Or</Typography>
+        </Divider>
+        <GoogleLoginButton />
+      </Box>
     </Container>
   );
 };

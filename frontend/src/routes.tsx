@@ -12,6 +12,7 @@ import Causes from "./pages/Causes/Causes";
 import CauseDetails from "./pages/Causes/[id]/CauseDetails";
 import CreateCause from "./pages/Causes/Create/CreateCause";
 import EditCause from "./pages/Causes/[id]/EditCause/EditCause";
+import PasswordVerificationCode from "./pages/PasswordVerificationCode/PasswordVerificationCode";
 
 const routes = [
   {
@@ -36,7 +37,11 @@ const routes = [
     element: <PasswordResetRequest />,
   },
   {
-    path: "/password-reset/confirm/:uid/:token",
+    path: "/forgot-password/verification-code",
+    element: <PasswordVerificationCode />,
+  },
+  {
+    path: "/password-reset/confirm/:token",
     element: <PasswordResetConfirm />,
   },
   {

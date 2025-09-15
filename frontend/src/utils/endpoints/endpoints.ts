@@ -32,6 +32,10 @@ interface PasswordResetRequestResponse {
   detail: string;
 }
 
+interface PasswordVerificationCodeResponse {
+  resetToken: string;
+}
+
 interface PasswordResetConfirmResponse {
   detail: string;
 }
@@ -42,6 +46,8 @@ interface AuthenticateWithGoogleResponse {
 
 // user auth.
 export const registerUser = async (
+  first_name: string,
+  last_name: string,
   email: string,
   password1: string,
   password2: string
@@ -49,7 +55,7 @@ export const registerUser = async (
   try {
     const response = await apiWithoutAuth.post<RegisterResponse>(
       "/auth/register/",
-      { email, password1, password2 }
+      { first_name, last_name, email, password1, password2 }
     );
     return response.data;
   } catch (error: any) {
@@ -65,13 +71,10 @@ export const confirmEmail = async (
   key: string
 ): Promise<ConfirmEmailResponse> => {
   try {
-    console.log("key: ", key);
     const response = await apiWithoutAuth.post<ConfirmEmailResponse>(
       "/auth/register/verify-email/",
       { key }
     );
-
-    console.log("confirmEmail successful, setting authToken.");
     Cookies.set("authToken", key, { expires: 7 }); // Expires in 7 days
     return response.data;
   } catch (error: any) {
@@ -93,8 +96,6 @@ export const login = async (email: string, password: string): Promise<void> => {
     // Extract the token from the response
     const { key } = response.data;
     Cookies.set("authToken", key, { expires: 7 });
-
-    console.log("Login successful!");
   } catch (error: any) {
     console.error("Login failed:", error.response?.data || error.message);
     throw error;
@@ -105,7 +106,6 @@ export const logout = async (): Promise<void> => {
   try {
     Cookies.remove("authToken");
     const response = await apiWithoutAuth.post<LogoutResponse>("/auth/logout/");
-    console.log("Logout successful! - data", response.data);
   } catch (error: any) {
     console.error("Logout failed:", error.response?.data || error.message);
     throw error;
@@ -130,8 +130,26 @@ export const resetPasswordRequest = async (
   }
 };
 
+export const resetPasswordVerifyCode = async (
+  email: string,
+  code: string
+): Promise<PasswordVerificationCodeResponse> => {
+  try {
+    const response = await apiWithoutAuth.post<PasswordVerificationCodeResponse>(
+      "/auth/password/reset/verify/",
+      { email, code }
+    );
+    return response.data
+  } catch (error: any) {
+    console.error(
+      "Failed - code verification.",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
 export const resetPasswordConfirm = async (
-  uid: string,
   token: string,
   new_password1: string,
   new_password2: string
@@ -139,7 +157,7 @@ export const resetPasswordConfirm = async (
   try {
     const response = await apiWithoutAuth.post<RegisterResponse>(
       "/auth/password/reset/confirm/",
-      { uid, token, new_password1, new_password2 }
+      { token, new_password1, new_password2 }
     );
     return response.data;
   } catch (error: any) {
@@ -163,8 +181,6 @@ export const AuthenticateWithGoogle = async (
     );
     const { key } = response.data;
     Cookies.set("authToken", key, { expires: 7 });
-
-    console.log("authenticate with google - data: ", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -179,7 +195,6 @@ export const AuthenticateWithGoogle = async (
 export const fetchUserProfile = async (): Promise<UserProfile> => {
   try {
     const response = await api.get<UserProfile>("/auth/user/");
-    console.log("fetch user profile - data", response.data);
     return response.data; // Return the user data
   } catch (error: any) {
     console.error(

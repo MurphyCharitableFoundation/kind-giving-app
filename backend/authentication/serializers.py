@@ -1,0 +1,73 @@
+"""Authentication serializers."""
+
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import LoginSerializer
+
+User = get_user_model()
+
+
+class CustomRegisterSerializer(RegisterSerializer):
+    """
+    Custom registration serializer.
+
+    Extends the default dj-rest-auth RegisterSerializer
+    to include first_name and last_name fields.
+    """
+
+    username = None
+
+    first_name = serializers.CharField(max_length=150)
+    last_name = serializers.CharField(max_length=150)
+
+    class Meta:  # noqa
+        model = User
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "password1",
+            "password2",
+        ]
+
+    def validate_email(self, value):
+        """Ensure email is unique before attempting to save."""
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already registered.")
+        return value
+
+    def save(self, request):
+        """Save user with provided first and last names."""
+        user = super().save(request)
+        user.first_name = self.data.get("first_name", "").strip()
+        user.last_name = self.data.get("last_name", "").strip()
+        user.save()
+        return user
+
+class CustomLoginSerializer(LoginSerializer):
+    username = None
+
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(style={'input_type': 'password'})
+
+    def validate(self, attrs):
+        attrs['username'] = attrs.get('email')
+        return super().validate(attrs)
+
+class PasswordResetCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=5)
+
+class PasswordResetSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    new_password1 = serializers.CharField(min_length=8, write_only=True)
+    new_password2 = serializers.CharField(min_length=8, write_only=True)
+
+    def validate(self, attrs):
+        if attrs['new_password1'] != attrs['new_password2']:
+            raise serializers.ValidationError("Passwords do not match.")
+        return attrs
