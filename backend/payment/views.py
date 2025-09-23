@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger("payment")
 """Payment Views."""
 
 from django.contrib.auth import get_user_model
@@ -13,6 +15,8 @@ from drf_spectacular.utils import (
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import StripePaymentInputSerializer, StripePaymentOutputSerializer
 
 from .models import Payment
 from .services import (
@@ -20,6 +24,7 @@ from .services import (
     paypal_payment_capture,
     paypal_payment_create,
     paypal_payout_create,
+    stripe_payment_create
 )
 
 User = get_user_model()
@@ -369,3 +374,61 @@ class CapturePayPalPayoutView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=400)
+
+@extend_schema_serializer(component_name="CreateStripePayment")
+class CreateStripePaymentView(APIView):
+    """Create Stripe Payment View."""
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=StripePaymentInputSerializer,
+        responses={
+            201: StripePaymentOutputSerializer,
+            400: OpenApiResponse(description="Invalid or missing input."),
+        },
+        examples=[
+            OpenApiExample(
+                name="Valid Request",
+                value={"amount": "20.00", "currency": "usd"},
+                request_only=True,
+            ),
+            OpenApiExample(
+                name="Valid Response",
+                value={"client_secret": "some_client_secret_value"},
+                response_only=True,
+            ),
+        ],
+    )
+    def post(self, request):
+        """Create Stripe Payment."""
+        logger.info(f"Starting Stripe payment process: amount={request.data.get('amount')}, "
+                    f"currency={request.data.get('currency', 'usd')}")
+        
+        serializer = StripePaymentInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        amount = serializer.validated_data.get("amount")
+        currency = serializer.validated_data.get("currency", "usd")
+
+        try:
+            stripe_payment_data = stripe_payment_create(
+                amount=amount,
+                currency=currency,
+            )
+
+            logger.info(
+                f"Stripe PaymentIntent criado: id={stripe_payment_data.id}, "
+                f"amount={amount}, currency={currency}, user={request.user}"
+            )
+
+            output_serializer = StripePaymentOutputSerializer(data={
+                "client_secret": stripe_payment_data.get("client_secret")
+            })
+
+            output_serializer.is_valid(raise_exception=True)
+
+            return Response(output_serializer.data, status=201)
+        
+        except Exception as e:
+            logger.error("Stripe payment failed", exc_info=True)
+            return Response({"error": "Stripe payment failed"}, status=400)

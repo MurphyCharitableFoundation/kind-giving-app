@@ -2,4 +2,4 @@
 
 from .paypal import *  # noqa
 
-# from .stripe import *
+from .stripe import *  # noqa
