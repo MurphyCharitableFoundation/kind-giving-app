@@ -234,5 +234,5 @@ PAYPAL_MODE = os.environ.get("PAYPAL_MODE")
 PAYPAL_RECEIVER_EMAIL = ""
 PAYPAL_BASE_URL = "https://api-m.sandbox.paypal.com"
 
-#---STRIPE
+# ---STRIPE
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")

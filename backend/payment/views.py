@@ -1,6 +1,6 @@
-import logging
-logger = logging.getLogger("payment")
 """Payment Views."""
+
+import logging
 
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -15,18 +15,16 @@ from drf_spectacular.utils import (
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from .serializers import StripePaymentInputSerializer, StripePaymentOutputSerializer
 
 from .models import Payment
 from .services import (
     paypal_payment_cancel,
     paypal_payment_capture,
     paypal_payment_create,
-    paypal_payout_create,
-    stripe_payment_create
+    stripe_payment_create,
 )
 
+logger = logging.getLogger("payment")
 User = get_user_model()
 
 
@@ -89,7 +87,7 @@ class CreatePayPalPaymentView(APIView):
         currency = request.data.get("currency", "USD")
         payer_id = request.data.get("payer_id")
         return_url = request.build_absolute_uri(reverse("paypal-capture"))
-        cancel_url = request.build_absolute_uri(reverse("cancel-payment"))
+        cancel_url = request.build_absolute_uri(reverse("paypal-cancel"))
 
         if not amount:
             return Response({"amount": "Amount is required."}, status=400)
@@ -110,12 +108,12 @@ class CreatePayPalPaymentView(APIView):
 class CapturePayPalPaymentView(APIView):
     """Execute PayPal Payment View."""
 
-    class CapturePayPalInputSerializer(serializers.Serializer):
+    class InputSerializer(serializers.Serializer):
         """Input for capturing PayPal payment."""
 
         token = serializers.CharField(help_text="PayPal PaymentID or Token returned after user approval.")
 
-    class CapturePayPalOutputSerializer(serializers.Serializer):
+    class OutputSerializer(serializers.Serializer):
         """Output for captured PayPal payment response."""
 
         id = serializers.CharField()
@@ -124,7 +122,7 @@ class CapturePayPalPaymentView(APIView):
         links = serializers.ListField(child=serializers.DictField(), required=False)
 
     @extend_schema(
-        request=CapturePayPalInputSerializer,
+        request=InputSerializer,
         parameters=[
             OpenApiParameter(
                 name="token",
@@ -135,7 +133,7 @@ class CapturePayPalPaymentView(APIView):
             )
         ],
         responses={
-            200: CapturePayPalOutputSerializer,
+            200: OutputSerializer,
             400: OpenApiResponse(description="Capture failed or bad request."),
             404: OpenApiResponse(description="Payment not found."),
         },
@@ -317,73 +315,26 @@ class CancelPayPalPaymentView(APIView):
             return Response({"error": str(e)}, status=400)
 
 
-@extend_schema_serializer(component_name="CapturePayPalPayout")
-class CapturePayPalPayoutView(APIView):
-    """Capture PayPal Payout View."""
+@extend_schema_serializer(component_name="CreateStripePayment")
+class CreateStripePaymentView(APIView):
+    """Create Stripe Payment View."""
 
-    class InputSerializer(serializers.Serializer):
-        """Input for PayPal Payout."""
+    class InputSerializer(serializers.Serializer):  # noqa
+        amount = serializers.DecimalField(
+            max_digits=10,
+            decimal_places=2,
+            min_value=0.50,
+            help_text="Payment amount in decimal format (e.g. 10.50)",
+        )
+        currency = serializers.CharField(default="usd", required=False)
 
-        payee_id = serializers.IntegerField(help_text="The ID of the payee user.")
-        amount = serializers.CharField(help_text="The amount to be paid out.")
-
-    class OutputSerializer(serializers.Serializer):
-        """Output for PayPal Payout."""
-
-        batch_header = serializers.DictField(help_text="PayPal payout batch header.")
+    class OutputSerializer(serializers.Serializer):  # noqa
+        client_secret = serializers.CharField()
 
     @extend_schema(
         request=InputSerializer,
         responses={
-            200: OutputSerializer,
-            400: OpenApiResponse(description="Invalid input or payout failed."),
-        },
-        examples=[
-            OpenApiExample(
-                name="Valid Request",
-                value={"payee_id": 1, "amount": "25.00"},
-                request_only=True,
-            ),
-            OpenApiExample(
-                name="Valid Response",
-                value={"batch_header": {"payout_batch_id": "XYZ123"}},
-                response_only=True,
-            ),
-        ],
-    )
-    def post(self, request):
-        """Capture PayPal Payout."""
-        # user = request.user
-        payee_id = request.data.get("payee_id")
-        amount = request.data.get("amount")
-
-        if not amount:
-            return Response({"amount": "Amount is required."}, status=400)
-
-        payee = get_object_or_404(User, pk=payee_id)
-
-        try:
-            payout_data = paypal_payout_create(
-                user=payee,
-                amount=amount,
-                capture_payout_func=lambda user, amount: None,
-                note=f"Withdrawal by {payee.email}",
-            )
-
-            return Response(payout_data, status=200)
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=400)
-
-@extend_schema_serializer(component_name="CreateStripePayment")
-class CreateStripePaymentView(APIView):
-    """Create Stripe Payment View."""
-    permission_classes = [IsAuthenticated]
-
-    @extend_schema(
-        request=StripePaymentInputSerializer,
-        responses={
-            201: StripePaymentOutputSerializer,
+            201: OutputSerializer,
             400: OpenApiResponse(description="Invalid or missing input."),
         },
         examples=[
@@ -435,14 +386,12 @@ class CreateStripePaymentView(APIView):
                 f"amount={amount}, currency={currency}, user={request.user}"
             )
 
-            output_serializer = StripePaymentOutputSerializer(data={
-                "client_secret": stripe_payment_data.get("client_secret")
-            })
+            output_serializer = self.OutputSerializer(data={"client_secret": stripe_payment_data.get("client_secret")})
 
             output_serializer.is_valid(raise_exception=True)
 
             return Response(output_serializer.data, status=201)
-        
-        except Exception as e:
+
+        except Exception:
             logger.error("Stripe payment failed", exc_info=True)
             return Response({"error": "Stripe payment failed"}, status=400)
