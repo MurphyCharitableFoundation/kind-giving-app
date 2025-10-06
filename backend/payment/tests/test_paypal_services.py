@@ -6,7 +6,6 @@ from django.test import TestCase
 from payment.services import (
     paypal_payment_capture,
     paypal_payment_create,
-    paypal_payout_create,
 )
 
 User = get_user_model()
@@ -54,20 +53,3 @@ class PayPalServiceTests(TestCase):
 
         self.assertEqual(result["status"], "COMPLETED")
         mock_external_capture.assert_called_once_with(payment=mock_payment, capture_payment_func=fake_capture)
-
-    @patch("payment.services.paypal.requests.post")
-    def test_paypal_payout_create_success(self, mock_post):
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json.return_value = {"batch_header": {"payout_batch_id": "XYZ123"}}
-
-        def fake_capture(user, amount):
-            return "ok"
-
-        result = paypal_payout_create(
-            user=self.user,
-            amount="25.00",
-            capture_payout_func=fake_capture,
-        )
-
-        self.assertIn("batch_header", result)
-        self.assertEqual(result["batch_header"]["payout_batch_id"], "XYZ123")

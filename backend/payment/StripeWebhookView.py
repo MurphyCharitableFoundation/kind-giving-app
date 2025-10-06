@@ -1,18 +1,20 @@
-import stripe
 import logging
+
+import stripe
 from django.conf import settings
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
-from rest_framework.views import APIView
+from django.views.decorators.csrf import csrf_exempt
 from drf_spectacular.utils import extend_schema
+from rest_framework.views import APIView
 
 from .models import Payment
-from .services.stripe import stripe_payment_capture
 from .selectors import payment_get
+from .services.stripe import stripe_payment_capture
 
 logger = logging.getLogger("payment")
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 @extend_schema(exclude=True)
 @method_decorator(csrf_exempt, name="dispatch")
@@ -37,9 +39,7 @@ class StripeWebhookView(APIView):
             payment_id = data["id"]
             stripe_payment_capture(
                 payment_id=payment_id,
-                capture_payment_func=lambda user, amount: logger.info(
-                    f"Credited {amount} to {user}"
-                ),
+                capture_payment_func=lambda user, amount: logger.info(f"Credited {amount} to {user}"),
             )
             logger.info(f"PaymentIntent {payment_id} succeeded.")
 

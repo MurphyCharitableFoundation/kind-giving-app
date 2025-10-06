@@ -71,29 +71,6 @@ def paypal_payment_cancel(payment_id: str) -> None:
         raise ValidationError("Payment %s not found." % payment_id)
 
 
-def paypal_payout_create(
-    *,
-    user: User,
-    amount: Amount,
-    capture_payout_func: Callable[[User, Amount], Any],
-    currency: str = "USD",
-    note: str = "Withdrawal",
-    sender_item_id: Optional[str] = None,
-) -> Dict[str, Any]:
-    """Capture Paypal payout and invoke `capture_payout_func`."""
-    payout_response = _payout_create(
-        recipient_email=user.email,
-        amount=amount,
-        currency=currency,
-        note=note,
-        sender_item_id=sender_item_id,
-    )
-
-    capture_payout_func(user, amount)
-
-    return payout_response
-
-
 def _get_access_token() -> str:
     """Get access token for MCF."""
     response = requests.post(
