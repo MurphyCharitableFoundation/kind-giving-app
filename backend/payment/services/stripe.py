@@ -12,6 +12,7 @@ from core.services import Amount, to_money
 from ..models import Payment
 from ..selectors import payment_get
 from .common import external_payment_capture, external_payment_create
+from typing import Optional
 
 User = get_user_model()
 stripe.api_key = settings.STRIPE_SECRET_KEY
