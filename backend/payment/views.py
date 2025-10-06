@@ -400,7 +400,21 @@ class CreateStripePaymentView(APIView):
         ],
     )
     def post(self, request):
-        """Create Stripe Payment."""
+        """Create Stripe Payment.
+        
+        Creates a new Stripe PaymentIntent and stores the payment record
+        in the local database. Returns the client_secret needed for the
+        frontend to complete the payment process.
+        
+        Args:
+            request: HTTP request containing amount and currency
+            
+        Returns:
+            Response: JSON with client_secret for payment completion
+            
+        Raises:
+            400: If validation fails or Stripe payment creation fails
+        """
         logger.info(f"Starting Stripe payment process: amount={request.data.get('amount')}, "
                     f"currency={request.data.get('currency', 'usd')}")
         
