@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from ..models import Payment
 from .common import external_payment_capture, external_payment_create
 from ..selectors import payment_get
+from typing import Optional
 
 User = get_user_model()
 stripe.api_key = settings.STRIPE_SECRET_KEY
