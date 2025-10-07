@@ -2,6 +2,7 @@
 
 from decimal import Decimal
 from typing import Any, Callable, Dict
+import uuid
 
 import stripe
 from django.conf import settings
@@ -23,13 +24,38 @@ def stripe_payment_create(
     payer: User,
     amount: Decimal,
     currency: str = "usd",
-):
-    payment_intent = stripe.PaymentIntent.create(amount=int(amount * 100), currency=currency)
 
-    money_amount = to_money(amount)
+):
+    """Create Stripe PaymentIntent and commit to database.
+    
+    Args:
+        payer: The user making the payment
+        amount: Payment amount in decimal format
+        currency: Currency code (default: 'usd')
+        
+    Returns:
+        stripe.PaymentIntent: The created PaymentIntent object with client_secret.
+    """
+
+    print(f"DEBUG: payer type: {type(payer)}, payer: {payer}")
+    print(f"DEBUG: amount type: {type(amount)}, amount: {amount}")
+    
+    idempotency_key = f"create-{payer.id}-{uuid.uuid4()}"
+    try:
+        
+        payment_intent = stripe.PaymentIntent.create(
+            amount=int(amount * 100),
+            currency=currency,
+            idempotency_key=idempotency_key
+        )
+        print(f"DEBUG: Stripe PaymentIntent created successfully: {payment_intent.get('id')}")
+    except stripe.StripeError as e:
+        print(f"DEBUG: Stripe API error: {str(e)}")
+        raise ValueError(f"Stripe API error: {str(e)}")
+
     external_payment_create(
         payer=payer,
-        amount=money_amount,
+        amount=amount,
         gateway_payment_id=payment_intent.get("id"),
         platform=Payment.Platforms.STRIPE,
         status=Payment.Status.PENDING,
@@ -53,7 +79,7 @@ def stripe_payment_capture(
         capture_payment_func: Callback function to execute after capture
         
     Returns:
-        Dict[str, Any]: Stripe PaymentIntent object
+        stripe.PaymentIntent: The created PaymentIntent object with client_secret.
         
     Raises:
         ValueError: If payment hasn't succeeded or not found in database
@@ -85,8 +111,12 @@ def stripe_payment_cancel(payment_id: str) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: Stripe PaymentIntent object after cancellation
     """
-    payment_intent = stripe.PaymentIntent.cancel(payment_id)
-    
+    try:
+        payment_intent = stripe.PaymentIntent.cancel(payment_id, idempotency_key=f"cancel-{payment_id}-{uuid.uuid4()}")
+
+    except stripe.StripeError as e:
+        raise ValueError(f"Stripe API error: {str(e)}")
+
     external_payment = payment_get(gateway_payment_id=payment_id)
 
     if not external_payment:
@@ -123,9 +153,15 @@ def stripe_refund_create(
     """
 
     payment_intent = stripe.PaymentIntent.retrieve(payment_id)
-    refund = stripe.Refund.create(
-        payment_intent=payment_id, amount=int(amount * 100) if amount else None
-    )
+
+    try:
+        refund = stripe.Refund.create(
+            payment_intent=payment_id, 
+            amount=int(amount * 100) if amount else None, 
+            idempotency_key=f"refund-{payment_id}-{uuid.uuid4()}"
+        )
+    except stripe.StripeError as e:
+        raise ValueError(f"Stripe API error: {str(e)}")
 
     external_payment = payment_get(gateway_payment_id=payment_id)
     if not external_payment:

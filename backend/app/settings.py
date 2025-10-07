@@ -236,3 +236,4 @@ PAYPAL_BASE_URL = "https://api-m.sandbox.paypal.com"
 
 # ---STRIPE
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "whsec_test_secret")

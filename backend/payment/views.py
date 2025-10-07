@@ -15,6 +15,7 @@ from drf_spectacular.utils import (
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Payment
 from .services import (
@@ -22,6 +23,7 @@ from .services import (
     paypal_payment_capture,
     paypal_payment_create,
     stripe_payment_create,
+    stripe_payment_cancel,
 )
 
 logger = logging.getLogger("payment")
@@ -319,6 +321,7 @@ class CancelPayPalPaymentView(APIView):
 class CreateStripePaymentView(APIView):
     """Create Stripe Payment View."""
 
+    permission_classes = [IsAuthenticated]  # Temporarily disabled for testing
     class InputSerializer(serializers.Serializer):  # noqa
         amount = serializers.DecimalField(
             max_digits=10,
@@ -369,16 +372,19 @@ class CreateStripePaymentView(APIView):
         logger.info(f"Starting Stripe payment process: amount={request.data.get('amount')}, "
                     f"currency={request.data.get('currency', 'usd')}")
         
-        serializer = StripePaymentInputSerializer(data=request.data)
+        serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
 
         amount = serializer.validated_data.get("amount")
         currency = serializer.validated_data.get("currency", "usd")
+        user = request.user
 
         try:
             stripe_payment_data = stripe_payment_create(
                 amount=amount,
                 currency=currency,
+                payer=user
             )
 
             logger.info(
@@ -395,3 +401,87 @@ class CreateStripePaymentView(APIView):
         except Exception:
             logger.error("Stripe payment failed", exc_info=True)
             return Response({"error": "Stripe payment failed"}, status=400)
+        
+@extend_schema_serializer(component_name="CancelStripePayment")
+class CancelStripePaymentView(APIView):
+    """Cancel Stripe Payment View."""
+
+    permission_classes = [IsAuthenticated]
+
+    class InputSerializer(serializers.Serializer):
+        paymentId = serializers.CharField(help_text="The Stripe PaymentIntent ID to cancel.")
+    
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.CharField()
+        status = serializers.CharField()
+
+    @extend_schema(
+        request=InputSerializer,
+        responses={
+            204: OpenApiResponse(description="Payment canceled successfully."),
+            404: OpenApiResponse(description="Payment not found."),
+            400: OpenApiResponse(description="Invalid request."),
+        },
+        examples=[
+            OpenApiExample(
+                name="Successful Cancel",
+                value={"id": "pi_1Hh1XYZ2eZvKYlo2C0FzX0aY", "status": "canceled"},
+                response_only=True,
+            ),
+            OpenApiExample(
+                name="Payment Not Found",
+                value={"error": "Payment not found."},
+                response_only=True,
+            ),
+            OpenApiExample(
+                name="Invalid Request",
+                value={"error": "paymentId is required."},
+                response_only=True,
+            ),
+        ],
+
+    )
+    def post(self, request):
+        """Cancel Stripe Payment.
+
+        Cancels a Stripe PaymentIntent that is in a cancelable state and 
+        updates the corresponding payment record in the local database.
+        
+        Only PaymentIntents with certain statuses can be canceled:
+        - requires_payment_method
+        - requires_confirmation  
+        - requires_action
+        - processing
+        - requires_capture
+
+        Args:
+            request: HTTP request containing paymentId in the request body
+
+        Returns:
+            Response: HTTP 204 (No Content) on successful cancellation
+            
+        Raises:
+            400: If paymentId is missing or invalid, or if PaymentIntent 
+                 cannot be canceled due to its current status
+            404: If payment record is not found in local database
+            401: If user is not authenticated (handled by permission_classes)
+        """
+
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        payment_id = serializer.validated_data.get("paymentId")
+
+        user = request.user
+
+        logger.info(f"[Stripe] User {user.id} requested cancel of PaymentIntent {payment_id}")
+
+        if not payment_id:
+            return Response({"error": "paymentId is required."}, status=400)
+
+        try:
+            stripe_payment_cancel(payment_id=payment_id)
+            return Response(status=204)
+        except Payment.DoesNotExist:
+            return Response({"error": "Payment not found."}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
