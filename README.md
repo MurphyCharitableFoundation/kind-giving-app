@@ -1,5 +1,42 @@
 # Kind Giving Application
 
+The Kind Giving Application is like most fundraising web-based
+applications. It is written by volunteers who want to support the
+Murphy Charitable Foundations' (MCF) goal of supporting those in need
+in Uganda.
+
+Start with the Docs, and use the sections as you need. 
+
+Thanks for joining the team!
+
+## Docs
+
+The docs folder contains a c4 representation of the kind giving
+application. You can render it on structurizr or any other web
+platform that supports the C4 DSL (domain-specific language) to get a
+big picture view of the application as a system that will help the MCF
+achieve it's goals.
+
+[Something](https://structurizr.com/dsl?src=https://docs.structurizr.com/dsl/tutorial/5.dsl)
+
+To render the diagram:
+1. Open the [Structurizr Tutorial](https://structurizr.com/dsl?src=https://docs.structurizr.com/dsl/tutorial/5.dsl) on your web browser.
+2. Click the 'view source' button at the top of the page.
+3. Copy and paste the c4-model.dsl contents into the text editor on the left.
+4. Click the 'render' button in the task bar at the top of the editor.
+5. The rendition will look mumbled, that is ok. Click the 'magic-wand'
+   button at the top right on the right side of the page.
+6. Click the 'auto-layout' button on at the bottom of the confirmation
+   dialog.
+   
+At this point, the rendition will look much better. It will show the
+architecture diagram at 3 levels:
+- landscape: all interacting users/systems (i.e. Staff, Registered Users, ...)
+- systems: all major systems (i.e. Kind Giving System & Payment
+  Systems)
+- containers: all containers within systems (i.e. PostgresQL inside
+  the Kind Giving System)
+
 ## Setup
 
 - Ensure to set up project configurations in `.env` file, check `.env.example`
