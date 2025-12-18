@@ -13,7 +13,8 @@ import CauseDetails from "./pages/Causes/[id]/CauseDetails";
 import CreateCause from "./pages/Causes/Create/CreateCause";
 import EditCause from "./pages/Causes/[id]/EditCause/EditCause";
 import PasswordVerificationCode from "./pages/PasswordVerificationCode/PasswordVerificationCode";
-
+import UserSetting from "./pages/UserSetting/components/UserSetting";
+import ProfilePicture from "./pages/UserSetting/components/ProfilePicture";
 const routes = [
   {
     path: "/",
@@ -67,6 +68,14 @@ const routes = [
   {
     path: "/causes/:causeId/edit",
     element: <EditCause />,
+  },
+  {
+    path: "/user",
+    element: <UserSetting />,
+  },
+   {
+    path: "/user/user-profile",
+    element: <ProfilePicture />,
   },
 ];
 
