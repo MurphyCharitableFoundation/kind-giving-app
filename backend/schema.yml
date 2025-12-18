@@ -1,0 +1,1947 @@
+openapi: 3.0.3
+info:
+  title: Kind Giving Application API
+  version: 1.0.0
+  description: API docs for Kind Giving Application
+paths:
+  /api/auth/account-confirm-email/:
+    post:
+      operationId: auth_account_confirm_email_create
+      description: |-
+        Verifies the email associated with the provided key.
+
+        Accepts the following POST parameter: key.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/google/:
+    post:
+      operationId: auth_google_create
+      description: |-
+        class used for social authentications
+        example usage for facebook with access_token
+        -------------
+        from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+
+        class FacebookLogin(SocialLoginView):
+            adapter_class = FacebookOAuth2Adapter
+        -------------
+
+        example usage for facebook with code
+
+        -------------
+        from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+        from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+
+        class FacebookLogin(SocialLoginView):
+            adapter_class = FacebookOAuth2Adapter
+            client_class = OAuth2Client
+            callback_url = 'localhost:8000'
+        -------------
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialLogin'
+          description: ''
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+  /api/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+
+        Accepts/Returns nothing.
+      tags:
+      - auth
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      description: |-
+        Calls Django Auth PasswordResetForm save method.
+
+        Accepts the following POST parameters: email
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/password/reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      description: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
+
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: auth_register_create
+      description: |-
+        Registers a new user.
+
+        Accepts the following POST parameters: username, email, password1, password2.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/register/resend-email/:
+    post:
+      operationId: auth_register_resend_email_create
+      description: |-
+        Resends another email to an unverified email.
+
+        Accepts the following POST parameter: email.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/register/verify-email/:
+    post:
+      operationId: auth_register_verify_email_create
+      description: |-
+        Verifies the email associated with the provided key.
+
+        Accepts the following POST parameter: key.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/user/:
+    get:
+      operationId: auth_user_retrieve
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+          description: ''
+    put:
+      operationId: auth_user_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserDetails'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+          description: ''
+    patch:
+      operationId: auth_user_partial_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetails'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+          description: ''
+  /api/campaigns/:
+    get:
+      operationId: campaigns_list
+      description: Campaign List Create API.
+      tags:
+      - campaigns
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CampaignOutput'
+          description: ''
+    post:
+      operationId: campaigns_create
+      description: Campaign List Create API.
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignInput'
+          description: ''
+  /api/campaigns/{campaign_id}/:
+    get:
+      operationId: campaigns_retrieve
+      description: Campaign Retrieve Update Destroy API.
+      parameters:
+      - in: path
+        name: campaign_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - campaigns
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignOutput'
+          description: ''
+    put:
+      operationId: campaigns_update
+      description: Campaign Retrieve Update Destroy API.
+      parameters:
+      - in: path
+        name: campaign_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignInput'
+          description: ''
+    patch:
+      operationId: campaigns_partial_update
+      description: Campaign Retrieve Update Destroy API.
+      parameters:
+      - in: path
+        name: campaign_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCampaignInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCampaignInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCampaignInput'
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignInput'
+          description: ''
+    delete:
+      operationId: campaigns_destroy
+      description: Campaign Retrieve Update Destroy API.
+      parameters:
+      - in: path
+        name: campaign_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - campaigns
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/campaigns/{campaign_id}/comments/:
+    get:
+      operationId: campaigns_comments_list
+      description: Retrieve comments of campaign by campaign-id.
+      parameters:
+      - in: path
+        name: campaign_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - campaigns
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentOutput'
+          description: ''
+  /api/campaigns/{campaign_id}/donations/:
+    get:
+      operationId: campaigns_donations_list
+      description: Retrieve donations of campaign by campaign-id.
+      parameters:
+      - in: path
+        name: campaign_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - campaigns
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Donation'
+          description: ''
+  /api/causes/:
+    get:
+      operationId: causes_list
+      description: List & Create View for Cause.
+      tags:
+      - causes
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CauseOutput'
+          description: ''
+    post:
+      operationId: causes_create
+      description: List & Create View for Cause.
+      tags:
+      - causes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CauseInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CauseInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CauseInput'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CauseInput'
+          description: ''
+  /api/causes/{cause_id}/:
+    get:
+      operationId: causes_retrieve
+      description: Retrieve, Update, and Destroy View for Cause.
+      parameters:
+      - in: path
+        name: cause_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - causes
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CauseOutput'
+          description: ''
+    put:
+      operationId: causes_update
+      description: Retrieve, Update, and Destroy View for Cause.
+      parameters:
+      - in: path
+        name: cause_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - causes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CauseInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CauseInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CauseInput'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CauseInput'
+          description: ''
+    patch:
+      operationId: causes_partial_update
+      description: Retrieve, Update, and Destroy View for Cause.
+      parameters:
+      - in: path
+        name: cause_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - causes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCauseInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCauseInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCauseInput'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CauseInput'
+          description: ''
+    delete:
+      operationId: causes_destroy
+      description: Retrieve, Update, and Destroy View for Cause.
+      parameters:
+      - in: path
+        name: cause_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - causes
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/comments/:
+    get:
+      operationId: comments_list
+      description: Comment List Create API.
+      tags:
+      - comments
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentOutput'
+          description: ''
+    post:
+      operationId: comments_create
+      description: Comment List Create API.
+      tags:
+      - comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentInput'
+          description: ''
+  /api/comments/{comment_id}/:
+    get:
+      operationId: comments_retrieve
+      description: Comment Detail API.
+      parameters:
+      - in: path
+        name: comment_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - comments
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentOutput'
+          description: ''
+    put:
+      operationId: comments_update
+      description: Comment Detail API.
+      parameters:
+      - in: path
+        name: comment_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentInput'
+          description: ''
+    patch:
+      operationId: comments_partial_update
+      description: Comment Detail API.
+      parameters:
+      - in: path
+        name: comment_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCommentInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCommentInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCommentInput'
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentInput'
+          description: ''
+    delete:
+      operationId: comments_destroy
+      description: Comment Detail API.
+      parameters:
+      - in: path
+        name: comment_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - comments
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/donations/:
+    get:
+      operationId: donations_list
+      description: Donation List API.
+      tags:
+      - donations
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DonationOutput'
+          description: ''
+    post:
+      operationId: donations_create
+      description: Donation List API.
+      tags:
+      - donations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DonationInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DonationInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DonationInput'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationInput'
+          description: ''
+  /api/donations/{donation_id}/:
+    get:
+      operationId: donations_retrieve
+      description: Donation Detail API.
+      parameters:
+      - in: path
+        name: donation_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - donations
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationOutput'
+          description: ''
+  /api/projects/:
+    get:
+      operationId: projects_list
+      description: List & Create View for Project.
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectOutputList'
+          description: ''
+    post:
+      operationId: projects_create
+      description: List & Create View for Project.
+      tags:
+      - projects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectInput'
+          description: ''
+  /api/projects/{project_id}/:
+    get:
+      operationId: projects_retrieve
+      description: Retrieve, Update, and Destroy View for Project.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectOutput'
+          description: ''
+    put:
+      operationId: projects_update
+      description: Retrieve, Update, and Destroy View for Project.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectInput'
+          description: ''
+    patch:
+      operationId: projects_partial_update
+      description: Retrieve, Update, and Destroy View for Project.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectInput'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectInput'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectInput'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectInput'
+          description: ''
+    delete:
+      operationId: projects_destroy
+      description: Retrieve, Update, and Destroy View for Project.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/projects/{project_id}/assign/:
+    post:
+      operationId: projects_assign_create
+      description: Create project assignment for beneficiary.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectAssignment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProjectAssignment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectAssignment'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: Beneficiary assigned successfully.
+        '200':
+          description: Beneficiary already assigned.
+        '400':
+          description: Validation error.
+  /api/projects/{project_id}/assignments/:
+    get:
+      operationId: projects_assignments_list
+      description: List all beneficiaries for a given Project.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Beneficiary'
+          description: ''
+  /api/projects/{project_id}/campaigns/:
+    get:
+      operationId: projects_campaigns_list
+      description: List all campaigns for a given Project.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/projects/{project_id}/unassign/:
+    delete:
+      operationId: projects_unassign_destroy
+      description: Delete project assignment for beneficiary.
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: Beneficiary unassigned successfully.
+        '400':
+          description: No assignment found or validation error.
+components:
+  schemas:
+    AssignableTypeEnum:
+      enum:
+      - User
+      - UserGroup
+      type: string
+      description: |-
+        * `User` - User
+        * `UserGroup` - UserGroup
+    Beneficiary:
+      type: object
+      description: Beneficiary Serializer.
+      properties:
+        assignable_type:
+          $ref: '#/components/schemas/AssignableTypeEnum'
+        assignable_id:
+          type: integer
+        beneficiary:
+          type: string
+          readOnly: true
+      required:
+      - assignable_id
+      - assignable_type
+      - beneficiary
+    Campaign:
+      type: object
+      description: Campaign Serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        target_currency:
+          type: string
+          readOnly: true
+        target:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Financial target (money) the project aims to raise.
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        img:
+          type: string
+          format: uri
+          nullable: true
+          description: Optional main image representing the campaign.
+        project:
+          type: integer
+        owner:
+          type: integer
+      required:
+      - created
+      - description
+      - id
+      - modified
+      - owner
+      - project
+      - target
+      - target_currency
+      - title
+    CampaignInput:
+      type: object
+      description: Campaign Create Input Serializer.
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        target:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Financial target (money) the project aims to raise.
+        project:
+          type: integer
+        owner:
+          type: integer
+      required:
+      - description
+      - owner
+      - project
+      - target
+      - title
+    CampaignOutput:
+      type: object
+      description: Campaign List Create Output Serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        target:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Financial target (money) the project aims to raise.
+        project:
+          type: integer
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        donations_count:
+          type: string
+          readOnly: true
+        donations_total:
+          type: string
+          readOnly: true
+      required:
+      - description
+      - donations_count
+      - donations_total
+      - id
+      - project
+      - target
+      - title
+    CauseInput:
+      type: object
+      description: Cause Input Serializer.
+      properties:
+        name:
+          type: string
+          description: Human-readable name of the cause.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Longer explanation of the cause.
+        icon:
+          type: string
+          format: uri
+          nullable: true
+          description: Optional image or icon representing the cause.
+      required:
+      - name
+    CauseOutput:
+      type: object
+      description: Cause Output Serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Human-readable name of the cause.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Longer explanation of the cause.
+        icon:
+          type: string
+          format: uri
+          nullable: true
+          description: Optional image or icon representing the cause.
+      required:
+      - id
+      - name
+    CommentInput:
+      type: object
+      description: Comment Create Input Serializer.
+      properties:
+        content:
+          type: string
+        campaign:
+          type: integer
+        author:
+          type: integer
+        parent:
+          type: integer
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - author
+      - campaign
+      - content
+      - created
+    CommentOutput:
+      type: object
+      description: Comment List Output Serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content:
+          type: string
+        campaign:
+          type: integer
+        author:
+          type: integer
+        parent:
+          type: integer
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - author
+      - campaign
+      - content
+      - created
+      - id
+    Donation:
+      type: object
+      description: Donation Serializer.
+      properties:
+        donor:
+          type: integer
+          description: Donor user who made the donation
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Amount of money donated
+        description:
+          type: string
+          nullable: true
+          description: Description of the donation
+          maxLength: 255
+        payment:
+          type: string
+          nullable: true
+          description: Reference of the payment transaction from PayPal/Stripe
+          maxLength: 255
+      required:
+      - amount
+      - donor
+    DonationInput:
+      type: object
+      description: Donation Create Input Serializer.
+      properties:
+        donor:
+          type: integer
+          description: Donor user who made the donation
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Amount of money donated
+        campaign:
+          type: integer
+          description: Campaign supported by donation.
+      required:
+      - amount
+      - campaign
+      - donor
+    DonationOutput:
+      type: object
+      description: Donation List Output Serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        donor:
+          type: integer
+          description: Donor user who made the donation
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Amount of money donated
+        campaign:
+          type: integer
+          description: Campaign supported by donation.
+        payment:
+          type: string
+          nullable: true
+          description: Reference of the payment transaction from PayPal/Stripe
+          maxLength: 255
+      required:
+      - amount
+      - campaign
+      - donor
+      - id
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+      - password
+    PaginatedProjectOutputList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/example-entity/?offset=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/example-accounts/?offset=2
+        limit:
+          type: integer
+          example: 123
+        offset:
+          type: integer
+          example: 123
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectOutput'
+    PasswordReset:
+      type: object
+      description: Serializer for requesting a password reset e-mail.
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    PasswordResetConfirm:
+      type: object
+      description: Serializer for confirming a password reset attempt.
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+      - new_password1
+      - new_password2
+      - token
+      - uid
+    PatchedCampaignInput:
+      type: object
+      description: Campaign Create Input Serializer.
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        target:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Financial target (money) the project aims to raise.
+        project:
+          type: integer
+        owner:
+          type: integer
+    PatchedCauseInput:
+      type: object
+      description: Cause Input Serializer.
+      properties:
+        name:
+          type: string
+          description: Human-readable name of the cause.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Longer explanation of the cause.
+        icon:
+          type: string
+          format: uri
+          nullable: true
+          description: Optional image or icon representing the cause.
+    PatchedCommentInput:
+      type: object
+      description: Comment Create Input Serializer.
+      properties:
+        content:
+          type: string
+        campaign:
+          type: integer
+        author:
+          type: integer
+        parent:
+          type: integer
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedProjectInput:
+      type: object
+      description: Project Input Serializer.
+      properties:
+        name:
+          type: string
+          description: Short name or title of the project.
+          maxLength: 255
+        img:
+          type: string
+          format: uri
+          nullable: true
+          description: Optional main image representing the project.
+        causes:
+          type: array
+          items:
+            type: string
+            description: Human-readable name of the cause.
+        causes_names:
+          type: array
+          items:
+            type: string
+          writeOnly: true
+        target:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Financial target (money) the project aims to raise.
+        campaign_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Maximum number of campaigns or participants allowed.
+        city:
+          type: string
+          nullable: true
+          description: City of the project.
+          maxLength: 255
+        country:
+          type: string
+          nullable: true
+          description: Country of the project.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Description of the project.
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Status of project, default is DRAFT.
+
+            * `draft` - Draft
+            * `active` - Active
+            * `funded` - Funded
+            * `expired` - Expired
+            * `cancelled` - Cancelled
+    PatchedUserDetails:
+      type: object
+      description: User model w/o password
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+    ProjectAssignment:
+      type: object
+      description: Serializer for ProjectAssignment.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        project:
+          type: integer
+          readOnly: true
+          description: Project to which this assignment belongs.
+        assignable_type:
+          $ref: '#/components/schemas/AssignableTypeEnum'
+        assignable_id:
+          type: integer
+      required:
+      - assignable_id
+      - assignable_type
+      - id
+      - project
+    ProjectInput:
+      type: object
+      description: Project Input Serializer.
+      properties:
+        name:
+          type: string
+          description: Short name or title of the project.
+          maxLength: 255
+        img:
+          type: string
+          format: uri
+          nullable: true
+          description: Optional main image representing the project.
+        causes:
+          type: array
+          items:
+            type: string
+            description: Human-readable name of the cause.
+        causes_names:
+          type: array
+          items:
+            type: string
+          writeOnly: true
+        target:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Financial target (money) the project aims to raise.
+        campaign_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Maximum number of campaigns or participants allowed.
+        city:
+          type: string
+          nullable: true
+          description: City of the project.
+          maxLength: 255
+        country:
+          type: string
+          nullable: true
+          description: Country of the project.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Description of the project.
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Status of project, default is DRAFT.
+
+            * `draft` - Draft
+            * `active` - Active
+            * `funded` - Funded
+            * `expired` - Expired
+            * `cancelled` - Cancelled
+      required:
+      - name
+      - target
+    ProjectOutput:
+      type: object
+      description: Project Output Serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Short name or title of the project.
+          maxLength: 255
+        img:
+          type: string
+          format: uri
+          nullable: true
+          description: Optional main image representing the project.
+        causes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CauseOutput'
+          readOnly: true
+        target:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+          description: Financial target (money) the project aims to raise.
+        campaign_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Maximum number of campaigns or participants allowed.
+        city:
+          type: string
+          nullable: true
+          description: City of the project.
+          maxLength: 255
+        country:
+          type: string
+          nullable: true
+          description: Country of the project.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Description of the project.
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Status of project, default is DRAFT.
+
+            * `draft` - Draft
+            * `active` - Active
+            * `funded` - Funded
+            * `expired` - Expired
+            * `cancelled` - Cancelled
+        donation_percentage:
+          type: integer
+          readOnly: true
+      required:
+      - causes
+      - donation_percentage
+      - id
+      - name
+      - target
+    Register:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 0
+          minLength: 1
+        email:
+          type: string
+          format: email
+        password1:
+          type: string
+          writeOnly: true
+        password2:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password1
+      - password2
+    ResendEmailVerification:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    RestAuthDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          readOnly: true
+      required:
+      - detail
+    SocialLogin:
+      type: object
+      properties:
+        access_token:
+          type: string
+        code:
+          type: string
+        id_token:
+          type: string
+    StatusEnum:
+      enum:
+      - draft
+      - active
+      - funded
+      - expired
+      - cancelled
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `active` - Active
+        * `funded` - Funded
+        * `expired` - Expired
+        * `cancelled` - Cancelled
+    Token:
+      type: object
+      description: Serializer for Token model.
+      properties:
+        key:
+          type: string
+          maxLength: 40
+      required:
+      - key
+    UserDetails:
+      type: object
+      description: User model w/o password
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - pk
+    VerifyEmail:
+      type: object
+      properties:
+        key:
+          type: string
+          writeOnly: true
+      required:
+      - key
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

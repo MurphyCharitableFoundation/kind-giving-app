@@ -1,7 +1,6 @@
-import { Box, Button, Container, Icon, Modal, TextField, Typography } from '@mui/material'
+import { Box, Button, Container, Modal, TextField, Typography } from '@mui/material'
 import React, { useRef, useState } from 'react'
 import theme from '../../theme/theme'
-import { Height } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { resetPasswordVerifyCode } from '../../utils/endpoints/endpoints';
