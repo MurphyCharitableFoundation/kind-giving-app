@@ -54,7 +54,7 @@ const ProjectManagement: React.FC = () => {
                 {/* Search Projects Input */}
                 <SearchBar />
                 {/* New project button */}
-                <NewItemButton>New Project</NewItemButton>
+                <NewItemButton onClick={() => navigate('/projects/create')}>New Project</NewItemButton>
                 {/* List of projects */}
                 {projects.length === 0 ? (
                     <>
