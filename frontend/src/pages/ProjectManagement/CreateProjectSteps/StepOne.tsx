@@ -10,13 +10,6 @@ import { TagsModal } from "./TagsModal";
 import Cause from "../../../interfaces/Cause";
 import { getCauses } from "../../../utils/endpoints/causesEndpoints";
 
-interface PersonalFormData {
-  firstName: string;
-  lastName: string;
-  street: string;
-  city: string;
-}
-
 const StepOne: React.FC<StepProps<CreateProjectFormData>> = ({
   data,
   onChange,

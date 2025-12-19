@@ -7,13 +7,6 @@ import AddIcon from '@mui/icons-material/Add';
 import theme from "../../../theme/theme";
 import { CreateProjectFormData } from "./CreateProjectFormData";
 
-interface PersonalFormData {
-  firstName: string;
-  lastName: string;
-  street: string;
-  city: string;
-}
-
 const StepTwo: React.FC<StepProps<CreateProjectFormData>> = ({
   data,
   onChange,

@@ -6,13 +6,6 @@ import ProjectImagesCarousel from "../../../components/ProjectImagesCarousel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { CreateProjectFormData } from "./CreateProjectFormData";
 
-interface PersonalFormData {
-  firstName: string;
-  lastName: string;
-  street: string;
-  city: string;
-}
-
 const StepReview: React.FC<StepProps<CreateProjectFormData>> = ({
   data,
 }) => {

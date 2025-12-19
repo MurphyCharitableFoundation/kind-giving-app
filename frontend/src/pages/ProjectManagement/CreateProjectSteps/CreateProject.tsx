@@ -8,20 +8,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import theme from "../../../theme/theme";
 import { CreateProjectFormData } from "./CreateProjectFormData";
 
-// interface PersonalFormData {
-//   firstName: string;
-//   lastName: string;
-//   street: string;
-//   city: string;
-// }
-
 const steps: StepConfig<CreateProjectFormData>[] = [
-  { label: "Personal Info", component: StepOne },
-  { label: "Address", component: StepTwo },
+  { label: "Step One", component: StepOne },
+  { label: "Step Two", component: StepTwo },
   { label: "Review", component: StepReview },
 ];
 
-export default function PersonalWizard() {
+export default function CreateProject() {
 
   const initialCreateProjectFormData: CreateProjectFormData = {
     name: "",
