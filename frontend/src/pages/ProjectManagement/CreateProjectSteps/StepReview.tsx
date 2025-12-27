@@ -9,10 +9,6 @@ import { CreateProjectFormData } from "./CreateProjectFormData";
 const StepReview: React.FC<StepProps<CreateProjectFormData>> = ({
   data,
 }) => {
-  useEffect(() => {
-    console.log(data)
-  }, [])
-
 
   return (
     <Container sx={{ padding: 0 }}>

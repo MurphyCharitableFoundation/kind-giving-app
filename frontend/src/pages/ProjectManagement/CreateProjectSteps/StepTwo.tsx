@@ -12,10 +12,6 @@ const StepTwo: React.FC<StepProps<CreateProjectFormData>> = ({
   onChange,
 }) => {
 
-  useEffect(() => {
-    console.log(data)
-  }, [])
-
   return (
     <Container sx={{ padding: 0 }}>
 
@@ -116,7 +112,6 @@ const StepTwo: React.FC<StepProps<CreateProjectFormData>> = ({
                     borderRadius: '30px',
                     bgcolor: theme.palette.secondary.container
                   }}
-                  onClick={() => console.log('add imagem')}
                   >
                     <Typography color={theme.palette.secondary.onContainer} variant='labelLarge'>Browse</Typography>
                   </Button>

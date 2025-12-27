@@ -20,7 +20,6 @@ const StepOne: React.FC<StepProps<CreateProjectFormData>> = ({
   useEffect(() => {
     getCauses()
       .then((result) => {
-        console.log(result);
         setCauses(result);
       })
       .catch((err) => console.error("Failed to fetch causes: ", err))
