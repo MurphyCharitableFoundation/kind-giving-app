@@ -1,15 +1,20 @@
-import { Box, Button, Chip, Modal, Typography } from "@mui/material";
+import { Box, Button, Chip, Modal, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import theme from "../../../theme/theme";
 import { getCauses } from "../../../utils/endpoints/causesEndpoints";
 import Cause from "../../../interfaces/Cause";
 
+export interface CauseDraft {
+    id?: number;      // undefined for new causes
+    name: string;
+}
+
 interface TagsModalProps {
     open: boolean;
     onClose: () => void;
     causes: Cause[];
-    value: number[];                     // selected cause IDs
-    onSave: (value: number[]) => void; // emit updates
+    value: CauseDraft[];                     // selected cause IDs
+    onSave: (value: CauseDraft[]) => void; // emit updates
 }
 
 export const TagsModal: React.FC<TagsModalProps> = ({
@@ -19,25 +24,70 @@ export const TagsModal: React.FC<TagsModalProps> = ({
     onSave,
     causes
 }) => {
+    const [draft, setDraft] = useState<CauseDraft[]>([]);
+    const [search, setSearch] = useState("");
+    const [availableCauses, setAvailableCauses] = useState<CauseDraft[]>([]);
+    const [selectedCauses, setSelectedCauses] = useState<CauseDraft[]>([]);
 
-    const [draft, setDraft] = useState<number[]>([]);
+    const causeExists = causes.some(
+        c => c.name.toLowerCase() === search.toLowerCase()
+    );
+    const alreadySelected = draft.some(
+        c => c.name.toLowerCase() === search.toLowerCase()
+    );
+
+    const addNewCause = () => {
+        if (!search.trim()) return;
+
+        const newCause = { name: search.trim() };
+
+        setAvailableCauses(prev => [...prev, newCause]);
+        setSelectedCauses(prev => [...prev, newCause]);
+
+        setSearch("");
+    };
 
     useEffect(() => {
         if (open) {
-            setDraft(value);
-        }
-    }, [open, value]);
+            setSelectedCauses(value);
 
-    const toggleCause = (causeId: number) => {
-        setDraft((prev) =>
-            prev.includes(causeId)
-                ? prev.filter((id) => id !== causeId)
-                : [...prev, causeId]
-        );
+            setAvailableCauses(prev => {
+                const existing = causes.map(c => ({ id: c.id, name: c.name }));
+
+                const merged = [...existing, ...value.filter(v => !v.id)];
+
+                return merged.filter(
+                    (c, i, arr) =>
+                        arr.findIndex(x =>
+                            x.id
+                                ? x.id === c.id
+                                : x.name.toLowerCase() === c.name.toLowerCase()
+                        ) === i
+                );
+            });
+
+            setSearch("");
+        }
+    }, [open, value, causes]);
+
+    const toggleCause = (cause: CauseDraft) => {
+        setSelectedCauses(prev => {
+            const exists = prev.some(c =>
+                c.id ? c.id === cause.id : c.name === cause.name
+            );
+
+            if (exists) {
+                return prev.filter(c =>
+                    c.id ? c.id !== cause.id : c.name !== cause.name
+                );
+            }
+
+            return [...prev, cause];
+        });
     };
 
     const handleSave = () => {
-        onSave(draft);
+        onSave(selectedCauses);
         onClose();
     };
 
@@ -45,6 +95,32 @@ export const TagsModal: React.FC<TagsModalProps> = ({
         onClose();
     };
 
+    const renderChip = (
+        label: string,
+        selected: boolean,
+        onClick: () => void
+    ) => (
+        <Chip
+            label={label}
+            clickable
+            onClick={onClick}
+            sx={{
+                borderRadius: "10px",
+                transition: "all 200ms ease",
+                backgroundColor: selected
+                    ? theme.palette.primary.main
+                    : theme.custom.surface.variant,
+                color: selected
+                    ? theme.palette.primary.onColor
+                    : theme.custom.surface.onColorVariant,
+                "&:hover": {
+                    backgroundColor: selected
+                        ? theme.palette.primary.dark
+                        : theme.custom.surface.variant,
+                },
+            }}
+        />
+    );
 
     return (
         <Modal open={open} onClose={onClose}>
@@ -64,6 +140,20 @@ export const TagsModal: React.FC<TagsModalProps> = ({
                 }}
             >
                 <Typography variant='titleXLargetextMedium' color={theme.custom.surface.onColor}>Select Tags</Typography>
+
+                <TextField
+                    fullWidth
+                    placeholder="Search or create a cause"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !causeExists && !alreadySelected) {
+                            e.preventDefault();
+                            addNewCause();
+                        }
+                    }}
+                />
+
                 <Typography variant='bodyMedium' color={theme.custom.surface.onColor}>I want to support someone for:</Typography>
 
                 {/* Scrollable content */}
@@ -102,35 +192,21 @@ export const TagsModal: React.FC<TagsModalProps> = ({
                             },
                         }}
                     >
-                        {causes.map((item) => {
-                            const selected = draft.includes(item.id);
-                            return (
-                                <Chip
-                                    key={item.id}
-                                    label={item.name}
-                                    clickable
-                                    onClick={() => toggleCause(item.id)}
-                                    sx={{
-                                        borderRadius: "10px",
-                                        transition: "all 200ms ease",
+                        {availableCauses
+                            .filter(c =>
+                                c.name.toLowerCase().includes(search.toLowerCase())
+                            )
+                            .map((cause, index) => {
+                                const selected = selectedCauses.some(c =>
+                                    c.id ? c.id === cause.id : c.name === cause.name
+                                );
 
-                                        backgroundColor: selected
-                                            ? theme.palette.primary.main
-                                            : theme.custom.surface.variant,
-
-                                        color: selected
-                                            ? theme.palette.primary.onColor
-                                            : theme.custom.surface.onColorVariant,
-
-                                        "&:hover": {
-                                            backgroundColor: selected
-                                                ? theme.palette.primary.dark
-                                                : theme.custom.surface.variant,
-                                        },
-                                    }}
-                                />
-                            );
-                        })}
+                                return renderChip(
+                                    cause.id ? cause.name : `${cause.name} (new)`,
+                                    selected,
+                                    () => toggleCause(cause)
+                                );
+                            })}
                     </Box>
                 </Box>
                 <Box

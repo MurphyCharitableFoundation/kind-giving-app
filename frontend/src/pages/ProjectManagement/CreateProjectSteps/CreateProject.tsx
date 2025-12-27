@@ -3,11 +3,13 @@ import StepTwo from "./StepTwo";
 import StepReview from "./StepReview";
 import { MultiStepForm } from "../../../components/MultiStepForm";
 import { StepConfig } from "../../../components/MultiStepForm";
-import { Box, Container, IconButton, Typography } from "@mui/material";
+import { Alert, Box, Container, IconButton, Snackbar, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import theme from "../../../theme/theme";
 import { CreateProjectFormData } from "./CreateProjectFormData";
 import { createProject } from "../../../utils/projectsEndpoints";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const steps: StepConfig<CreateProjectFormData>[] = [
   { label: "Step One", component: StepOne },
@@ -29,16 +31,26 @@ export default function CreateProject() {
     status: "draft",
   };
 
+  const [success, setSuccess] = useState(false);
+
   const handleSubmit = async (data: CreateProjectFormData) => {
     try {
       await createProject(data);
-
-      // TODO -> redirect, toast or reset form
-      console.log("Project created successfully");
+      setSuccess(true);
     } catch (error) {
       console.error("Failed to create project:", error);
     }
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => {
+        navigate("/projects");
+      }, 1500);
+    }
+  }, [success]);
 
   return (
     <Container sx={{ padding: 0, bgcolor: theme.custom.misc.background }}>
@@ -67,6 +79,7 @@ export default function CreateProject() {
           <IconButton
             aria-label="navigate back to projects"
             sx={{ padding: 0, display: "flex", alignItems: "center" }}
+            onClick={() => navigate('/projects')}
           >
             <ArrowBackIcon />
           </IconButton>
@@ -80,6 +93,16 @@ export default function CreateProject() {
         initialData={initialCreateProjectFormData}
         onSubmit={handleSubmit}
       />
+
+      <Snackbar
+        open={success}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success" variant="filled">
+          Project created successfully
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

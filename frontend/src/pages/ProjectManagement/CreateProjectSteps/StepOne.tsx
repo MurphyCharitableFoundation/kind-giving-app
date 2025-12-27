@@ -6,7 +6,7 @@ import theme from "../../../theme/theme";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { CreateProjectFormData } from "./CreateProjectFormData";
-import { TagsModal } from "./TagsModal";
+import { CauseDraft, TagsModal } from "./TagsModal";
 import Cause from "../../../interfaces/Cause";
 import { getCauses } from "../../../utils/endpoints/causesEndpoints";
 
@@ -17,12 +17,6 @@ const StepOne: React.FC<StepProps<CreateProjectFormData>> = ({
   const [causes, setCauses] = useState<Cause[]>([]);
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
 
-  const selectedCauseIds = data.causes.map(cause => cause.id);
-
-  const selectedCauses = causes.filter((cause) =>
-    selectedCauseIds.includes(cause.id)
-  );
-
   useEffect(() => {
     getCauses()
       .then((result) => {
@@ -32,12 +26,8 @@ const StepOne: React.FC<StepProps<CreateProjectFormData>> = ({
       .catch((err) => console.error("Failed to fetch causes: ", err))
   }, [])
 
-  const handleSaveCauses = (ids: number[]) => {
-    const selectedCauses = causes.filter(cause =>
-      ids.includes(cause.id)
-    );
-
-    onChange("causes", selectedCauses);
+  const handleSaveCauses = (causes: CauseDraft[]) => {
+    onChange("causes", causes);
   };
 
   return (
@@ -74,7 +64,7 @@ const StepOne: React.FC<StepProps<CreateProjectFormData>> = ({
         </FormControl>
 
         <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-          {selectedCauses.map((cause) => (
+          {data.causes.map((cause) => (
             <Chip key={cause.id} label={cause.name} />
           ))}
         </Box>
@@ -86,7 +76,7 @@ const StepOne: React.FC<StepProps<CreateProjectFormData>> = ({
         <TagsModal
           open={tagsModalOpen}
           onClose={() => setTagsModalOpen(false)}
-          value={selectedCauseIds}
+          value={data.causes}
           onSave={handleSaveCauses}
           causes={causes}
         />
