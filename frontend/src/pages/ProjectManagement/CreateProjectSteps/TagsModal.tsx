@@ -28,19 +28,6 @@ export const TagsModal: React.FC<TagsModalProps> = ({
         }
     }, [open, value]);
 
-    useEffect(() => {
-        console.log("Draft IDs:", draft);
-    }, [draft]);
-
-    // useEffect(() => {
-    //     getCauses()
-    //         .then((result) => {
-    //             console.log(result);
-    //             setCauses(result);
-    //         })
-    //         .catch((err) => console.error("Failed to fetch causes: ", err))
-    // }, [])
-
     const toggleCause = (causeId: number) => {
         setDraft((prev) =>
             prev.includes(causeId)

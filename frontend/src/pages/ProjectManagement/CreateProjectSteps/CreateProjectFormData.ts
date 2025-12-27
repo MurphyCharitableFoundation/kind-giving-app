@@ -3,7 +3,7 @@ import Cause from "../../../interfaces/Cause";
 
 export interface CreateProjectFormData {
     name: string;
-    img: string;
+    img: string | null;
     causes: Cause[];
     target: number;
     campaign_limit: number;

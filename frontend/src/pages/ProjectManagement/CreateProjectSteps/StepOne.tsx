@@ -94,66 +94,77 @@ const StepOne: React.FC<StepProps<CreateProjectFormData>> = ({
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'row',
-            gap: '8px'
+            flexDirection: 'column',
+            alignItems: 'start',
+            gap: '12px'
           }}
         >
-          <ToggleButtonGroup
-            value={data.status}
-            exclusive
-            onChange={(_, value) => {
-              if (value !== null) {
-                onChange("status", value);
-              }
-            }}
+          <Typography color={theme.palette.primary.main} variant='body1' sx={{ ml: 1 }}>Set Status</Typography>
+          <Box
             sx={{
-              borderRadius: "40px",
-              backgroundColor: theme.custom.surface.main,
-              border: `1px solid ${theme.custom.misc.outline}`,
-              overflow: "hidden",
-
-              "& .MuiToggleButton-root": {
-                border: "none",
-                textTransform: "none",
-                px: 3,
-                py: 1.5,
-                transition: "background-color 250ms ease, color 200ms ease",
-              },
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '8px'
             }}
           >
-            <ToggleButton
-              value="active"
-              sx={{
-                "&.Mui-selected": {
-                  backgroundColor: theme.palette.primary.main,
-                  color: theme.palette.primary.onColor,
-                },
-                "&.Mui-selected:hover": {
-                  backgroundColor: theme.palette.primary.main,
-                },
+            <ToggleButtonGroup
+              value={data.status}
+              exclusive
+              onChange={(_, value) => {
+                if (value !== null) {
+                  onChange("status", value);
+                }
               }}
-            >
-              <VisibilityIcon sx={{ mr: 1 }} />
-              Active
-            </ToggleButton>
+              sx={{
+                borderRadius: "40px",
+                backgroundColor: theme.custom.surface.main,
+                border: `1px solid ${theme.custom.misc.outline}`,
+                overflow: "hidden",
 
-            <ToggleButton
-              value="draft"
-              sx={{
-                "&.Mui-selected": {
-                  backgroundColor: theme.status.warning.main,
-                  color: theme.palette.primary.onColor,
-                },
-                "&.Mui-selected:hover": {
-                  backgroundColor: theme.status.warning.main,
+                "& .MuiToggleButton-root": {
+                  border: "none",
+                  textTransform: "none",
+                  px: 3,
+                  py: 1.5,
+                  transition: "background-color 250ms ease, color 200ms ease",
                 },
               }}
             >
-              <VisibilityOffIcon sx={{ mr: 1 }} />
-              Inactive
-            </ToggleButton>
-          </ToggleButtonGroup>
+              <ToggleButton
+                value="active"
+                sx={{
+                  "&.Mui-selected": {
+                    backgroundColor: theme.palette.primary.main,
+                    color: theme.palette.primary.onColor,
+                  },
+                  "&.Mui-selected:hover": {
+                    backgroundColor: theme.palette.primary.main,
+                  },
+                }}
+              >
+                <VisibilityIcon sx={{ mr: 1 }} />
+                Active
+              </ToggleButton>
+
+              <ToggleButton
+                value="draft"
+                sx={{
+                  "&.Mui-selected": {
+                    backgroundColor: theme.status.warning.main,
+                    color: theme.palette.primary.onColor,
+                  },
+                  "&.Mui-selected:hover": {
+                    backgroundColor: theme.status.warning.main,
+                  },
+                }}
+              >
+                <VisibilityOffIcon sx={{ mr: 1 }} />
+                Inactive
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
         </Box>
+
 
       </Box>
 

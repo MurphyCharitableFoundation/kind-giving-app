@@ -7,6 +7,7 @@ import { Box, Container, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import theme from "../../../theme/theme";
 import { CreateProjectFormData } from "./CreateProjectFormData";
+import { createProject } from "../../../utils/projectsEndpoints";
 
 const steps: StepConfig<CreateProjectFormData>[] = [
   { label: "Step One", component: StepOne },
@@ -18,7 +19,7 @@ export default function CreateProject() {
 
   const initialCreateProjectFormData: CreateProjectFormData = {
     name: "",
-    img: "",
+    img: "default",
     causes: [],
     target: 0,
     campaign_limit: 0,
@@ -26,6 +27,17 @@ export default function CreateProject() {
     country: "",
     description: "",
     status: "draft",
+  };
+
+  const handleSubmit = async (data: CreateProjectFormData) => {
+    try {
+      await createProject(data);
+
+      // TODO -> redirect, toast or reset form
+      console.log("Project created successfully");
+    } catch (error) {
+      console.error("Failed to create project:", error);
+    }
   };
 
   return (
@@ -66,7 +78,7 @@ export default function CreateProject() {
       <MultiStepForm
         steps={steps}
         initialData={initialCreateProjectFormData}
-        onSubmit={(data) => console.log("Submit:", data)}
+        onSubmit={handleSubmit}
       />
     </Container>
   );

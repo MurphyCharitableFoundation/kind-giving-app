@@ -1,4 +1,5 @@
 import { IPaginatedResponse } from "../interfaces/Pagination";
+import { CreateProjectFormData } from "../pages/ProjectManagement/CreateProjectSteps/CreateProjectFormData";
 import { api } from "./axios";
 
 export interface Cause {
@@ -61,17 +62,35 @@ export interface ProjectCampaign {
 
 export type ProjectBeneficiary = UserBeneficiary | GroupBeneficiary;
 
+export const createProject = async (data: CreateProjectFormData) => {
+
+  const payload = {
+    name: data.name,
+    causes_names: data.causes.map(c => c.name),
+    target: String(data.target),
+    campaign_limit: data.campaign_limit,
+    city: data.city,
+    country: data.country,
+    description: data.description,
+    status: data.status,
+  };
+
+  return await api.post('/projects/', {
+    ...payload
+  });
+};
+
 export const fetchAllProjects = async (params: { limit?: number; offset?: number }): Promise<IPaginatedResponse<Project>> => {
-    try {
-        const response = await api.get<IPaginatedResponse<Project>>('/projects/', {params});
-        return response.data;
-    } catch (error: any) {
-        console.error(
-            "Failed to fetch projects:",
-            error.response?.data || error.message
-        );
-        throw error;
-    }
+  try {
+    const response = await api.get<IPaginatedResponse<Project>>('/projects/', { params });
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Failed to fetch projects:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
 }
 
 export const fetchProjectById = async (projectId: number): Promise<Project> => {

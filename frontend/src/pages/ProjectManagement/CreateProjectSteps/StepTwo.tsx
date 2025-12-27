@@ -93,6 +93,42 @@ const StepTwo: React.FC<StepProps<CreateProjectFormData>> = ({
             <Typography color={theme.palette.primary.main}> Add a Benefeciary </Typography>
           </Button>
         </Box>
+
+        <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px'
+        }}
+        >
+          <FormControl fullWidth>
+            <InputLabel htmlFor="images">Image</InputLabel>
+            <OutlinedInput
+              id="images"
+              startAdornment
+              endAdornment={
+                <InputAdornment position="end">
+                  <Button
+                  variant='contained'
+                  disableElevation
+                  sx={{
+                    textTransform: 'none',
+                    borderRadius: '30px',
+                    bgcolor: theme.palette.secondary.container
+                  }}
+                  onClick={() => console.log('add imagem')}
+                  >
+                    <Typography color={theme.palette.secondary.onContainer} variant='labelLarge'>Browse</Typography>
+                  </Button>
+                </InputAdornment>
+              }
+              label="Image"
+              value={data.img}
+              onChange={(e) => onChange('img', e.target.value)}
+            />
+          </FormControl>
+          <Typography sx={{ml: '16px'}} variant='bodyXSmall' color={theme.custom.surface.onColorVariant}>Images should not exceed 20MB</Typography>
+        </Box>
       </Box>
     </Container>
   );
