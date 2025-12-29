@@ -13,6 +13,7 @@ import CauseDetails from "./pages/Causes/[id]/CauseDetails";
 import CreateCause from "./pages/Causes/Create/CreateCause";
 import EditCause from "./pages/Causes/[id]/EditCause/EditCause";
 import PasswordVerificationCode from "./pages/PasswordVerificationCode/PasswordVerificationCode";
+import CreateProject from "./pages/ProjectManagement/CreateProjectSteps/CreateProject";
 
 const routes = [
   {
@@ -47,6 +48,10 @@ const routes = [
   {
     path: "/projects",
     element: <ProjectManagement />,
+  },
+  {
+    path: "/projects/create",
+    element: <CreateProject />,
   },
   {
     path: "/projects/:projectId",
